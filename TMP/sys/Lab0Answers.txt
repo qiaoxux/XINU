@@ -1,0 +1,81 @@
+1. Assuming the XINU text begins at address 0x0, draw a rough diagram of XINU's memory layout with addresses derived from your experimental measurements. Include the information you uncovered from running your version of printsegaddress() and printprocstks().
+
+Answer:
+high address ----------------------------------------------------
+			  |command line arguments and environment variables|
+ stack bottom |------------------------------------------------| 
+			  |			            stack                      |
+	stack top |------------------------------------------------|
+	          |												   |
+			  |						free					   |
+			  |												   |
+			  |------------------------------------------------|                       
+			  |					    heap                       |
+			  |------------------------------------------------| 0x00013df7
+			  |			            bss   					   |
+			  |------------------------------------------------| 0x0000b73f
+			  |			   			data					   |
+			  |------------------------------------------------| 0x00009051
+			  |		  	      		text					   |
+low address  ---------------------------------------------------- 0x00000000
+
+In Xinu, all the processes share the text, data, BSS and heap sections, but each process has its own stack space. This diagram is based on the experiments from printsegaddress() and printprocstks().
+
+2. What is the difference in stack top address before and after calling printtos() ? Draw a diagram to illustrate what are the contents of the items pushed into the stack between these two time points.
+
+Answer:
+high address ---------------------- bottom of stack
+			  | passed paramters | ——> previous stack top address 
+			  |------------------|
+			  |  return address  |
+			  |------------------| 
+			  |     saved EBP    | ——> new stack top address 
+			  |------------------|
+			  |  local variables |
+			  |------------------|
+			  |	    saved EDI    |
+			  |------------------|
+			  |	    saved ESI    |
+low address  ---------------------- top of stack
+
+As this diagram shows, before calling printtos(), the address of the top stack located at <passed paramters>. After calling printtos(), it will push <return address> into stack immediately and saved EBP. The top address of the stack before calling printtos () is 2 * 4 bytes = 8 bytes bigger than the address after calling printtos().
+
+
+3. Which byte order is adopted in the host machine that we are using ? How did you find out?
+
+Answer:
+
+After running below program, we found that host machine adopt Little Endian byte order. Little Endian is an order in which the "little end" (least significant value in the sequence) is stored first.
+
+#include <stdio.h>
+
+int little_endian(){
+	int i = 1;
+    return *(char*)&i;
+}
+int big_endian(){
+    return !little_endian();
+}
+
+int main(){
+    if(big_endian())
+        printf("Big Endian\n");
+    if(little_endian())
+        printf("Little Endian\n");
+    
+    return 0;
+}
+
+4. Briefly describe the mov, push, pusha, pop, and popa instructions in the x86.
+
+Answer:
+(1). The mov instruction copies the data item referred to by its second operand (i.e. register contents, memory contents, or a constant value) into the location referred to by its first operand (i.e. a register or memory).
+(2). The push instruction places its operand onto the top of the hardware supported stack in memory. Specifically, push first decrements ESP by 4, then places its operand into the contents of the 32-bit location at address [ESP]. ESP (the stack pointer) is decremented by push since the x86 stack grows down - i.e. the stack grows from high addresses to lower addresses.
+(3). This pusha instruction pushes all the general purpose registers onto the stack in the following order: AX, CX, DX, BX, SP, BP, SI, DI. The value of SP pushed is the value before the instruction is executed. It is useful for saving state before an operation that could potential change these registers.
+(4). The pop instruction removes the 4-byte data element from the top of the hardware-supported stack into the specified operand (i.e. register or memory location). It first moves the 4 bytes located at memory location [SP] into the specified register or memory location, and then increments SP by 4.
+(5). This popa instruction pops all the general purpose registers off the stack in the reverse order of PUSHA. That is, DI, SI, BP, SP, BX, DX, CX, AX. Used to restore state after a call to PUSHA.
+
+5. In a stack frame, local variables are stored below the top of the stack. In task 3, does your result show all the local variables declared in your printtos function? If not, can you explain that? (hint: try to disable the compiler optimization by specifing -O0 in your Makefile)
+
+Answer:
+No, printtos() will not print the contents of the locally unused variables because compiler optimization will not push unused variables onto stack.
