@@ -1,0 +1,25 @@
+1. What are the advantages and disadvantages of each of the two scheduling policies? Also, give the advantages and disadvantages of the round robin scheduling policy originally implemented in Xinu.
+
+(1). Exponential Distribution Scheduler
+
+Advantages: This scheduler chooses the next process based on a random value that follows the exponential distribution. EDS scheduling policy solves the starvation problem, and it ensures fairness by probability distribution and preemptions.
+
+Disadvantages: EDS scheduling policy probably will not schedule a highest priority process in a long time because its randomness and always dispatch CPU resources to those processes with low priorities, which can be very inefficient for operating system.
+
+(2). Linux-Like Scheduler
+
+Advantages: This scheduler chooses the next process based on goodnesses value, which are calculated from their priorities and left quantums. LL scheduling policy solves the startvation problem, and ensures fairness by predetermined time quota and epochs. It has fast response to user despite high load and scales well with number of processes.
+
+Disadvantages: LL scheduling policy is preemptive, which will decrease the consecutiveness of process execution. when a process enters the RUNNING state, the kernel checks whether its goodness is higher than the goodness of the currently executing process. If it is, the scheduler is invoked to pick a new process to run (presumably the process that just became runnable).
+
+(3). XINU Round-Robin Policy
+
+Advantage: It is easy to implement in Xinu and best suited in embedded system. At any time, the highest priority eligible process is executing and among processes with equal priority scheduling is round-robin. It always dispatch CPU resources to those processes with high priorities, which is efficient for operating system. 
+
+Disadvantage: This scheduling policy can suffer from a major problem known as indefinite blocking, or starvation and unfairness, in which a low-priority task can wait forever because there are always some other jobs around that have higher priority.
+
+
+
+2. Describe the way each of the schedulers affects the NULL process.
+
+NULL process will be initialized instantly after the C environment has been established, its process id and priority are both 0. In each of the three schedulers, the NULL process will run if no other processes is runnable (in the ready queue).
