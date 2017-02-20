@@ -170,4 +170,7 @@ DEVCALL read(int descrp, void *buf, int count);
 DEVCALL seek(int descrp, long pos);
 DEVCALL write(int descrp, void *buf, int count);
 
+/*Customized function to shutdown QEUM*/
+int shutdown();
+
 #endif

@@ -4,14 +4,15 @@
 
 CC	=	/usr/bin/gcc
 AS	=	/usr/bin/as
-CFLAGS	=	-march=i586 -fno-builtin -O -c -I../../h
+#CFLAGS	=	-march=i586 -m32 -fno-builtin -O -c -I../../h
+CFLAGS =        -m32 -fno-builtin -O -c -I../../h
 SFLAGS	=	-I../../h
 AR	=	/usr/bin/ar
 LIB	=	..
 
 
 .s.o:
-		$(AS) -o $@ $(AFLAGS) $<
+		$(AS) --32 -o $@ $(AFLAGS) $<
 
 .c.o:
 		$(CC) $(CFLAGS) $<

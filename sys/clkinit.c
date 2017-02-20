@@ -49,7 +49,9 @@ void clkinit()
 	set_evec(IRQBASE, (u_long)clkint);
 
 	/* clock rate is 1.190 Mhz; this is 10ms interrupt rate */
-	intv = 1190;
+	// intv = 1190;
+	// TODO: this seems a ok value via trial-and-error, but need to fix
+	intv = 11900;
 
 	clkruns = 1;
 	clockq = newqueue();
