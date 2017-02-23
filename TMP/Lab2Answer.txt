@@ -1,0 +1,46 @@
+1. The priority inversion problem could cause that a higher­priority process needs to wait for the completion of a lower­priority process.
+1). Priority inheritance is one approach to address this issue. Please give another approach and briefly describe its idea.
+Answer:
+
+Another approach is random boosting: ready threads holding locks are randomly boosted in priority and allowed to run long enough to exit the critical section. If the thread doesn't get enough time to release the lock, it will get another chance.
+
+2). Design a test case to show that your approach can address the priority inversion problem. You should compare the results that derived from the original XINU implementation (use semaphore) and that derived from your implementation (use readers/writer locks). Put your results in Lab2Answers.txt and your test case program (name it task1.c) in both ./sys and ./TMP
+Answer:
+
+In this test case, we have 3 processes with high priority (writer 2), medium priority (nothing), and low priority (writer 1), and a lock X.
+
+Scenario:
+1. writer 1 runs and acquires lock X.
+2. writer 2 tries to access lock X, but then writer 2 sleeps because writer 1 holds lock X. 
+3. nothing preempts writer 1 and runs because nothing has higher priority than writer 1.
+4. nothing finishes and writer 1 runs because writer 1 holds the lock X.
+5. writer 1 releases the lock and writer 2 gets the lock and executes.
+
+Question here is that writer 2 and nothing were two processes waiting to run, and writer 2 has highest priority, but nothing ran because writer 2 was waiting on lock. So I implemented priority inheritance in the readers/writer lock system and got results as follow:
+
+testlock start
+  writer 1: acquired lock, sleep for a while
+  writer 1: to release lock
+  writer 2: acquired lock, sleep for a while
+  writer 2: to release lock
+  nothing: to do nothing
+  nothing: but sleep for a while
+
+testsemaphore start
+  writer 1: acquired sem, sleep for a while
+  nothing: to do nothing
+  nothing: but sleep for a while
+  writer 1: to release sem
+  writer 2: acquired sem, sleep for a while
+  writer 2: to release sem
+
+
+
+2. Synchronization is a quite complex issue in operating systems. To show your understanding about process synchronization, you are asked to point out a reader/writer synchronization issue in this pesudo-code: task2_sync_issue.c. Multiple reader threads can execute this code concurrently by calling do_update. All the variables starting with global_ are global variables. You are asked to describe the potential issue caused by the incorrect synchronization and point out at least one possible thread interleaving that would trigger the problem. Put your answer in Lab2Answers.txt mentioned above.
+Answer:
+
+This reader/writer synchronization system doesn't make write operation exclusive, because global_semaphore is initialized to 10 instead of 1, which makes multiple-writer possible. Actually, I suppose it would be better that the lock in the do_update function is write lock instead of read lock.
+
+The anamoly situation is clear: if 3 readers A, B, C acquire the read lock successfully, which is easy because read lock is shared lock. Then all these 3 readers will enter try_update function and try to acquire global_semaphore. Assuming that A acquires global_semaphore first and just finishes "memcpy (buf->buf + buf->len, txt, size);" successfully. At this moment, B also acquires global_semaphore and is going to add string to this buffer. However, B will possibly overwrite the buffer A added just now, because buffer_t->len hasn't been updated yet.
+
+
