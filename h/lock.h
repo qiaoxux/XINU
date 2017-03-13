@@ -34,6 +34,6 @@ extern	int	nextlock;
 extern int lcreate(void);
 extern int ldelete(int lockdescriptor);
 extern int lock(int ldes1, int type, int priority);
-extern int releaseall(int numlocks, long args);
+extern int releaseall(int numlocks, long args, ...);
 
 #endif

@@ -8,7 +8,10 @@
 #include <lock.h>
 #include <stdio.h>
 
-int releaseall(int numlocks, long args) {
+int releaseall(numlocks, args)
+int numlocks;
+long args;
+{
 	STATWORD ps;
 	int i;
 	int ldes;
