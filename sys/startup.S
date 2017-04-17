@@ -50,10 +50,10 @@
 #define MULTIBOOT_HEADER_MAGIC 0x1BADB002
 #define MULTIBOOT_HEADER_FLAGS 0x00000003
 
-	.align 4
-	.long MULTIBOOT_HEADER_MAGIC
-	.long MULTIBOOT_HEADER_FLAGS
- 	.long -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
+        .align 4
+        .long MULTIBOOT_HEADER_MAGIC
+        .long MULTIBOOT_HEADER_FLAGS
+        .long -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
 
 	.data
@@ -91,7 +91,7 @@ entry:	.globl	entry
 
 	movl	$BRELOC,%esi    # Move from BRELOC to 
 	movl	$0,%edi		# to relocated area
-	movl	$330*1024,%ecx  # Size to Move (should be _edata)
+	movl	$300*1024,%ecx  # Size to Move (should be _edata)
 	cld
 	rep
 	movsb
@@ -99,12 +99,6 @@ entry:	.globl	entry
 	movl	$BRELOC+360*1024, %esp	#Put Stack pointer somewhere safe.  
 	pushl	$start
 	ret
-
-#.text
-#	.align 4
-#	.long MULTIBOOT_HEADER_MAGIC
-#	.long MULTIBOOT_HEADER_FLAGS
-#	.long -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
 start:
 
@@ -154,7 +148,10 @@ gdt1:
 	movl	initsp,%esp	/* set new stack pointer base */
 	movl	%esp,%ebp
 
-	call	nulluser
+	movw	$0x28, %ax	/* set current task */
+	ltr	%ax
+	
+	call	nulluser	/* start xinu */
 	call	halt
 
 	.data
@@ -176,11 +173,11 @@ inw:	movl	4(%esp),%edx
 	inw	%dx,%ax
 	ret
 
-	.globl  inl
-inl:	movl	4(%esp),%edx
-	xorl	%eax,%eax
-	inl	%dx,%eax
-	ret
+        .globl  inl
+inl:    movl    4(%esp),%edx
+        xorl    %eax,%eax
+        inl     %dx,%eax
+        ret
 
 	.globl	outb
 outb:	movl	4(%esp),%edx
@@ -194,11 +191,11 @@ outw:	movl	4(%esp),%edx
 	outw	%ax,%dx
 	ret
 
-	.globl	outl
-outl:	movl	4(%esp),%edx
-	movl	8(%esp),%eax
-	outl	%eax,%dx
-	ret
+        .globl  outl
+outl:   movl    4(%esp),%edx
+        movl    8(%esp),%eax
+        outl    %eax,%dx
+        ret
 
 #ifndef SMALL
 	.globl	_rtcin

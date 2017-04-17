@@ -28,6 +28,11 @@
 #define	PRWAIT		'\007'		/* process is on semaphore queue*/
 #define	PRTRECV		'\010'		/* process is timing a receive	*/
 
+/* process rescheduleing policy */
+
+#define RANDOMSCHED             1
+#define PROPORTIONALSHARE       2
+
 /* miscellaneous process definitions */
 
 #define	PNMLEN		16		/* length of process "name"	*/
@@ -60,6 +65,18 @@ struct	pentry	{
 	int	fildes[_NFILE];		/* file - device translation	*/
 	int	ppagedev;		/* pageing dgram device		*/
 	int	pwaitret;
+
+/* for process scheduling*/
+        int     ppolicy;                /* process scheduling policy    */
+        int     ppi;                    /* priority value in psp        */
+        int     prate;                  /* rate value in psp            */
+
+/* for demand paging */
+        unsigned long pdbr;             /* PDBR                         */
+        int     store;                  /* backing store for vheap      */
+        int     vhpno;                  /* starting pageno for vheap    */
+        int     vhpnpages;              /* vheap size                   */
+        struct mblock *vmemlist;        /* vheap list              	*/
 };
 
 

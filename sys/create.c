@@ -7,7 +7,7 @@
 #include <sem.h>
 #include <mem.h>
 #include <io.h>
-#include <stdio.h>
+#include <paging.h>
 
 LOCAL int newpid();
 
@@ -97,6 +97,7 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
 	restore(ps);
+
 	return(pid);
 }
 

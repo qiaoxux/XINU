@@ -9,4 +9,4 @@ fi
 HOST=`hostname`
 HOST=`basename $HOST .ncsu.edu`
 VN=`cat vn`
-echo "(CSC501 1-2017 base) #$VN ("$USER"@"$HOST") "`date` > version
+echo "(CSC501 1-2009 base) #$VN ("$USER"@"$HOST") "`date` > version

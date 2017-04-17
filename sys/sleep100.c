@@ -21,7 +21,7 @@ SYSCALL sleep100(int n)
 	if (n == 0) {		/* sleep100(0) -> end time slice */
 	        ;
 	} else {
-		insertd(currpid,clockq,n*1);
+		insertd(currpid,clockq,n*10);
 		slnempty = TRUE;
 		sltop = &q[q[clockq].qnext].qkey;
 		proctab[currpid].pstate = PRSLEEP;

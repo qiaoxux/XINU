@@ -3,7 +3,6 @@
 #include <icu.h>
 #include <i386.h>
 #include <kernel.h>
-#include <stdio.h>
 
 
 #define BOOTP_CODE
@@ -20,13 +19,101 @@ struct sd gdt_copy[NGD] = {
 	{ 0xffff, 0, 0, 2, 0, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 },
 		/* 3rd, Kernel Stack Segment */
 	{ 0xffff, 0, 0, 2, 0, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 },
-		/* 4st, Bootp Code Segment */
+		/* 4th, Bootp Code Segment */
 	{ 0xffff, 0, 0, 6, 1, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 },
-		/* 5th, Code Segment for BIOS32 request */
-	{ 0xffff, 0, 0, 6, 1, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 },
-		/* 6th, Data Segment for BIOS32 request */
+		/* 5th, Task for Xinu */
+	{ 0xffff, 0, 0, 1, 1, 0, 0, 1, 0xf, 1, 0, 0, 1, 0 },
+		/* 6th, Task for Interrupt 14 */
+	{ 0xffff, 0, 0, 1, 1, 0, 0, 1, 0xf, 1, 0, 0, 1, 0 },
+		/* Ignore This One */
 	{ 0xffff, 0, 0, 2, 0, 1, 0, 1, 0xf, 0, 0, 1, 1, 0 },
 
+};
+
+/* Two Tasks for Final Project . First is for Xinu.
+   Second is for interrupt handler.
+*/
+struct tss i386_tasks[2] = {
+
+  {0,	/* previous task	*/
+   0,	/* mbz			*/
+   0,	/* esp0			*/
+   0x18,/* ss0			*/
+   0,	/* mbz			*/
+   0,	/* esp1			*/
+   0x18,/* ss1			*/
+   0,	/* mbz			*/
+   0,	/* esp2			*/
+   0x18,/* ss2			*/
+   0,	/* mbz			*/
+   0,	/* cr3 (PDBR)		*/
+   0,	/* eip			*/
+   0,	/* efl			*/
+   0,	/* eax			*/
+   0,	/* ecx			*/
+   0,	/* edx			*/
+   0,	/* ebx			*/
+   0,	/* esp			*/
+   0,	/* ebp			*/
+   0,	/* esi			*/
+   0,	/* edi			*/
+   0,	/* es			*/
+   0,	/* mbz			*/
+   0x8,	/* cs			*/
+   0,	/* mbz			*/
+   0x18,/* ss			*/
+   0,	/* mbz			*/
+   0x10,/* ds			*/
+   0,	/* mbz			*/
+   0,	/* fs			*/
+   0,	/* mbz			*/
+   0,	/* gs			*/
+   0,	/* mbz			*/
+   0,	/* local desc tab sel	*/
+   0,	/* mbz			*/
+   0,	/* debug		*/
+   0,	/* mbz			*/
+   0},	/* iomap base address	*/
+
+  {0,	/* previous task	*/
+   0,	/* mbz			*/
+   0,	/* esp0			*/
+   0x18,/* ss0			*/
+   0,	/* mbz			*/
+   0,	/* esp1			*/
+   0x18,/* ss1			*/
+   0,	/* mbz			*/
+   0,	/* esp2			*/
+   0x18,/* ss2			*/
+   0,	/* mbz			*/
+   0,	/* cr3 (PDBR)		*/ /* ! */
+   0,	/* eip			*/ /* ! */
+   0,	/* efl			*/
+   0,	/* eax			*/
+   0,	/* ecx			*/
+   0,	/* edx			*/
+   0,	/* ebx			*/
+   0,	/* esp			*/ /* ! */
+   0,	/* ebp			*/
+   0,	/* esi			*/
+   0,	/* edi			*/
+   0,	/* es			*/
+   0,	/* mbz			*/
+   0x8,	/* cs			*/
+   0,	/* mbz			*/
+   0x18,/* ss			*/
+   0,	/* mbz			*/
+   0x10,/* ds			*/
+   0,	/* mbz			*/
+   0,	/* fs			*/
+   0,	/* mbz			*/
+   0,	/* gs			*/
+   0,	/* mbz			*/
+   0,	/* local desc tab sel	*/
+   0,	/* mbz			*/
+   0,	/* debug		*/
+   0,	/* mbz			*/
+   0},	/* iomap base address	*/
 };
 
 extern struct sd gdt[];
@@ -40,42 +127,68 @@ extern	char	*maxaddr;
  * setsegs - initialize the 386 processor
  *------------------------------------------------------------------------
  */
-int setsegs()
+setsegs()
 {
-	extern int	etext;
+	extern int	start, etext;
 	struct sd	*psd;
-	unsigned int	np, npages;
+	unsigned int	np, npages, lostk, limit;
 
 	npages = sizmem();
+/*
 	maxaddr = (char *)(npages * NBPG - 1);
+*/
+	maxaddr = (char *)( 1536 * NBPG - 1); /* 10M size */
+				 	      /* the top 10M is used for backing store */
 
 	psd = &gdt_copy[1];	/* kernel code segment */
 	np = ((int)&etext + NBPG-1) / NBPG;	/* # code pages */
 	psd->sd_lolimit = np;
 	psd->sd_hilimit = np >> 16;
-
+#if 0
 	psd = &gdt_copy[2];	/* kernel data segment */
 	psd->sd_lolimit = npages;
 	psd->sd_hilimit = npages >> 16;
 
 	psd = &gdt_copy[3];	/* kernel stack segment */
 	psd->sd_lolimit = npages;
-	psd->sd_hilimit = npages >> 16;
+	psd->sd_hilimit = npages >> 16; 
+#endif
 
 	psd = &gdt_copy[4];	/* bootp code segment */
 	psd->sd_lolimit = npages;   /* Allows execution of 0x100000 CODE */
 	psd->sd_hilimit = npages >> 16;
 
+	/* Set the descriptors for the tasks */
+	/* Main Xinu task */
+
+	psd = &gdt_copy[5];
+	psd->sd_hibase = ((unsigned int) i386_tasks) >> 24;
+	psd->sd_midbase = (((unsigned int) i386_tasks)>>16) & 0xff;
+	psd->sd_lobase = ((unsigned int) i386_tasks) & 0xffff;
+
+	/* Page Fault handler task */
+
+	psd = &gdt_copy[6];
+	psd->sd_hibase = ((unsigned int) & i386_tasks[1]) >> 24;
+	psd->sd_midbase = (((unsigned int) & i386_tasks[1]) >> 16) & 0xff;
+	psd->sd_lobase = ((unsigned int) & i386_tasks[1]) & 0xffff;
+
 	blkcopy(gdt, gdt_copy, sizeof(gdt_copy));
+
+	/* initial stack must be in physical
+	   memory.
+	*/
+/*
 	initsp = npages*NBPG  - 4;
-        return(OK);
+*/
+	initsp = 1024*NBPG  - 4;
 }
 
 /*------------------------------------------------------------------------
  * init8259 - initialize the 8259A interrupt controllers
  *------------------------------------------------------------------------
  */
-int init8259()
+init8259()
 {
 	STATWORD	PS;
 
@@ -94,10 +207,10 @@ int init8259()
 	outb(ICU2, 0xb);	/* OCW3: set ISR on read	*/
 
 	disable(PS);
-        return(OK);
 }
 
-int pseg(struct sd *psd)
+pseg(psd)
+struct sd	*psd;
 {
 	int		i;
 	unsigned char	*pb = (unsigned char *)psd;
@@ -123,5 +236,4 @@ int pseg(struct sd *psd)
 		psd->sd_avl);
 	kprintf("mbz %d 32b %d gran %d\n", psd->sd_mbz, psd->sd_32b,
 		psd->sd_gran);
-        return(OK);
 }
