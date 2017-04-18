@@ -52,26 +52,8 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 	proctab[pid].vmemlist->mnext = (struct mblock *) (4096 * NBPG);
-	proctab[pid].vmemlist->mnext->mlen = hsize * NBPG
+	proctab[pid].vmemlist->mnext->mlen = hsize * NBPG;
 
 	restore(ps);
 	return OK;
-}
-
-/*------------------------------------------------------------------------
- * newpid  --  obtain a new (free) process id
- *------------------------------------------------------------------------
- */
-LOCAL	newpid()
-{
-	int	pid;			/* process id to return		*/
-	int	i;
-
-	for (i=0 ; i<NPROC ; i++) {	/* check all NPROC slots	*/
-		if ( (pid=nextproc--) <= 0)
-			nextproc = NPROC-1;
-		if (proctab[pid].pstate == PRFREE)
-			return(pid);
-	}
-	return(SYSERR);
 }
