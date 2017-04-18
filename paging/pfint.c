@@ -75,7 +75,7 @@ SYSCALL pfint()
 		pd_entry->pd_avail = 0;
 		pd_entry->pd_base = FRAME0 + free_frame;
 
-		frm_tab[free_frame].fr_status = FRM_UNMAPPED;
+		frm_tab[free_frame].fr_status = FRM_MAPPED;
 		frm_tab[free_frame].fr_pid = currpid;
 		frm_tab[free_frame].fr_vpno = vpno;
 		frm_tab[free_frame].fr_refcnt = 1;
@@ -104,7 +104,7 @@ SYSCALL pfint()
 	pt_entry->pt_avail = 0;
 	pt_entry->pt_base = 0;
 
-	frm_tab[free_frame].fr_status = FRM_UNMAPPED;
+	frm_tab[free_frame].fr_status = FRM_MAPPED;
 	frm_tab[free_frame].fr_pid = currpid;
 	frm_tab[free_frame].fr_vpno = vpno;
 	frm_tab[free_frame].fr_refcnt++;

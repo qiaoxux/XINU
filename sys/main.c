@@ -22,7 +22,7 @@ void proc1_test1(char *msg, int lck) {
 	int i;
 
 	get_bs(TEST1_BS, 100);
-
+	kprintf(get_bs(TEST1_BS, 100));
 	if (xmmap(PROC1_VPNO, TEST1_BS, 100) == SYSERR) {
 		kprintf("xmmap call failed\n");
 		sleep(3);
@@ -94,4 +94,6 @@ int main() {
 	// pid1 = create(proc1_test3, 2000, 20, "proc1_test3", 0, NULL);
 	// resume(pid1);
 	// sleep(3);
+
+	return 0;
 }
