@@ -135,6 +135,7 @@ void init_page_directory() {
 	frm_tab[free_frame].fr_dirty = 0;
 	
 	proctab[currpid].pdbr = pd_entry = (pd_t*)((FRAME0 + free_frame) * NBPG);
+	kprintf("create PDRB address is 0x%08x\n", proctab[currpid].pdbr);
 
 	int i;
 	for (i = 0; i < NFRAMES; i++) {
