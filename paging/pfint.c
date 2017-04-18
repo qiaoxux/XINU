@@ -3,6 +3,7 @@
 #include <conf.h>
 #include <kernel.h>
 #include <paging.h>
+#include <proc.h>
 #include <q.h>
 
 
@@ -41,10 +42,10 @@ SYSCALL pfint()
 		return SYSERR;
 	}
 
-	if (pd_entry->pt_pres == 0) {
+	if (pd_entry->pd_pres == 0) {
 		get_frm(&free_frame);
 
-		pt_entry = (pt_t*) (FRAME0 + free_frame) * NBPG;
+		pt_entry = (pt_t*)((FRAME0 + free_frame) * NBPG);
 		for (i = 0; i < NFRAMES; i++) {
 			pt_entry->pt_pres = 0;	
 			pt_entry->pt_write = 0;
@@ -72,7 +73,7 @@ SYSCALL pfint()
 		pd_entry->pd_avail = 0;
 		pd_entry->pd_base = FRAME0 + free_frame;
 
-		frm_tab[free_frame].fr_status = FRM_UNMAPPED
+		frm_tab[free_frame].fr_status = FRM_UNMAPPED;
 		frm_tab[free_frame].fr_pid = currpid;
 		frm_tab[free_frame].fr_vpno = vpno;
 		frm_tab[free_frame].fr_refcnt = 1;
@@ -80,7 +81,7 @@ SYSCALL pfint()
 		frm_tab[free_frame].fr_dirty = 0;
 	}
 
-	pt_entry = pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t);
+	pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
 
 	bsm_lookup(currpid, vaddr, &bs_id, &offset);
 
@@ -96,7 +97,7 @@ SYSCALL pfint()
 	pt_entry->pt_avail = 0;
 	pt_entry->pt_base = 0;
 
-	frm_tab[free_frame].fr_status = FRM_UNMAPPED
+	frm_tab[free_frame].fr_status = FRM_UNMAPPED;
 	frm_tab[free_frame].fr_pid = currpid;
 	frm_tab[free_frame].fr_vpno = vpno;
 	frm_tab[free_frame].fr_refcnt++;
@@ -105,9 +106,9 @@ SYSCALL pfint()
 
 	get_frm(&free_frame);
 
-	read_bs((char*)(FRAME0 + free_frame) * NBPG, offset);
+	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
 
-	penqueue(free_frame);
+	penqueue(free_frame, TailPQ);
 
 	restore(ps);
 	return OK;
