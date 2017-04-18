@@ -60,18 +60,18 @@ SYSCALL pfint()
 			pt_entry++;
 		}
 
-
-		pd_entry->pt_pres = 1;	
-		pd_entry->pt_write = 1;
-		pd_entry->pt_user = 0;
-		pd_entry->pt_pwt = 0;
-		pd_entry->pt_pcd = 0;
-		pd_entry->pt_acc = 0;
-		pd_entry->pt_dirty = 0;
-		pd_entry->pt_mbz = 0;
-		pd_entry->pt_global = 0;
-		pd_entry->pt_avail = 0;
-		pd_entry->pt_base = FRAME0 + free_frame;
+		pd_entry->pd_pres = 1;	
+		pd_entry->pd_write = 1;
+		pd_entry->pd_user = 0;
+		pd_entry->pd_pwt = 0;
+		pd_entry->pd_pcd = 0;
+		pd_entry->pd_acc = 0;
+		pd_entry->pd_mbz = 0;
+		pd_entry->pd_fmb = 0;
+		pd_entry->pd_dirty = 0;
+		pd_entry->pd_global = 0;
+		pd_entry->pd_avail = 0;
+		pd_entry->pd_base = FRAME0 + free_frame;
 
 		frm_tab[free_frame].fr_status = FRM_UNMAPPED
 		frm_tab[free_frame].fr_pid = currpid;

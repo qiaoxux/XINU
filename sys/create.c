@@ -138,17 +138,18 @@ void init_page_directory() {
 
 	int i;
 	for (i = 0; i < NFRAMES; i++) {
-		pd_entry->pd_pres = 0;
+		pd_entry->pd_pres = 0;	
 		pd_entry->pd_write = 1;
-		pd_entry->pt_user = 0;
-		pd_entry->pt_pwt = 0;
-		pd_entry->pt_pcd = 0;
-		pd_entry->pt_acc = 0;
-		pd_entry->pt_dirty = 0;
-		pd_entry->pt_mbz = 0;
-		pd_entry->pt_global = 0;
-		pd_entry->pt_avail = 0;
-		pd_entry->pd_base = 0;
+		pd_entry->pd_user = 0;
+		pd_entry->pd_pwt = 0;
+		pd_entry->pd_pcd = 0;
+		pd_entry->pd_acc = 0;
+		pd_entry->pd_mbz = 0;
+		pd_entry->pd_fmb = 0;
+		pd_entry->pd_dirty = 0;
+		pd_entry->pd_global = 0;
+		pd_entry->pd_avail = 0;
+		pd_entry->pd_base = FRAME0 + free_frame;
 		if (i < 4) {
 			pd_entry->pd_pres = 1;
 			pd_entry->pd_base = FRAME0 + i;
