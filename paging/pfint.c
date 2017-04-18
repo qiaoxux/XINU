@@ -27,9 +27,14 @@ SYSCALL pfint()
 	/* Contains a value called Page Fault Linear Address (PFLA). When a page fault occurs, 
 	the address the program attempted to access is stored in the CR2 register. */
 	vaddr = read_cr2();
+
+	(virt_addr_t*) virt_addr = (virt_addr_t*)&vaddr;
+
+	offset = virt_addr->pg_offset;
+	pt_offset = virt_addr->pt_offset;
+	pd_offset = virt_addr->pd_offset;
+
 	vpno = vaddr >> 12;
-	pd_offset = vpno >> 10;
-	pt_offset = vpno & 1023;
 
 	pdbr = proctab[currpid].pdbr;
 	pd_entry = pdbr + pd_offset * sizeof(pd_t);
