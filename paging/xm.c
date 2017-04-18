@@ -38,7 +38,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 
 		if (bsm_tab[source].bs_pid == currpid) {
 			bsm_map(currpid, virtpage, source, npages);
-			restore(ps)
+			restore(ps);
 			return OK;
 		}
 	}
@@ -61,6 +61,6 @@ SYSCALL xmunmap(int virtpage)
 	}
 
 	bsm_unmap(currpid, virtpage, 0);
-	restore(ps)
+	restore(ps);
   	return OK;
 }
