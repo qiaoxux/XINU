@@ -84,6 +84,7 @@ int	resched()
 #endif
 	
 	write_cr3(nptr->pdbr);
+	kprintf("PDRB address is 0x%08x\n", ptr->pdbr);
 	
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
