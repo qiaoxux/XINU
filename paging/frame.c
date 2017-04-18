@@ -18,7 +18,7 @@ SYSCALL init_frm()
 	fr_map_t frm_tab[NFRAMES];
 
 	for (i = 0; i < NFRAMES; i++) {
-		frm_tab[i].fr_status = FRM_UNMAPPED
+		frm_tab[i].fr_status = FRM_UNMAPPED;
 		frm_tab[i].fr_pid = -1;
 		frm_tab[i].fr_vpno = -1;
 		frm_tab[i].fr_refcnt = 0;
@@ -55,7 +55,7 @@ SYSCALL get_frm(int* avail)
 	}
 
 	if (grpolicy() == SC) {
-		while (true) {
+		while (1) {
 			if (currqueue == HeadPQ || currqueue == TailPQ)
 				currqueue = pq[HeadPQ].qnext;
 			
@@ -84,7 +84,7 @@ SYSCALL get_frm(int* avail)
 		fit_frame = frame_idx;
 		while (frame_idx != HeadPQ) {
 			if (frm_tab[frame_idx].fr_refcnt <= min_age) {
-				min_age = rm_tab[frame_idx].fr_refcnt;
+				min_age = frm_tab[frame_idx].fr_refcnt;
 				fit_frame = frame_idx;
 			}
 			frame_idx = pq[frame_idx].qprev;
@@ -134,7 +134,7 @@ SYSCALL free_frm(int i)
 		pd_entry = pdbr + pd_offset * sizeof(pd_t);
 		pt_entry = pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t);
 
-		frm_tab[i].fr_status = FRM_UNMAPPED
+		frm_tab[i].fr_status = FRM_UNMAPPED;
 		frm_tab[i].fr_pid = -1;
 		frm_tab[i].fr_vpno = -1;
 		frm_tab[i].fr_refcnt = 0;
@@ -146,9 +146,9 @@ SYSCALL free_frm(int i)
 		write_bs((FRAME0 + i) * NBPG, proctab[pid].store, vpno - proctab[pid].vhpno);
 
 		if(--frm_tab[pd_nframes].fr_refcnt <= 0) {
-			pd_nframes = pd_entry->base - FRAME0;
+			pd_nframes = pd_entry->pd_base - FRAME0;
 
-			frm_tab[pd_nframes].fr_status = FRM_UNMAPPED
+			frm_tab[pd_nframes].fr_status = FRM_UNMAPPED;
 			frm_tab[pd_nframes].fr_pid = -1;
 			frm_tab[pd_nframes].fr_vpno = -1;
 			frm_tab[pd_nframes].fr_refcnt = 0;
@@ -181,7 +181,7 @@ SYSCALL evict_frm(int pid)
 	for (i = 0; i < NFRAMES; i++) {
 		if (frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid && frm_tab[i].fr_type == FR_PAGE) {
 			int qid = pq[HeadPQ].qnext;
-			while (pq[qid] != TailPQ) {
+			while (qid != TailPQ) {
 				if (qid == i) {
 					pdequeue(i);
 					break;
