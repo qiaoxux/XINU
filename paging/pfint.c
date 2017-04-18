@@ -115,6 +115,8 @@ SYSCALL pfint()
 	get_frm(&free_frame);
 	bsm_lookup(currpid, vaddr, &bs_id, &offset);
 
+	kprintf("0x%08x: %c\n", ((FRAME0 + free_frame) * NBPG), *((FRAME0 + free_frame) * NBPG));
+
 	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
 
 	penqueue(free_frame, TailPQ);
