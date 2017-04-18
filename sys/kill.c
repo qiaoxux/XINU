@@ -67,7 +67,7 @@ SYSCALL kill(int pid)
 		proctab[currpid].store = -1;
 		proctab[currpid].vhpno = -1;
 		proctab[currpid].vhpnpages = -1;
-		vfreemem(proctab[currpid].vmemlist->mnext, proctab[currpid].vmemlist->mnext->len);
+		vfreemem(proctab[currpid].vmemlist->mnext, proctab[currpid].vmemlist->mnext->mlen);
 	}
 
 	restore(ps);
