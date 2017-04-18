@@ -31,15 +31,15 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 	}
 
 	if (bsm_tab[source].bs_status == BSM_MAPPED) {
-		if (bsm_tab[source].bs_sem = 1 && bsm_tab[source].bs_pid != currpid) {
-			kprintf("Exclusive backing store");
-			return SYSERR;
-		}
-
 		if (bsm_tab[source].bs_pid == currpid) {
 			bsm_map(currpid, virtpage, source, npages);
 			restore(ps);
 			return OK;
+		}
+		
+		if (bsm_tab[source].bs_sem = 1) {
+			kprintf("Exclusive backing store");
+			return SYSERR;
 		}
 	}
 	

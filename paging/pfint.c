@@ -83,12 +83,12 @@ SYSCALL pfint()
 		frm_tab[free_frame].fr_dirty = 0;
 	}
 
-	kprintf("currpid: %d\n", currpid);
+	// kprintf("currpid: %d\n", currpid);
 		
-	kprintf("vaddr: 0x%08x\n", vaddr);
-	kprintf("pg_offset: %d\n", pg_offset);
-	kprintf("pd_offset: %d\n", pd_offset);
-	kprintf("pt_offset: %d\n", pt_offset);
+	// kprintf("vaddr: 0x%08x\n", vaddr);
+	// kprintf("pg_offset: %d\n", pg_offset);
+	// kprintf("pt_offset: %d\n", pt_offset);
+	// kprintf("pd_offset: %d\n", pd_offset);
 
 	pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
 
@@ -113,8 +113,6 @@ SYSCALL pfint()
 
 	get_frm(&free_frame);
 	bsm_lookup(currpid, vaddr, &bs_id, &pg_offset);
-	
-	kprintf("bs_id: %d\n", bs_id);
 
 	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, pg_offset);
 
