@@ -18,6 +18,7 @@ SYSCALL pfint()
 
 	int i, bs_id, offset, vpno, free_frame;
 	struct idt *pidt;
+	virt_addr_t *virt_addr;
 	unsigned long vaddr, pdbr;
 	unsigned int pd_offset, pt_offset;
 
@@ -28,8 +29,8 @@ SYSCALL pfint()
 	the address the program attempted to access is stored in the CR2 register. */
 	vaddr = read_cr2();
 
-	(virt_addr_t*) virt_addr = (virt_addr_t*)&vaddr;
-
+	virt_addr = (virt_addr_t*)&vaddr;
+	
 	offset = virt_addr->pg_offset;
 	pt_offset = virt_addr->pt_offset;
 	pd_offset = virt_addr->pd_offset;
