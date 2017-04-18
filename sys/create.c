@@ -98,8 +98,6 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 
 	init_page_directory(pid);	/* page directory initialization */
 
-	kprintf("'create' PDRB address is 0x%08x, of PID %d\n", pptr->pdbr, pid);
-
 	restore(ps);
 
 	return(pid);

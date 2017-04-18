@@ -18,8 +18,7 @@ SYSCALL pfint()
 
 	int i, bs_id, offset, vpno, free_frame;
 	struct idt *pidt;
-	unsigned short vaddr;
-	unsigned long pdbr;
+	unsigned long vaddr, pdbr;
 	unsigned int pd_offset, pt_offset;
 
 	pt_t *pt_entry;
@@ -41,6 +40,12 @@ SYSCALL pfint()
 		kill(currpid);
 		return SYSERR;
 	}
+
+	kprintf("currpid: %d\n", currpid);
+	kprintf("vaddr: 0x%08x\n", vaddr);
+	kprintf("vpno: %d\n", vpno);
+	kprintf("pd_offset: %d\n", pd_offset);
+	kprintf("pt_offset: %d\n", pt_offset);
 
 	if (pd_entry->pd_pres == 0) {
 		get_frm(&free_frame);

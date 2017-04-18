@@ -83,7 +83,6 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	
-	kprintf("'resched' PDRB address is 0x%08x, of PID %d\n", nptr->pdbr, currpid);
 	write_cr3(nptr->pdbr);
 	
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
