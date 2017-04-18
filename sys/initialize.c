@@ -82,8 +82,6 @@ nulluser()				/* babysit CPU when no one is home */
 	kprintf("system running up!\n");
 	sysinit();
 
-	enable_paging();
-	
 	enable();		/* enable interrupts */
 
 	sprintf(vers, "PC Xinu %s", VERSION);
@@ -120,7 +118,6 @@ nulluser()				/* babysit CPU when no one is home */
 
 	/* create a process to execute the user's main program */
 	userpid = create(main,INITSTK,INITPRIO,INITNAME,INITARGS);
-
 	resume(userpid);
 
 	while (TRUE)
@@ -221,6 +218,9 @@ sysinit()
 
 	/* Install the page fault interrupt service routine. */
 	set_evec(14,(u_long)pfintr);
+
+	/* Enable paging */
+	enable_paging();
 
 	return(OK);
 }
