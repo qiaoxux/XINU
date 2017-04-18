@@ -180,21 +180,11 @@ void write_cr4(unsigned long n) {
  * enable_paging - enable paging 
  *-------------------------------------------------------------------------
  */
-#define CR0_PG 0x80000001
-void enable_paging (unsigned int pd)
-{
-        unsigned long          cr0;
-
-        kprintf("load cr3\n");
-        write_cr3 (pd & ~4096);
-
-        kprintf("enable paging\n");
-        cr0  = read_cr0 ();
-        cr0 |= CR0_PG;
-        write_cr0 (cr0);
-
-        cr0 = read_cr0 ();
-        kprintf("cr0: %x, cr3 %x\n", read_cr0(), read_cr3());
+void enable_paging(){
+  
+  unsigned long temp =  read_cr0();
+  temp = temp | ( 0x1 << 31 ) | 0x1;
+  write_cr0(temp); 
 }
 
 
