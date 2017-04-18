@@ -96,7 +96,9 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
-	init_page_directory();	/* page directory initialization */
+	init_page_directory(pid);	/* page directory initialization */
+
+	kprintf("'create' PDRB address is 0x%08x, of PID %d\n", pptr->pdbr, pid);
 
 	restore(ps);
 
@@ -121,22 +123,20 @@ LOCAL int newpid()
 	return(SYSERR);
 }
 
-void init_page_directory() {
+void init_page_directory(int pid) {
 	int free_frame;
 	pd_t *pd_entry;
 	
 	get_frm(&free_frame);
 
 	frm_tab[free_frame].fr_status = FRM_MAPPED;
-	frm_tab[free_frame].fr_pid = currpid;
+	frm_tab[free_frame].fr_pid = pid;
 	frm_tab[free_frame].fr_vpno = -1;
 	frm_tab[free_frame].fr_refcnt = 0;
 	frm_tab[free_frame].fr_type = FR_DIR;
 	frm_tab[free_frame].fr_dirty = 0;
 	
-	proctab[currpid].pdbr = pd_entry = (pd_t*)((FRAME0 + free_frame) * NBPG);
-
-	kprintf("create PDRB address is 0x%08x, of pid %d\n", proctab[currpid].pdbr, currpid);
+	proctab[pid].pdbr = pd_entry = (pd_t*)((FRAME0 + free_frame) * NBPG);
 
 	int i;
 	for (i = 0; i < NFRAMES; i++) {
