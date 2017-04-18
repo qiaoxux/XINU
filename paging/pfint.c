@@ -16,11 +16,11 @@ SYSCALL pfint()
 	STATWORD ps;
 	disable(ps);
 
-	int i, bs_id, offset, vpno, free_frame;
+	int i, bs_id, vpno, free_frame;
 	struct idt *pidt;
-	virt_addr_t *virt_addr;
+	virt_addr_t *virt_address;
 	unsigned long vaddr, pdbr;
-	unsigned int pd_offset, pt_offset;
+	unsigned int pg_offset, pd_offset, pt_offset;
 
 	pt_t *pt_entry;
 	pd_t *pd_entry;
@@ -29,30 +29,21 @@ SYSCALL pfint()
 	the address the program attempted to access is stored in the CR2 register. */
 	vaddr = read_cr2();
 
-	virt_addr = (virt_addr_t*)&vaddr;
-	
-	offset = virt_addr->pg_offset;
-	pt_offset = virt_addr->pt_offset;
-	pd_offset = virt_addr->pd_offset;
+	virt_address = (virt_addr_t*)&vaddr;
+
+	pg_offset = virt_address->pg_offset;
+	pt_offset = virt_address->pt_offset;
+	pd_offset = virt_address->pd_offset;
 
 	vpno = vaddr >> 12;
-
-	pdbr = proctab[currpid].pdbr;
-	pd_entry = pdbr + pd_offset * sizeof(pd_t);
-	
-	
-	if (vpno > pd_offset * 1024 * 1024) {
+	if (vpno < 4096) {
 		kprintf("Illegal address");
 		kill(currpid);
 		return SYSERR;
 	}
 
-	kprintf("currpid: %d\n", currpid);
-	kprintf("vaddr: 0x%08x\n", vaddr);
-	kprintf("vpno: %d\n", vpno);
-	kprintf("pd_offset: %d\n", pd_offset);
-	kprintf("pt_offset: %d\n", pt_offset);
-
+	pdbr = proctab[currpid].pdbr;
+	pd_entry = (pd_t*)(pdbr + pd_offset * sizeof(pd_t));
 	if (pd_entry->pd_pres == 0) {
 		get_frm(&free_frame);
 
@@ -92,9 +83,14 @@ SYSCALL pfint()
 		frm_tab[free_frame].fr_dirty = 0;
 	}
 
-	pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
+	kprintf("currpid: %d\n", currpid);
+		
+	kprintf("vaddr: 0x%08x\n", vaddr);
+	kprintf("pg_offset: %d\n", pg_offset);
+	kprintf("pd_offset: %d\n", pd_offset);
+	kprintf("pt_offset: %d\n", pt_offset);
 
-	bsm_lookup(currpid, vaddr, &bs_id, &offset);
+	pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
 
 	pt_entry->pt_pres = 1;	
 	pt_entry->pt_write = 1;
@@ -116,8 +112,11 @@ SYSCALL pfint()
 	frm_tab[free_frame].fr_dirty = 0;
 
 	get_frm(&free_frame);
+	bsm_lookup(currpid, vaddr, &bs_id, &pg_offset);
+	
+	kprintf("bs_id: %d\n", bs_id);
 
-	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
+	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, pg_offset);
 
 	penqueue(free_frame, TailPQ);
 

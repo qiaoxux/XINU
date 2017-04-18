@@ -97,11 +97,13 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 			bsm_tab[i].bs_vpno == vpno) {
 			*store = i;
 			*pageth = bsm_tab[i].bs_npages;
+
+			restore(ps);
+			return OK;
 		}
 	}
 
 	kprintf("No such entry");
-	restore(ps);
 	return SYSERR;
 }
 
