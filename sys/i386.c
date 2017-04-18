@@ -144,11 +144,11 @@ setsegs()
 
 	psd = &gdt_copy[2];	/* kernel data segment */
 	psd->sd_lolimit = npages;
-	psd->sd_hilimit = npages;
+	psd->sd_hilimit = npages >> 16;
 
 	psd = &gdt_copy[3];	/* kernel stack segment */
 	psd->sd_lolimit = npages;
-	psd->sd_hilimit = npages; 
+	psd->sd_hilimit = npages >> 16; 
 
 
 	psd = &gdt_copy[4];	/* bootp code segment */

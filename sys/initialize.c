@@ -84,6 +84,9 @@ nulluser()				/* babysit CPU when no one is home */
 
 	enable();		/* enable interrupts */
 
+	/* Enable paging */
+	enable_paging();
+
 	sprintf(vers, "PC Xinu %s", VERSION);
 	kprintf("\n\n%s\n", vers);
 	if (reboot++ < 1)
@@ -219,8 +222,7 @@ sysinit()
 	/* Install the page fault interrupt service routine. */
 	set_evec(14,(u_long)pfintr);
 
-	/* Enable paging */
-	enable_paging();
+	
 
 	return(OK);
 }
