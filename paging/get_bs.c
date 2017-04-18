@@ -20,7 +20,7 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 			kprintf("Exclusive backing store");
 			return SYSERR;
 		}
-		return bsm_tab[bs_id].npages;
+		return bsm_tab[bs_id].bs_npages;
 	}
 
 	bsm_tab[bs_id].bs_status = BSM_MAPPED;
