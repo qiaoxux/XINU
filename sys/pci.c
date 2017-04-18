@@ -11,9 +11,9 @@
 #include <pci.h>
 #include <stdio.h>
 
-/*
+
 #define DEBUG
-*/
+
 
 SYSCALL pcibios_init(void);
 SYSCALL check_pcibios(void);
