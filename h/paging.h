@@ -59,8 +59,8 @@ typedef struct{
   int fr_dirty;
 } fr_map_t;
 
-extern struct bs_map_t bsm_tab[NSTORES];
-extern struct fr_map_t frm_tab[NFRAMES];
+extern bs_map_t bsm_tab[];
+extern fr_map_t frm_tab[];
 
 /* Prototypes for required API calls */
 SYSCALL xmmap(int, bsd_t, int);

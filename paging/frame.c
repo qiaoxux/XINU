@@ -15,6 +15,8 @@ SYSCALL init_frm()
   	disable(ps);
 
 	int i;
+	fr_map_t frm_tab[NFRAMES];
+
 	for (i = 0; i < NFRAMES; i++) {
 		frm_tab[i].fr_status = FRM_UNMAPPED
 		frm_tab[i].fr_pid = -1;
