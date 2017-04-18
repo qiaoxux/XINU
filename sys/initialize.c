@@ -211,10 +211,10 @@ sysinit()
 	init_four_global_pages();
 
 	/* Allocate and initialize a page directory for the NULL process. */
-	init_page_directory();
+	init_page_directory(NULLPROC);
 
 	/* Set the PDBR register to the page directory for the NULL process. */
-	write_cr3(proctab[currpid].pdbr);
+	write_cr3(proctab[NULLPROC].pdbr);
 
 	/* Install the page fault interrupt service routine. */
 	set_evec(14,(u_long)pfintr);
