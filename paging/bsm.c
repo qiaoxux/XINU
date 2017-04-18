@@ -103,7 +103,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 		}
 	}
 
-	kprintf("vpno: %d ", vpno);
+	kprintf("bsm_lookup vpno: %d ", vpno);
 
 	kprintf("No such entry\n");
 	return SYSERR;
@@ -132,6 +132,8 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 	bsm_tab[source].bs_pid = pid;
 	bsm_tab[source].bs_vpno = vpno;
 	bsm_tab[source].bs_npages = npages;
+
+	kprintf("bsm_map vpno: %d\n", vpno);
 	
 	restore(ps);
 	return OK;
