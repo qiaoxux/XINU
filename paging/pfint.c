@@ -111,11 +111,11 @@ SYSCALL pfint()
 	frm_tab[free_frame].fr_type = FR_PAGE;
 	frm_tab[free_frame].fr_dirty = 0;
 
-	int pg_offset_bs;
+	int offset;
 	get_frm(&free_frame);
-	bsm_lookup(currpid, vaddr, &bs_id, &pg_offset_bs);
+	bsm_lookup(currpid, vaddr, &bs_id, &offset);
 
-	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, pg_offset_bs);
+	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
 
 	penqueue(free_frame, TailPQ);
 
