@@ -11,6 +11,22 @@
  */
 SYSCALL init_bsm()
 {
+	STATWORD ps;
+  	disable(ps);
+
+	int i;
+	struct bs_map_t bsm_tab[NSTORES];
+
+	for (int i = 0; i < NSTORES; i++) {
+		bsm_tab[i].bs_status = BSM_UNMAPPED;
+		bsm_tab[i].bs_pid = -1;
+		bsm_tab[i].bs_vpno = -1;
+		bsm_tab[i].bs_vpages = -1;
+		bsm_tab[i].bs_sem = 0;
+	}
+
+	restore(ps);
+	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -19,6 +35,20 @@ SYSCALL init_bsm()
  */
 SYSCALL get_bsm(int* avail)
 {
+	STATWORD ps;
+  	disable(ps);
+
+	int i;
+	for (i = 0; i < NSTORES; i++) {
+		if (bsm_tab[i].bs_status == BSM_UNMAPPED) {
+			*avail = i;
+			return OK;
+		}
+	}
+
+	kprintf("No free store");
+	restore(ps);
+	return SYSERR;
 }
 
 
@@ -27,7 +57,23 @@ SYSCALL get_bsm(int* avail)
  *-------------------------------------------------------------------------
  */
 SYSCALL free_bsm(int i)
-{
+{	
+	STATWORD ps;
+  	disable(ps);
+
+	if (i < 0 || i > NSTORES) {
+		kprintf("Wrong store index");
+		return SYSERR;
+	}
+
+	bsm_tab[i].bs_status = BSM_UNMAPPED;
+	bsm_tab[i].bs_pid = -1;
+	bsm_tab[i].bs_vpno = -1;
+	bsm_tab[i].bs_vpages = -1;
+	bsm_tab[i].bs_sem = 0;
+
+	restore(ps);
+	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -36,8 +82,28 @@ SYSCALL free_bsm(int i)
  */
 SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 {
-}
+	STATWORD ps;
+  	disable(ps);
 
+	if(isbadpid(pid)) {
+		kprintf("Wrong process id");
+		return SYSERR;
+	}
+
+	int i;
+	int vpno = (int) (vaddr / NBPG);
+	for (i = 0; i < NSTORES; i++) {
+		if (bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid && 
+			bsm_tab[i].bs_vpno == vpno) {
+			*store = i;
+			*pageth = bsm_tab[i].bs_npages;
+		}
+	}
+
+	kprintf("No such entry");
+	restore(ps);
+	return SYSERR;
+}
 
 /*-------------------------------------------------------------------------
  * bsm_map - add an mapping into bsm_tab 
@@ -45,9 +111,31 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
  */
 SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 {
+	STATWORD ps;
+  	disable(ps);
+
+	if(isbadpid(pid)) {
+		kprintf("Wrong process id");
+		return SYSERR;
+	}
+
+	if (source < 0 || source > NSTORES) {
+		kprintf("Wrong source store index");
+		return SYSERR;
+	}
+
+	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
+		bsm_tab[source].bs_status = BSM_MAPPED;
+		bsm_tab[source].bs_pid = pid;
+		bsm_tab[source].bs_vpno = vpno;
+		bsm_tab[source].bs_npages = npages;
+		
+		restore(ps);
+		return OK;
+	}
+
+	return SYSERR;
 }
-
-
 
 /*-------------------------------------------------------------------------
  * bsm_unmap - delete an mapping from bsm_tab
@@ -55,6 +143,26 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
  */
 SYSCALL bsm_unmap(int pid, int vpno, int flag)
 {
+	STATWORD ps;
+  	disable(ps);
+
+	if(isbadpid(pid)) {
+		kprintf("Wrong process id");
+		return SYSERR;
+	}
+
+	int i;
+	for (i = 0; i < NSTORES; i++) {
+		if (bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid && 
+			bsm_tab[i].bs_vpno == vpno) {
+			bsm_tab[i].bs_status = BSM_UNMAPPED;
+			bsm_tab[i].bs_pid = -1;
+			bsm_tab[i].bs_vpno = -1;
+			bsm_tab[i].bs_vpages = -1;
+			bsm_tab[i].bs_sem = 0;
+		}
+	}
+
+	restore(ps);
+	return OK;
 }
-
-

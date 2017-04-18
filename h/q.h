@@ -9,6 +9,10 @@
 #define	NQENT		NPROC + NSEM + NSEM + 4	/* for ready & sleep	*/
 #endif
 
+#define NPQ	NFRAMES + 2
+#define HeadPQ	NFRAMES
+#define TailPQ	NFRAMES + 1
+
 struct	qent	{		/* one for each process plus two for	*/
 				/* each list				*/
 	int	qkey;		/* key on which the queue is ordered	*/
@@ -18,6 +22,9 @@ struct	qent	{		/* one for each process plus two for	*/
 
 extern	struct	qent q[];
 extern	int	nextqueue;
+
+extern struct qent pq[]; 	/* paging policy */
+extern int currqueue;
 
 /* inline list manipulation procedures */
 
@@ -42,5 +49,9 @@ int insertd(int pid, int head, int key);
 int insert(int proc, int head, int key);
 int getfirst(int head);
 int getlast(int tail);
+
+void pnewqueue();
+int penqueue(int item, int tail);
+int pdequeue(int item);
 
 #endif

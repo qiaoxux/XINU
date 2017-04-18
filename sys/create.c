@@ -96,6 +96,8 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
+	init_page_directory();	/* page directory initialization */
+
 	restore(ps);
 
 	return(pid);
@@ -117,4 +119,42 @@ LOCAL int newpid()
 			return(pid);
 	}
 	return(SYSERR);
+}
+
+void init_page_directory() {
+	int free_frame;
+	pd_t *pd_entry;
+	
+	get_frm(&free_frame);
+
+	frm_tab[free_frame].fr_status = FRM_MAPPED;
+	frm_tab[free_frame].fr_pid = currpid;
+	frm_tab[free_frame].fr_vpno = -1;
+	frm_tab[free_frame].fr_refcnt = 0;
+	frm_tab[free_frame].fr_type = FR_DIR;
+	frm_tab[free_frame].fr_dirty = 0;
+	
+	proctab[currpid].pdbr = pd_entry = (FRAME0 + free_frame) * NBPG;
+
+	int i;
+	for (i = 0; i < NFRAMES; i++) {
+		pd_entry->pd_pres = 0;
+		pd_entry->pd_write = 1;
+		pd_entry->pt_user = 0;
+		pd_entry->pt_pwt = 0;
+		pd_entry->pt_pcd = 0;
+		pd_entry->pt_acc = 0;
+		pd_entry->pt_dirty = 0;
+		pd_entry->pt_mbz = 0;
+		pd_entry->pt_global = 0;
+		pd_entry->pt_avail = 0;
+		pd_entry->pd_base = 0;
+		if (i < 4) {
+			pd_entry->pd_pres = 1;
+			pd_entry->pd_base = FRAME0 + i;
+
+			frm_tab[free_frame].fr_refcnt++;
+		}
+		pd_entry++;
+	}
 }

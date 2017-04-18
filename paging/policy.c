@@ -6,17 +6,26 @@
 
 
 extern int page_replace_policy;
+
 /*-------------------------------------------------------------------------
  * srpolicy - set page replace policy 
  *-------------------------------------------------------------------------
  */
 SYSCALL srpolicy(int policy)
 {
-  /* sanity check ! */
+	STATWORD ps;
+  	disable(ps);
 
-  kprintf("To be implemented!\n");
+	/* sanity check ! */
+	if (policy != SC && policy != AGING) {
+		kprintf("Wrong policy");
+		return SYSERR;
+	}
 
-  return OK;
+	page_replace_policy = policy;
+
+	restore(ps);
+	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -25,5 +34,5 @@ SYSCALL srpolicy(int policy)
  */
 SYSCALL grpolicy()
 {
-  return page_replace_policy;
+	return page_replace_policy;
 }

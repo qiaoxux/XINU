@@ -3,11 +3,20 @@
 #include <proc.h>
 #include <paging.h>
 
+/* release the backing store with ID bs_id */
 SYSCALL release_bs(bsd_t bs_id) {
+	STATWORD ps;
+  	disable(ps);
 
-  /* release the backing store with ID bs_id */
-    kprintf("To be implemented!\n");
-   return OK;
+	if (bs_id < 0 || bs_id > 7) {
+		kprintf("Wrong bs_id");
+		return SYSERR;
+	}
+  	
+ 	if (free_bsm(bs_id) == SYSERR) {
+ 		return SYSERR;
+ 	}
 
+ 	restore(ps);
+   	return OK;
 }
-

@@ -57,24 +57,37 @@ typedef struct{
   int fr_refcnt;			/* reference count		*/
   int fr_type;				/* FR_DIR, FR_TBL, FR_PAGE	*/
   int fr_dirty;
-}fr_map_t;
+} fr_map_t;
 
-extern bs_map_t bsm_tab[];
-extern fr_map_t frm_tab[];
+extern struct bs_map_t bsm_tab[];
+extern struct fr_map_t frm_tab[];
+
 /* Prototypes for required API calls */
 SYSCALL xmmap(int, bsd_t, int);
 SYSCALL xunmap(int);
 
 /* given calls for dealing with backing store */
-
 int get_bs(bsd_t, unsigned int);
 SYSCALL release_bs(bsd_t);
 SYSCALL read_bs(char *, bsd_t, int);
 SYSCALL write_bs(char *, bsd_t, int);
 
+SYSCALL init_bsm();
+SYSCALL get_bsm(int *);
+SYSCALL free_bsm(int);
+SYSCALL bsm_lookup(int, long, int *, int *);
+SYSCALL bsm_map(int, int, int, int);
+SYSCALL bsm_unmap(int, int, int);
+
+SYSCALL init_frm();
+SYSCALL get_frm(int *);
+SYSCALL free_frm(int);
+
+
 #define NBPG		4096	/* number of bytes per page	*/
 #define FRAME0		1024	/* zero-th frame		*/
 #define NFRAMES 	1024	/* number of frames		*/
+#define NSTORES   8     /* number of stores   */
 
 #define BSM_UNMAPPED	0
 #define BSM_MAPPED	1

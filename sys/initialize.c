@@ -12,11 +12,9 @@
 #include <io.h>
 #include <paging.h>
 
-/*#define DETAIL */
-#define HOLESIZE	(600)	
+/* HOLE */
 #define	HOLESTART	(640 * 1024)
-#define	HOLEEND		((1024 + HOLESIZE) * 1024)  
-/* Extra 600 for bootp loading, and monitor */
+#define	HOLEEND		(1624 * 1024)
 
 extern	int	main();	/* address of user's main prog	*/
 
@@ -134,35 +132,27 @@ sysinit()
 	struct	mblock	*mptr;
 	SYSCALL pfintr();
 
-	
-
 	numproc = 0;			/* initialize system variables */
 	nextproc = NPROC-1;
 	nextsem = NSEM-1;
 	nextqueue = NPROC;		/* q[0..NPROC-1] are processes */
 
 	/* initialize free memory list */
-	/* PC version has to pre-allocate 640K-1024K "hole" */
-	if (maxaddr+1 > HOLESTART) {
+	/* PC version has to pre-allocate 640K-1624K "hole" */
+	if (maxaddr + 1 > HOLESTART) {
 		memlist.mnext = mptr = (struct mblock *) roundmb(&end);
-		mptr->mnext = (struct mblock *)HOLEEND;
-		mptr->mlen = (int) truncew(((unsigned) HOLESTART -
-	     		 (unsigned)&end));
+		mptr->mnext = (struct mblock *) HOLEEND;
+		mptr->mlen = (int) truncew(((unsigned)HOLESTART - (unsigned)&end));
         mptr->mlen -= 4;
 
 		mptr = (struct mblock *) HOLEEND;
 		mptr->mnext = 0;
-		mptr->mlen = (int) truncew((unsigned)maxaddr - HOLEEND -
-	      		NULLSTK);
-/*
-		mptr->mlen = (int) truncew((unsigned)maxaddr - (4096 - 1024 ) *  4096 - HOLEEND - NULLSTK);
-*/
+		mptr->mlen = (int) truncew((unsigned)maxaddr - HOLEEND - NULLSTK);
 	} else {
 		/* initialize free memory list */
 		memlist.mnext = mptr = (struct mblock *) roundmb(&end);
 		mptr->mnext = 0;
-		mptr->mlen = (int) truncew((unsigned)maxaddr - (int)&end -
-			NULLSTK);
+		mptr->mlen = (int) truncew((unsigned)maxaddr - (int)&end - NULLSTK);
 	}
 	
 
@@ -192,10 +182,6 @@ sysinit()
 		pptr->pname[j] = "prnull"[j];
 	pptr->plimit = (WORD)(maxaddr + 1) - NULLSTK;
 	pptr->pbase = (WORD) maxaddr - 3;
-/*
-	pptr->plimit = (WORD)(maxaddr + 1) - NULLSTK - (4096 - 1024 )*4096;
-	pptr->pbase = (WORD) maxaddr - 3 - (4096-1024)*4096;
-*/
 	pptr->pesp = pptr->pbase-4;	/* for stkchk; rewritten before used */
 	*( (int *)pptr->pbase ) = MAGIC;
 	pptr->paddr = (WORD) nulluser;
@@ -210,6 +196,25 @@ sysinit()
 
 	rdytail = 1 + (rdyhead=newqueue());/* initialize ready list */
 
+	/* Initialize all necessary data structures. */
+	init_bsm();
+
+	init_frm();
+
+	/* Create the page tables which will map pages 0 through 4095 to the physical 16 MB. */
+	init_four_global_pages();
+
+	/* Allocate and initialize a page directory for the NULL process. */
+	init_page_directory();
+
+	/* Set the PDBR register to the page directory for the NULL process. */
+	write_cr3(proctab[currpid].pdbr);
+
+	/* Install the page fault interrupt service routine. */
+	set_evec(14,(u_long)pfintr);
+
+	/* Install the page fault interrupt service routine. */
+	enable_paging();
 
 	return(OK);
 }
@@ -238,29 +243,38 @@ int	n;
  */
 long sizmem()
 {
-	unsigned char	*ptr, *start, stmp, tmp;
-	int		npages;
 
-	/* at least now its hacked to return
-	   the right value for the Xinu lab backends (16 MB) */
-
+	/* at least now its hacked to return the right value for the Xinu lab backends (16 MB) */
 	return 4096; 
+}
 
-	start = ptr = 0;
-	npages = 0;
-	stmp = *start;
-	while (1) {
-		tmp = *ptr;
-		*ptr = 0xA5;
-		if (*ptr != 0xA5)
-			break;
-		*ptr = tmp;
-		++npages;
-		ptr += NBPG;
-		if ((int)ptr == HOLESTART) {	/* skip I/O pages */
-			npages += (1024-640)/4;
-			ptr = (unsigned char *)HOLEEND;
+void init_four_global_pages() {
+	int i, j;
+	int free_frame;
+	pt_t *pt_entry;
+	for(i = 0; i < 4; i++) {
+		get_frm(&free_frame);
+		frm_tab[free_frame].fr_status = FRM_MAPPED;
+		frm_tab[free_frame].fr_pid = currpid;
+		frm_tab[free_frame].fr_vpno = -1;
+		frm_tab[free_frame].fr_refcnt = 0;
+		frm_tab[free_frame].fr_type = FR_TBL;
+		frm_tab[free_frame].fr_dirty = 0;
+		
+		pt_entry = (FRAME0 + free_frame) * NBPG;
+		for(j = 0; j < NFRAMES; j++) {
+			pt_entry->pt_pres = 1;	
+			pt_entry->pt_write = 1;
+			pt_entry->pt_user = 0;
+			pt_entry->pt_pwt = 0;
+			pt_entry->pt_pcd = 0;
+			pt_entry->pt_acc = 0;
+			pt_entry->pt_dirty = 0;
+			pt_entry->pt_mbz = 0;
+			pt_entry->pt_global = 1;
+			pt_entry->pt_avail = 0;
+			pt_entry->pt_base = i * FRAME0 + j;	
+			pt_entry++;
 		}
 	}
-	return npages;
 }

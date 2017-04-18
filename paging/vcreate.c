@@ -28,7 +28,33 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	long	args;			/* arguments (treated like an	*/
 					/* array in the code)		*/
 {
-	kprintf("To be implemented!\n");
+	STATWORD ps;
+  	disable(ps);
+
+	int bs_id;
+
+	if (get_bsm(&bs_id) == SYSERR) {
+		kprintf("No free store");
+		return SYSERR;
+	}
+
+	if (hsize <= 0 || hsize > 256) {
+		kprintf("Wrong hsize");
+		return SYSERR;
+	}
+
+	int pid = create(procaddr, ssize, priority, name, nargs, args);
+
+	bsm_map(pid, 4096, bs_id, hsize);
+	bsm_tab[bs_id].bs_sem = 1;
+
+	proctab[pid].store = bs_id;
+	proctab[pid].vhpno = 4096;
+	proctab[pid].vhpnpages = hsize;
+	proctab[pid].vmemlist->mnext = (struct mblock *) (4096 * NBPG);
+	proctab[pid].vmemlist->mnext->mlen = hsize * NBPG
+
+	restore(ps);
 	return OK;
 }
 

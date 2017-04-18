@@ -56,6 +56,20 @@ SYSCALL kill(int pid)
 						/* fall through	*/
 	default:	pptr->pstate = PRFREE;
 	}
+
+	evict_frm(currpid);
+
+	release_bs(proctab[currpid].store);
+
+	proctab[currpid].pdbr = -1;
+
+	if (proctab[currpid].store >= 0) {
+		proctab[currpid].store = -1;
+		proctab[currpid].vhpno = -1;
+		proctab[currpid].vhpnpages = -1;
+		vfreemem(proctab[currpid].vmemlist->mnext, proctab[currpid].vmemlist->mnext->len);
+	}
+
 	restore(ps);
 	return(OK);
 }

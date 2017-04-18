@@ -134,17 +134,14 @@ setsegs()
 	unsigned int	np, npages, lostk, limit;
 
 	npages = sizmem();
-/*
-	maxaddr = (char *)(npages * NBPG - 1);
-*/
-	maxaddr = (char *)( 1536 * NBPG - 1); /* 10M size */
-				 	      /* the top 10M is used for backing store */
+
+	maxaddr = (char *)( 2048 * NBPG - 1);
 
 	psd = &gdt_copy[1];	/* kernel code segment */
-	np = ((int)&etext + NBPG-1) / NBPG;	/* # code pages */
+	np = ((int)&etext + NBPG - 1) / NBPG;	/* # code pages */
 	psd->sd_lolimit = np;
 	psd->sd_hilimit = np >> 16;
-#if 0
+
 	psd = &gdt_copy[2];	/* kernel data segment */
 	psd->sd_lolimit = npages;
 	psd->sd_hilimit = npages >> 16;
@@ -152,7 +149,7 @@ setsegs()
 	psd = &gdt_copy[3];	/* kernel stack segment */
 	psd->sd_lolimit = npages;
 	psd->sd_hilimit = npages >> 16; 
-#endif
+
 
 	psd = &gdt_copy[4];	/* bootp code segment */
 	psd->sd_lolimit = npages;   /* Allows execution of 0x100000 CODE */
@@ -175,13 +172,8 @@ setsegs()
 
 	blkcopy(gdt, gdt_copy, sizeof(gdt_copy));
 
-	/* initial stack must be in physical
-	   memory.
-	*/
-/*
-	initsp = npages*NBPG  - 4;
-*/
-	initsp = 1024*NBPG  - 4;
+	/* initial stack must be in physical memory. */
+	initsp = 2048 * NBPG  - 4;
 }
 
 /*------------------------------------------------------------------------

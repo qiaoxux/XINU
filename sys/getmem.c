@@ -23,18 +23,18 @@ WORD *getmem(unsigned nbytes)
 	for (q= &memlist,p=memlist.mnext ;
 	     p != (struct mblock *) NULL ;
 	     q=p,p=p->mnext)
-		if ( p->mlen == nbytes) {
-			q->mnext = p->mnext;
-			restore(ps);
-			return( (WORD *)p );
-		} else if ( p->mlen > nbytes ) {
-			leftover = (struct mblock *)( (unsigned)p + nbytes );
-			q->mnext = leftover;
-			leftover->mnext = p->mnext;
-			leftover->mlen = p->mlen - nbytes;
-			restore(ps);
-			return( (WORD *)p );
-		}
+	if ( p->mlen == nbytes) {
+		q->mnext = p->mnext;
+		restore(ps);
+		return( (WORD *)p );
+	} else if ( p->mlen > nbytes ) {
+		leftover = (struct mblock *)( (unsigned)p + nbytes );
+		q->mnext = leftover;
+		leftover->mnext = p->mnext;
+		leftover->mlen = p->mlen - nbytes;
+		restore(ps);
+		return( (WORD *)p );
+	}
 	restore(ps);
 	return( (WORD *)SYSERR );
 }
