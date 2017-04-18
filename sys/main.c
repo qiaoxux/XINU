@@ -20,9 +20,9 @@
 void proc1_test1(char *msg, int lck) {
 	char *addr;
 	int i;
-
+	kprintf("xixi");
 	get_bs(TEST1_BS, 100);
-	kprintf(get_bs(TEST1_BS, 100));
+	kprintf("haha");
 	if (xmmap(PROC1_VPNO, TEST1_BS, 100) == SYSERR) {
 		kprintf("xmmap call failed\n");
 		sleep(3);
@@ -82,7 +82,7 @@ int main() {
 	kprintf("\n1: shared memory\n");
 	pid1 = create(proc1_test1, 2000, 20, "proc1_test1", 0, NULL);
 	resume(pid1);
-	sleep(10);
+	// sleep(10);
 
 	// kprintf("\n2: vgetmem/vfreemem\n");
 	// pid1 = vcreate(proc1_test2, 2000, 100, 20, "proc1_test2", 0, NULL);
