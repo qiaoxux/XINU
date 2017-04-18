@@ -16,17 +16,17 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
   	disable(ps);
 
 	if (virtpage < 4096) {
-		kprintf("Wrong virtual page number");
+		kprintf("Wrong virtual page number\n");
 		return SYSERR;
 	}
 
   	if (source < 0 || source > 7) {
-		kprintf("Wrong source");
+		kprintf("Wrong source\n");
 		return SYSERR;
 	}
 
 	if (npages <= 0 || npages > 256) {
-		kprintf("Wrong npages");
+		kprintf("Wrong npages\n");
 		return SYSERR;
 	}
 
@@ -38,7 +38,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 		}
 		
 		if (bsm_tab[source].bs_sem = 1) {
-			kprintf("Exclusive backing store");
+			kprintf("Exclusive backing store\n");
 			return SYSERR;
 		}
 	}
@@ -56,7 +56,7 @@ SYSCALL xmunmap(int virtpage)
   	disable(ps);
 
 	if (virtpage < 4096) {
-		kprintf("Wrong virtual page number");
+		kprintf("Wrong virtual page number\n");
 		return SYSERR;
 	}
 

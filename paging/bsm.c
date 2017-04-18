@@ -46,7 +46,7 @@ SYSCALL get_bsm(int* avail)
 		}
 	}
 
-	kprintf("No free store");
+	kprintf("No free store\n");
 	restore(ps);
 	return SYSERR;
 }
@@ -62,7 +62,7 @@ SYSCALL free_bsm(int i)
   	disable(ps);
 
 	if (i < 0 || i > NSTORES) {
-		kprintf("Wrong store index");
+		kprintf("Wrong store index\n");
 		return SYSERR;
 	}
 
@@ -86,7 +86,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id");
+		kprintf("Wrong process id\n");
 		return SYSERR;
 	}
 
@@ -103,7 +103,9 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 		}
 	}
 
-	kprintf("No such entry");
+	kprintf("vpno: %d", vpno);
+
+	kprintf("No such entry\n");
 	return SYSERR;
 }
 
@@ -117,12 +119,12 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id");
+		kprintf("Wrong process id\n");
 		return SYSERR;
 	}
 
 	if (source < 0 || source > NSTORES) {
-		kprintf("Wrong source store index");
+		kprintf("Wrong source store index\n");
 		return SYSERR;
 	}
 
@@ -149,7 +151,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id");
+		kprintf("Wrong process id\n");
 		return SYSERR;
 	}
 

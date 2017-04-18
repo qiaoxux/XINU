@@ -98,7 +98,7 @@ SYSCALL get_frm(int* avail)
 		return OK;
 	}
 
-	kprintf("Wrong policy");
+	kprintf("Wrong policy\n");
 	return SYSERR;
 }
 
@@ -112,7 +112,7 @@ SYSCALL free_frm(int i)
   	disable(ps);
 
 	if (i < 0 || i > NFRAMES) {
-		kprintf("Wrong frame index");
+		kprintf("Wrong frame index\n");
 		return SYSERR;
 	}
 
@@ -173,7 +173,7 @@ SYSCALL evict_frm(int pid)
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id");
+		kprintf("Wrong process id\n");
 		return SYSERR;
 	}
 

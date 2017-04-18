@@ -37,7 +37,7 @@ SYSCALL pfint()
 
 	vpno = vaddr >> 12;
 	if (vpno < 4096) {
-		kprintf("Illegal address");
+		kprintf("Illegal address\n");
 		kill(currpid);
 		return SYSERR;
 	}
