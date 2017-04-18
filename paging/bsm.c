@@ -17,11 +17,11 @@ SYSCALL init_bsm()
 	int i;
 	bs_map_t bsm_tab[NSTORES];
 
-	for (int i = 0; i < NSTORES; i++) {
+	for (i = 0; i < NSTORES; i++) {
 		bsm_tab[i].bs_status = BSM_UNMAPPED;
 		bsm_tab[i].bs_pid = -1;
 		bsm_tab[i].bs_vpno = -1;
-		bsm_tab[i].bs_vpages = -1;
+		bsm_tab[i].bs_npages = -1;
 		bsm_tab[i].bs_sem = 0;
 	}
 
@@ -69,7 +69,7 @@ SYSCALL free_bsm(int i)
 	bsm_tab[i].bs_status = BSM_UNMAPPED;
 	bsm_tab[i].bs_pid = -1;
 	bsm_tab[i].bs_vpno = -1;
-	bsm_tab[i].bs_vpages = -1;
+	bsm_tab[i].bs_npages = -1;
 	bsm_tab[i].bs_sem = 0;
 
 	restore(ps);
@@ -158,7 +158,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
 			bsm_tab[i].bs_status = BSM_UNMAPPED;
 			bsm_tab[i].bs_pid = -1;
 			bsm_tab[i].bs_vpno = -1;
-			bsm_tab[i].bs_vpages = -1;
+			bsm_tab[i].bs_npages = -1;
 			bsm_tab[i].bs_sem = 0;
 		}
 	}
