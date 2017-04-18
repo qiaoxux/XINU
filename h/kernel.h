@@ -170,7 +170,7 @@ DEVCALL read(int descrp, void *buf, int count);
 DEVCALL seek(int descrp, long pos);
 DEVCALL write(int descrp, void *buf, int count);
 
-SYSCALL create(int *procaddr, int ssize, int hsize, int priority, char *name, int nargs, long args);
+SYSCALL vcreate(int *procaddr, int ssize, int hsize, int priority, char *name, int nargs, long args);
 WORD *vgetmem(unsigned nbytes);
 SYSCALL	vfreemem(struct mblock *block, unsigned size);
 
