@@ -146,7 +146,6 @@ void init_page_directory() {
 		pd_entry->pd_acc = 0;
 		pd_entry->pd_mbz = 0;
 		pd_entry->pd_fmb = 0;
-		pd_entry->pd_dirty = 0;
 		pd_entry->pd_global = 0;
 		pd_entry->pd_avail = 0;
 		pd_entry->pd_base = FRAME0 + free_frame;
