@@ -118,10 +118,6 @@ nulluser()				/* babysit CPU when no one is home */
 
 	/* create a process to execute the user's main program */
 	userpid = create(main,INITSTK,INITPRIO,INITNAME,INITARGS);
-
-	/* Enable paging */
-	enable_paging();
-
 	resume(userpid);
 
 	while (TRUE)
@@ -223,6 +219,9 @@ sysinit()
 	/* Install the page fault interrupt service routine. */
 	set_evec(14,(u_long)pfintr);
 
+	/* Enable paging */
+	enable_paging();
+
 	return(OK);
 }
 
@@ -268,7 +267,7 @@ void init_four_global_pages() {
 		frm_tab[free_frame].fr_type = FR_TBL;
 		frm_tab[free_frame].fr_dirty = 0;
 		
-		pt_entry = (FRAME0 + free_frame) * NBPG;
+		pt_entry = (pt_t*)((FRAME0 + free_frame) * NBPG);
 		for(j = 0; j < NFRAMES; j++) {
 			pt_entry->pt_pres = 1;	
 			pt_entry->pt_write = 1;
