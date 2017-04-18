@@ -11,6 +11,7 @@
  */
 SYSCALL resume(int pid)
 {
+	kprintf("Current pid is %d\n", pid);
 	STATWORD ps;    
 	struct	pentry	*pptr;		/* pointer to proc. tab. entry	*/
 	int	prio;			/* priority to return		*/
