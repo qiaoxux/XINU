@@ -47,6 +47,12 @@ int	console_dev;		/* the console device			*/
 /*  added for the demand paging */
 int page_replace_policy = SC;
 
+bs_map_t bsm_tab[NSTORES];
+fr_map_t frm_tab[NFRAMES];
+
+struct qent pq[NPQ];
+int currqueue;
+
 /************************************************************************/
 /***				NOTE:				      ***/
 /***								      ***/
