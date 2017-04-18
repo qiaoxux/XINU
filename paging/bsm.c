@@ -103,7 +103,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 		}
 	}
 
-	kprintf("vpno: %d", vpno);
+	kprintf("vpno: %d ", vpno);
 
 	kprintf("No such entry\n");
 	return SYSERR;

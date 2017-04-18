@@ -20,9 +20,9 @@
 void proc1_test1(char *msg, int lck) {
 	char *addr;
 	int i;
-	kprintf("xixi");
+	
 	get_bs(TEST1_BS, 100);
-	kprintf("haha");
+
 	if (xmmap(PROC1_VPNO, TEST1_BS, 100) == SYSERR) {
 		kprintf("xmmap call failed\n");
 		sleep(3);
