@@ -12,5 +12,5 @@ pfintr:
 		call pfint
 		popal
 		popfl
-		sli
+		sti
 		iret
