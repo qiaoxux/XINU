@@ -21,13 +21,13 @@ WORD *vgetmem(nbytes)
 
 	struct mblock *vmemlist = proctab[currpid].vmemlist;
 	
-	if (nbytes == 0 || vmemlist.mnext == (struct mblock *) NULL) {
+	if (nbytes == 0 || vmemlist->mnext == (struct mblock *) NULL) {
 		restore(ps);
 		return((WORD *)SYSERR);
 	}
 
 	nbytes = (unsigned int) roundmb(nbytes);
-	for (q = &vmemlist, p = vmemlist.mnext; p != (struct mblock *) NULL; q = p, p = p->mnext)
+	for (q = &vmemlist, p = vmemlist->mnext; p != (struct mblock *) NULL; q = p, p = p->mnext)
 	if ( p->mlen == nbytes) {
 		q->mnext = p->mnext;
 		restore(ps);

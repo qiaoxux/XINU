@@ -19,15 +19,14 @@ SYSCALL	vfreemem(block, size)
 	struct	mblock	*p, *q;
 	unsigned top;
 
-	unsigned int *minaddr = (unsigned int *) (1024 * NPBG - 1);
-	if (size == 0 || (unsigned)block > (unsigned)maxaddr || ((unsigned)block) < ((unsigned)minaddr))
+	if (size == 0)
 		return(SYSERR);
 	size = (unsigned)roundmb(size);
 	
 	disable(ps);
 	
 	struct mblock *vmemlist = proctab[currpid].vmemlist;
-	for( p = vmemlist.mnext,q = &vmemlist; p != (struct mblock *) NULL && p < block; q = p, p = p->mnext);
+	for( p = vmemlist->mnext,q = &vmemlist; p != (struct mblock *) NULL && p < block; q = p, p = p->mnext);
 	if (((top = q->mlen + (unsigned)q) > (unsigned)block && q!= &vmemlist) ||
 	    (p != NULL && (size+(unsigned)block) > (unsigned)p)) {
 		restore(ps);
