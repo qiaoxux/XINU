@@ -128,17 +128,13 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 		return SYSERR;
 	}
 
-	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
-		bsm_tab[source].bs_status = BSM_MAPPED;
-		bsm_tab[source].bs_pid = pid;
-		bsm_tab[source].bs_vpno = vpno;
-		bsm_tab[source].bs_npages = npages;
-		
-		restore(ps);
-		return OK;
-	}
-
-	return SYSERR;
+	bsm_tab[source].bs_status = BSM_MAPPED;
+	bsm_tab[source].bs_pid = pid;
+	bsm_tab[source].bs_vpno = vpno;
+	bsm_tab[source].bs_npages = npages;
+	
+	restore(ps);
+	return OK;
 }
 
 /*-------------------------------------------------------------------------
