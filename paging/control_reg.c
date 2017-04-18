@@ -177,7 +177,7 @@ void write_cr4(unsigned long n) {
 
 
 /*-------------------------------------------------------------------------
- * enable_pagine - enable paging 
+ * enable_paging - enable paging 
  *-------------------------------------------------------------------------
  */
 void enable_paging(){

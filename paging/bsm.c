@@ -15,8 +15,6 @@ SYSCALL init_bsm()
   	disable(ps);
 
 	int i;
-	struct bs_map_t bsm_tab[NSTORES];
-
 	for (int i = 0; i < NSTORES; i++) {
 		bsm_tab[i].bs_status = BSM_UNMAPPED;
 		bsm_tab[i].bs_pid = -1;
