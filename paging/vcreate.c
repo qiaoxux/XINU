@@ -62,5 +62,5 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
     memblock->mlen  = hsize*NBPG;
 
 	restore(ps);
-	return OK;
+	return pid;
 }
