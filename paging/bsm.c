@@ -175,16 +175,16 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		return SYSERR;
 	}
 
-	if (++bsm_tab[store].nmapping == 1) {
+	if (++bsm_tab[source].nmapping == 1) {
 		bsm_tab[source].bs_status = BSM_MAPPED;
 		bsm_tab[source].bs_pid = pid;
 		bsm_tab[source].bs_vpno = vpno;
 		bsm_tab[source].bs_npages = npages;
 	}
 	
-	proctab[pid].bsmap[store].bs_status = BSM_MAPPED;
-	proctab[pid].bsmap[store].bs_vpno = vpno;
-	proctab[pid].bsmap[store].bs_npages = npages;
+	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
+	proctab[pid].bsmap[source].bs_vpno = vpno;
+	proctab[pid].bsmap[source].bs_npages = npages;
 	
 	restore(ps);
 	return OK;
