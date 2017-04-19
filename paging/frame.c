@@ -166,8 +166,9 @@ SYSCALL free_frm(int i) {
 	upper = frm_tab[i].fr_upper;
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
+		kprintf("%d %d\n", currpid, frm_tab[i].fr_vpno);
 		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
-			kprintf("fress_frm: can't find map");
+			kprintf("free_frm: can't find map");
 			return SYSERR;
 		}
 			
@@ -178,11 +179,13 @@ SYSCALL free_frm(int i) {
 		frm_tab[upper].fr_refcnt--;
 	
 	} else if(frm_tab[i].fr_type == FR_TBL) {
+		kprintf("%d %d\n", currpid, frm_tab[i].fr_vpno);
     	init_pt(pt);
     	reset_frm(i);
 
 		frm_tab[upper].fr_refcnt--;
 	} else {
+		kprintf("%d %d\n", currpid, frm_tab[i].fr_vpno);
 		pd = fr2p(i);
   		init_pd(pd);
   		reset_frm(i);	
