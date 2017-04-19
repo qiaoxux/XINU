@@ -89,11 +89,6 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	
-	// if (opid != currpid) {
-	// 	write_data(opid);
-	// 	read_data(currpid);
-	// }
-	
 	set_PDBR(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);

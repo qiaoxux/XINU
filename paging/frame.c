@@ -263,7 +263,7 @@ SYSCALL write_back(int old_pid) {
 			upper = frm_tab[i].fr_upper;
 		
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
-				kill(old_pid);
+				continue;
 		
 			write_bs((char *)pt, store, pageth);
 
