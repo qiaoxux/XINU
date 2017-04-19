@@ -77,6 +77,7 @@ struct	pentry	{
         int     vhpnpages;              /* vheap size                   */
         struct mblock *vmemlist;        /* vheap list              	*/
 
+		int private;			/* private heap */
 		struct bs *bsmap;		/* process' backing stores */
 };
 

@@ -41,7 +41,6 @@ void proc1_test1(char *msg, int lck) {
 	}
 
 	xmunmap(PROC1_VPNO);
-	kprintf("hahhahahhahahahahhahahhahahahhaa\n");
 	return;
 }
 

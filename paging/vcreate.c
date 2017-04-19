@@ -45,6 +45,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		return SYSERR;
 	}
 	
+	proctab[pid].private = 1;
 	bsm_tab[bs_id].bs_private = 1;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
 

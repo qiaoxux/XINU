@@ -166,9 +166,11 @@ SYSCALL free_frm(int i) {
 	upper = frm_tab[i].fr_upper;
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
-		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR)
+		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
 			kill(currpid);
- 
+			return SYSERR;
+		}
+			
     	write_bs((char *)pt, store, pageth);
     	init_pt(pt);
     	reset_frm(i);
@@ -293,7 +295,6 @@ SYSCALL write_back(int old_pid) {
  *-------------------------------------------------------------------------
  */
 SYSCALL read_from(int new_pid) {
-	kprintf("read_from currpid %d\n", currpid);
 	STATWORD ps;
 	disable(ps);
 
@@ -304,8 +305,6 @@ SYSCALL read_from(int new_pid) {
 	pt_t *pt;
 
 	pd = proctab[new_pid].pdbr;
-
-	kprintf("%d find you\n", new_pid);
 
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == new_pid) {
