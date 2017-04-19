@@ -42,7 +42,6 @@ SYSCALL pfint() {
 
     if(pd[pd_offset].pd_pres != 1) {
       get_frm(&free_frame);
-      kprintf("pd		%d \n",free_frame);
       init_frm_after_get(free_frame, currpid, FR_TBL);
 
       frm_tab[free_frame].fr_upper = p2fr((unsigned long) pd);
@@ -67,28 +66,25 @@ SYSCALL pfint() {
 
     pt = vno2p(pd[pd_offset].pd_base);
 
-    free_frame = find_frm(currpid, vp);
-    if (free_frame == -1) {
-      	get_frm(&free_frame);
-      	kprintf("pt		%d \n",free_frame);
-		init_frm_after_get(free_frame, currpid, FR_PAGE);
+    
+  	get_frm(&free_frame);
+	init_frm_after_get(free_frame, currpid, FR_PAGE);
+	frm_tab[free_frame].fr_vpno = vp;
+	frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
+	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
+	frm_tab[free_frame].fr_refcnt++;
 
-		frm_tab[free_frame].fr_vpno = vp;
-		frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
-		frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
+	kprintf("	%d \n", pd[pd_offset].pd_base);
 
-		proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
+	proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
 
-		pt[pt_offset].pt_pres  = 1;
-	    pt[pt_offset].pt_write = 1;
-	    pt[pt_offset].pt_base  = fr2vno(free_frame);
+	pt[pt_offset].pt_pres  = 1;
+    pt[pt_offset].pt_write = 1;
+    pt[pt_offset].pt_base  = fr2vno(free_frame);
 
-		physical_addr = fr2p(free_frame);
-		read_bs(physical_addr, store, pageth);
-		kprintf("physical_addr		%d \n",physical_addr);
-    } else {
-      frm_tab[free_frame].fr_refcnt++;
-    }
+	physical_addr = fr2p(free_frame);
+	read_bs(physical_addr, store, pageth);
+	
 
     set_PDBR(currpid);
     restore(ps);
