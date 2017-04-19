@@ -19,7 +19,7 @@ SYSCALL	sleep(int n)
 	if (n == 0) {
 	        disable(ps);
 		resched();
-		kprintf("5\n");
+		kprintf("6\n");
 		restore(ps);
 		return(OK);
 	}

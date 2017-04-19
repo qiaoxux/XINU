@@ -101,6 +101,7 @@ int	resched()
 	/* The OLD process returns here when resumed. */
 	restore(PS);
 	kprintf("5\n");
+	kprintf("Process id %d\n", currpid);
 	return OK;
 }
 
