@@ -175,8 +175,7 @@ SYSCALL free_frm(int i) {
     	init_pt(pt);
     	reset_frm(i);
 
-		if(--frm_tab[upper].fr_refcnt <= 0)
-			free_frm(upper);
+		frm_tab[upper].fr_refcnt--;
 	
 	} else if(frm_tab[i].fr_type == FR_TBL) {
     	init_pt(pt);
