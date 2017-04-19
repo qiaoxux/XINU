@@ -168,7 +168,7 @@ SYSCALL free_frm(int i) {
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
 		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR)
-			continue;
+			kill(currpid);
  
     	write_bs((char *)pt, store, pageth);
     	init_pt(pt);
