@@ -186,7 +186,7 @@ SYSCALL free_frm(int i) {
 	} else {
 		pd = fr2p(i);
   		init_pd(pd);
-  		reset_frm(id);	
+  		reset_frm(i);	
 	}
 	
 	restore(ps);
@@ -264,8 +264,6 @@ SYSCALL write_back(int old_pid) {
 		
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
 				kill(old_pid);
-			
-			proc_frames[old_pid][j++] = frm_tab[i].fr_vpno;
 		
 			write_bs((char *)pt, store, pageth);
 
