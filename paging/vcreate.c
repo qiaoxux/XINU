@@ -60,6 +60,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
     memblock->mnext = NULL;
     memblock->mlen  = hsize * NBPG;
 
+    kprintf("vcreate hsize 1.5 %d\n", hsize);
     bsm_map(pid, 4096, bs_id, hsize);
     kprintf("vcreate hsize 2 %d\n", hsize);
 
