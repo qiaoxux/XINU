@@ -64,11 +64,11 @@ void proc1_test3(char *msg, int lck) {
 
 	addr = (char*) 0x0;
 
-	for (i = 0; i < 1024; i++) {
+	for (i = 0; i < 1025; i++) {
 		*(addr + i * NBPG) = 'B';
 	}
 
-	for (i = 0; i < 1024; i++) {
+	for (i = 0; i < 1025; i++) {
 		kprintf("0x%08x: %c\n", addr + i * NBPG, *(addr + i * NBPG));
 	}
 
