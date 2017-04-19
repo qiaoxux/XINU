@@ -95,7 +95,8 @@ int main() {
 	// resume(pid1);
 	// sleep(3);
 
-	shutdown();
 
 	return 0;
+
+	shutdown();
 }
