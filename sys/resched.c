@@ -91,8 +91,8 @@ int	resched()
 
 	set_PDBR(currpid);
 
-	write_back(opid);
-	read_from(currpid);
+	// write_back(opid);
+	// read_from(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
