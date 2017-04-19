@@ -43,7 +43,9 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	}
 	
 	kprintf("vcreate bs_id %d\n", bs_id);
+	
 	pid = create(procaddr, ssize, priority, name, nargs, args);
+	kprintf("pid %d\n", pid);
 
 	proctab[pid].private = 1;
 	bsm_tab[bs_id].bs_private = 1;
