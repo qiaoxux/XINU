@@ -56,7 +56,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	bsm_map(pid, 4096, bs_id, hsize);
 
 	kprintf("vcreate2.6: \n");
-	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
 	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
 	proctab[pid].vmemlist->mlen = 0;
 
