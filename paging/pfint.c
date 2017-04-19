@@ -17,7 +17,7 @@ SYSCALL pfint() {
     disable(ps);
 
     virt_addr_t * vaddr;
-	int vp,s,o,free_frame,store,pageth;
+	int vp,free_frame,store,pageth;
 	unsigned int pd_offset, pt_offset, pg_offset;
   	unsigned long cr2, physical_addr;
     
@@ -30,8 +30,9 @@ SYSCALL pfint() {
     pd = proctab[currpid].pdbr;
 
     if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
-      kprintf("Virtual address hasn't been mapped!\n");
-      kill(currpid);
+    	kprintf("%d %d\n", currpid, vp)
+      	kprintf("Virtual address hasn't been mapped!\n");
+      	kill(currpid);
     }
 
     pd_offset = vaddr->pd_offset;
