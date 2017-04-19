@@ -64,7 +64,7 @@ SYSCALL get_frm(int* avail) {
 				currqueue = pq[HeadPQ].qnext;
 			
 			if (frm_tab[currqueue].fr_type == FR_TBL) {
-				pt = (pt*)fr2p(i);
+				pt = (pt_t*)fr2p(i);
 				if (pt->pt_acc == 1) {
 					pt->pt_acc = 0;
 				} else {
