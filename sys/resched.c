@@ -89,10 +89,12 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	
+	if (opid != currpid) {
+		write_data(opid);
+		read_data(currpid);
+	}
+	
 	write_cr3(nptr->pdbr);
-
-	write_data(opid);
-	read_data(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
