@@ -179,13 +179,11 @@ SYSCALL free_frm(int i) {
 		frm_tab[upper].fr_refcnt--;
 	
 	} else if(frm_tab[i].fr_type == FR_TBL) {
-		kprintf("hahahah\n");
     	init_pt(pt);
     	reset_frm(i);
 
 		frm_tab[upper].fr_refcnt--;
 	} else {
-		kprintf("xixiixi\n");
 		pd = fr2p(i);
   		init_pd(pd);
   		reset_frm(i);	
