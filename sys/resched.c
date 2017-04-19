@@ -4,8 +4,11 @@
 #include <kernel.h>
 #include <proc.h>
 #include <q.h>
+#include <paging.h>
 
 unsigned long currSP;	/* REAL sp of current process */
+int write_data(int pid);
+int read_data(int pid);
 
 /*------------------------------------------------------------------------
  * resched  --  reschedule processor to highest priority ready process
@@ -23,6 +26,9 @@ int	resched()
 	register int i;
 
 	disable(PS);
+	
+	int opid = currpid;
+
 	/* no switch needed if current process priority higher than next*/
 
 	if ( ( (optr= &proctab[currpid])->pstate == PRCURR) &&
@@ -84,7 +90,10 @@ int	resched()
 #endif
 	
 	write_cr3(nptr->pdbr);
-	
+
+	write_data(opid);
+	read_data(currpid);
+
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
 #ifdef	DEBUG
@@ -118,4 +127,33 @@ PrintSaved(ptr)
 }
 #endif
 
+int write_data(int pid)
+{
+	int i, j, bs_id;
+	for(i = 0; i < NFRAMES; i++){
+		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {	
+         bs_id = proctab[pid].store;
+
+         if(bs_id >= 0 && bs_id <=7)
+         	write_bs((char *)((i + FRAME0) * NBPG), bs_id, (frm_tab[i].fr_vpno - proctab[pid].vhpno));
+      }
+   }   
+
+   return OK;
+}
+
+int read_data(int pid)
+{
+	int i, j, bs_id;
+	for(i = 0; i < NFRAMES; i++){
+		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {	
+         bs_id = proctab[pid].store;
+
+         if(bs_id >= 0 && bs_id <=7)
+         	read_bs((char *)((i + FRAME0) * NBPG), bs_id, (v - proctab[pid].vhpno));
+      }
+   }   
+
+   return OK;
+}
 
