@@ -5,7 +5,7 @@
 
 /* requests a new mapping of npages with ID map_id */
 int get_bs(bsd_t bs_id, unsigned int npages) {
-	if (bs_id < 0 || bs_id > 7) {
+	if (bs_id < 0 || bs_id >= NSTORES) {
 		kprintf("get_bs: wrong bs_id\n");
 		return SYSERR;
 	}

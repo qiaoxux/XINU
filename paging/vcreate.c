@@ -41,7 +41,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		kprintf("vcreate: wrong hsize");
 		return SYSERR;
 	}
-	
 	kprintf("vcreate bs_id %d\n", bs_id);
 
 	pid = create(procaddr, ssize, priority, name, nargs, args);
@@ -61,6 +60,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
     memblock->mlen  = hsize * NBPG;
 
     kprintf("vcreate hsize 1.5 %d\n", hsize);
+    get_bs(bs_id, hsize);
     bsm_map(pid, 4096, bs_id, hsize);
     kprintf("vcreate hsize 2 %d\n", hsize);
 
