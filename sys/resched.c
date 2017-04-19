@@ -89,6 +89,7 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	write_back(opid);
+	kprintf("what happened??\n");
 	read_from(currpid);
 	set_PDBR(currpid);
 
