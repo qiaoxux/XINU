@@ -91,9 +91,11 @@ int	resched()
 
 	set_PDBR(currpid);
 
-	// write_back(opid);
-	// read_from(currpid);
+	write_back(opid);
+	read_from(currpid);
 
+	kprintf("pid %d switch to pid %d\n", opid, currpid);
+	
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
 #ifdef	DEBUG
