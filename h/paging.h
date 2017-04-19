@@ -102,6 +102,8 @@ SYSCALL write_back(int);
 
 SYSCALL init_4_global_page_tables();
 SYSCALL init_page_directory_for_process(int);
+SYSCALL init_pt(pt_t *);
+SYSCALL init_pd(pd_t *);
 
 #define NBPG		4096	/* number of bytes per page	*/
 #define FRAME0		1024	/* zero-th frame		*/
