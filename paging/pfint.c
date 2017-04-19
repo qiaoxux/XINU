@@ -34,8 +34,6 @@ SYSCALL pfint() {
       	kill(currpid);
     }
 
-    kprintf("%d %d %d %d\n", currpid, vp, store, pageth);
-
     pd_offset = vaddr->pd_offset;
     pt_offset = vaddr->pt_offset;
     pg_offset = vaddr->pg_offset;
@@ -65,7 +63,6 @@ SYSCALL pfint() {
     }
 
     pt = vno2p(pd[pd_offset].pd_base);
-
     
   	get_frm(&free_frame);
 	init_frm_after_get(free_frame, currpid, FR_PAGE);
@@ -73,8 +70,6 @@ SYSCALL pfint() {
 	frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
 	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
 	frm_tab[free_frame].fr_refcnt++;
-
-	kprintf("	%d \n", pd[pd_offset].pd_base);
 
 	proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
 
@@ -85,8 +80,8 @@ SYSCALL pfint() {
 	physical_addr = fr2p(free_frame);
 	read_bs(physical_addr, store, pageth);
 	
-
     set_PDBR(currpid);
+
     restore(ps);
     return OK;
 }
