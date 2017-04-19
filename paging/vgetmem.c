@@ -21,7 +21,7 @@ WORD *vgetmem(nbytes)
 
 	struct mblock *vmemlist = proctab[currpid].vmemlist;
 	
-	if (nbytes == 0 || vmemlist->mnext == (struct mblock *) NULL) {
+	if (nbytes == 0 || nbytes > vmemlist->mnext->mlen || vmemlist->mnext == (struct mblock *) NULL) {
 		restore(ps);
 		return((WORD *)SYSERR);
 	}
