@@ -34,12 +34,12 @@ void proc1_test1(char *msg, int lck) {
 		*(addr + i * NBPG) = 'A' + i;
 	}
 
-	sleep(6);
+	
 
 	for (i = 0; i < 26; i++) {
 		kprintf("0x%08x: %c\n", addr + i * NBPG, *(addr + i * NBPG));
 	}
-
+sleep(6);
 	xmunmap(PROC1_VPNO);
 	return;
 }
