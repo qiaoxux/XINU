@@ -91,7 +91,7 @@ int	resched()
 
 	set_PDBR(currpid);
 
-	kprintf("########################pid <%02d> is switching to pid <%02d>########################\n", opid, currpid);
+	kprintf("##################### pid <%02d> is switching to pid <%02d> #####################\n", opid, currpid);
 
 	write_back(opid);
 	read_from(currpid);

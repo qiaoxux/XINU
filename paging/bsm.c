@@ -144,7 +144,6 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 		}
 	}
 
-	kprintf("bsm_lookup: no such entry\n");
 	return SYSERR;
 }
 
