@@ -47,13 +47,13 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	bsm_tab[bs_id].bs_status = BSM_MAPPED;
 	bsm_tab[bs_id].bs_pid = pid;
 	bsm_tab[bs_id].bs_private = 1;
-	bsm_tab[bs_id].bs_vpno = vpno;
-	bsm_tab[bs_id].bs_npages = npages;
+	bsm_tab[bs_id].bs_vpno = 4096;
+	bsm_tab[bs_id].bs_npages = hsize;
 
 	proctab[pid].bsmap[bs_id].bs_status = BSM_MAPPED;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
-	proctab[pid].bsmap[bs_id].bs_vpno = vpno;
-	proctab[pid].bsmap[bs_id].bs_npages = npages;
+	proctab[pid].bsmap[bs_id].bs_vpno = 4096;
+	proctab[pid].bsmap[bs_id].bs_npages = hsize;
 	
 	proctab[pid].private = 1;
 	proctab[pid].vhpno = 4096;
