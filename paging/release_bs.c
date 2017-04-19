@@ -8,7 +8,7 @@ SYSCALL release_bs(bsd_t bs_id) {
 	STATWORD ps;
   	disable(ps);
 
-	if (bs_id < 0 || bs_id > 7) {
+	if (bs_id < 0 || bs_id >= NSTORES) {
 		kprintf("Wrong bs_id");
 		return SYSERR;
 	}

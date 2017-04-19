@@ -9,7 +9,7 @@ int write_bs(char *src, bsd_t bs_id, int page) {
 	STATWORD ps;
   	disable(ps);
 
-	if (bs_id < 0 || bs_id > 7) {
+	if (bs_id < 0 || bs_id >= NSTORES) {
 		kprintf("write_bs: wrong bs_id\n");
 		return SYSERR;
 	}

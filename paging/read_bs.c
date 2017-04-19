@@ -9,7 +9,7 @@ SYSCALL read_bs(char *dst, bsd_t bs_id, int page) {
 	STATWORD ps;
   	disable(ps);
 
-	if (bs_id < 0 || bs_id > 7) {
+	if (bs_id < 0 || bs_id >= NSTORES) {
 		kprintf("read_bs: wrong bs_id\n");
 		return SYSERR;
 	}
