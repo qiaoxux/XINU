@@ -42,15 +42,15 @@ SYSCALL kill(int pid)
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mlen);
 	}
 
-	for(i = 0; i < 8; i++) {
-		if(bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid) {
-			free_bsm(i);
-		}
-	}
-
 	for(i = 0; i < NFRAMES; i++) {
 		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
 			free_frm(i);
+		}
+	}
+
+	for(i = 0; i < 8; i++) {
+		if(bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid) {
+			free_bsm(i);
 		}
 	}
 
