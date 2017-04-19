@@ -127,6 +127,6 @@ SYSCALL init_page_directory_for_process(int);
 #define fr2vno(i)  ( (unsigned int) (FRAME0 + i) )
 #define fr2p(i)    ( (unsigned int) ((FRAME0 + i) * NBPG) )
 #define p2fr(i)    ( (unsigned int) ((i/NBPG) - FRAME0) )
-#define bs2p(i)    ( (unsigned int) ((NBSP + i * NPGPBS) * NBPG) )
+#define bs2p(i)    ( (unsigned int) ((2048 + i * 256) * NBPG) )
 #define vno2p(i)   ( (unsigned int) (i * NBPG) )
 #define p2vno(i)   ( (unsigned int) (i/NBPG) )
