@@ -259,7 +259,7 @@ SYSCALL write_back(int old_pid) {
 
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == old_pid) {
-			pt = (pt *) fr2p(i);
+			pt = (pt_t *) fr2p(i);
 			upper = frm_tab[i].fr_upper;
 		
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
@@ -271,7 +271,7 @@ SYSCALL write_back(int old_pid) {
 	    	reset_frm(i);
 			
 			if(--frm_tab[upper].fr_refcnt <= 0) {	
-				u_upper = frm_tab[upper].fr_upper
+				u_upper = frm_tab[upper].fr_upper;
 	    		
 	    		if(--frm_tab[u_upper].fr_refcnt <= 0)
 	    			init_pd(pd);
@@ -303,7 +303,7 @@ SYSCALL read_from(int new_pid) {
 
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == new_pid) {
-			pt = (pt *) fr2p(i);
+			pt = (pt_t *) fr2p(i);
 			upper = frm_tab[i].fr_upper;
 		
 			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth))
