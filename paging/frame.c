@@ -248,8 +248,8 @@ SYSCALL write_back(int old_pid) {
 	STATWORD ps;
 	disable(ps);
 
-	int i, j = 0, upper, u_upper, store, pageth;
-	unsigned int pd_offset,pt_offset,pg_offset;
+	int i, upper, u_upper, store, pageth;
+	unsigned int pd_offset, pt_offset, pg_offset;
 
 	pd_t *pd;	
 	pt_t *pt;
@@ -264,6 +264,7 @@ SYSCALL write_back(int old_pid) {
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kprintf("write_back: bsm_lookup can't find mapping\n");
 				kill(old_pid);
+				return SYSERR;
 			}
 			
 			kprintf("write_back %d %d %d %d\n", old_pid, frm_tab[i].fr_vpno, store, pageth);
@@ -296,8 +297,8 @@ SYSCALL read_from(int new_pid) {
 	STATWORD ps;
 	disable(ps);
 
-	int i, j = 0, upper, u_upper, store, pageth;
-	unsigned int pd_offset,pt_offset,pg_offset;
+	int i, upper, u_upper, store, pageth;
+	unsigned int pd_offset, pt_offset, pg_offset;
 
 	pd_t *pd;	
 	pt_t *pt;
@@ -314,6 +315,7 @@ SYSCALL read_from(int new_pid) {
 			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kill(new_pid);
 				kprintf("read_from: bsm_lookup can't find mapping\n");
+				return SYSERR;
 			}
 			
 			kprintf("read_from %d %d %d %d\n", new_pid, frm_tab[i].fr_vpno, store, pageth);
@@ -321,7 +323,6 @@ SYSCALL read_from(int new_pid) {
 			read_bs((char *)pt, store, pageth);
 			
 			frm_tab[upper].fr_refcnt++;
-
  		}
  	}
 	
