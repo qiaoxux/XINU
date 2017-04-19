@@ -32,7 +32,7 @@ SYSCALL pfint() {
     if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
       	kprintf("pfint: virtual address hasn't been mapped!\n");
       	kill(currpid);
-      	return;
+      	return SYSERR;
     }
 
     pd_offset = vaddr->pd_offset;
