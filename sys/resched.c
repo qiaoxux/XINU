@@ -150,7 +150,7 @@ int read_data(int pid)
          bs_id = proctab[pid].store;
 
          if(bs_id >= 0 && bs_id <=7)
-         	read_bs((char *)((i + FRAME0) * NBPG), bs_id, (v - proctab[pid].vhpno));
+         	read_bs((char *)((i + FRAME0) * NBPG), bs_id, (frm_tab[i].fr_vpno - proctab[pid].vhpno));
       }
    }   
 
