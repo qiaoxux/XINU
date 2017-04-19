@@ -43,14 +43,15 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	}
 	
 	kprintf("vcreate bs_id %d\n", bs_id);
-	
+
 	pid = create(procaddr, ssize, priority, name, nargs, args);
-	kprintf("pid %d\n", pid);
+	kprintf("vcreate pid %d\n", pid);
 
 	proctab[pid].private = 1;
 	bsm_tab[bs_id].bs_private = 1;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
 	
+	kprintf("vcreate hsize %d\n", hsize);
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 	proctab[pid].vmemlist = vgetmem(sizeof(struct mblock *));
@@ -61,6 +62,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
     memblock->mlen  = hsize * NBPG;
 
     bsm_map(pid, 4096, bs_id, hsize);
+    kprintf("vcreate hsize %d\n", hsize);
 
 	restore(ps);
 	return pid;
