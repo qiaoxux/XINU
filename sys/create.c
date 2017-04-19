@@ -98,7 +98,9 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
+	kprintf("before init %d\n", pid);
 	init_page_directory_for_process(pid);	/* page directory initialization */
+	kprintf("after init %d\n", pid);
 
 	restore(ps);
 	return(pid);

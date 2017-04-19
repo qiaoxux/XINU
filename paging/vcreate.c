@@ -31,10 +31,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	STATWORD ps;
   	disable(ps);
 
-  	int pid = create(procaddr, ssize, priority, name, nargs, args);
-  	kprintf("vcreate pid %d\n", pid);
-
-	int bs_id;
+	int bs_id, pid;
 	if (get_bsm(&bs_id) == SYSERR) {
 		kprintf("vcreate: no free store");
 		return SYSERR;
@@ -44,6 +41,9 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		kprintf("vcreate: wrong hsize");
 		return SYSERR;
 	}
+	
+	kprintf("vcreate bs_id %d\n", bs_id);
+	pid = create(procaddr, ssize, priority, name, nargs, args);
 
 	proctab[pid].private = 1;
 	bsm_tab[bs_id].bs_private = 1;
@@ -59,7 +59,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
     memblock->mlen  = hsize * NBPG;
 
     bsm_map(pid, 4096, bs_id, hsize);
-    kprintf("vcreate %d %d\n", bs_id, hsize);
 
 	restore(ps);
 	return pid;
