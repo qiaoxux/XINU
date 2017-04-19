@@ -32,9 +32,9 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
   	disable(ps);
 
   	int pid = create(procaddr, ssize, priority, name, nargs, args);
+  	kprintf("vcreate pid %d\n", pid);
 
 	int bs_id;
-
 	if (get_bsm(&bs_id) == SYSERR) {
 		kprintf("vcreate: no free store");
 		return SYSERR;
@@ -45,19 +45,21 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		return SYSERR;
 	}
 
-	bsm_tab[bs_id].bs_private = 1;
-
 	proctab[pid].private = 1;
+	bsm_tab[bs_id].bs_private = 1;
+	proctab[pid].bsmap[bs_id].bs_private = 1;
+	
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
-	proctab[pid].bsmap[bs_id].bs_private = 1;
-	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
+	proctab[pid].vmemlist = vgetmem(sizeof(struct mblock *));
+	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(4096 * NBPG);
 	proctab[pid].vmemlist->mlen = 0;
 	struct mblock * memblock = bs2p(bs_id);
-    memblock->mnext = 0;  
+    memblock->mnext = NULL;
     memblock->mlen  = hsize * NBPG;
 
     bsm_map(pid, 4096, bs_id, hsize);
+    kprintf("vcreate %d %d\n", bs_id, hsize);
 
 	restore(ps);
 	return pid;
