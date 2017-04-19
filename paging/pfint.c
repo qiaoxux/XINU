@@ -29,8 +29,9 @@ SYSCALL pfint() {
     vp = p2vno(cr2);
     pd = proctab[currpid].pdbr;
 
+    kprintf("%d \n",vp);
+
     if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
-    	kprintf("%d %d\n", currpid, vp);
       	kprintf("Virtual address hasn't been mapped!\n");
       	kill(currpid);
     }
