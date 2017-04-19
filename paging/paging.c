@@ -130,5 +130,3 @@ SYSCALL init_pt(pt_t *new_pt) {
 	restore(ps);
 	return OK;
 }
-
-
