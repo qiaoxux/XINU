@@ -45,8 +45,7 @@ SYSCALL kill(int pid)
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mlen);
 	}
 
-	// reverse traverse order to make reference counting correct
-	for(i = NFRAMES - 1; i >= 0; i++) {
+	for(i = 0; i < NFRAMES; i++) {
 		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
 			kprintf("%dth entering free_frm\n", i);
 			free_frm(i);
