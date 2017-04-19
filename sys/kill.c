@@ -46,6 +46,7 @@ SYSCALL kill(int pid)
 
 	for(i = 0; i < NFRAMES; i++) {
 		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
+			prinft("%dth entering free_frm\n");
 			free_frm(i);
 		}
 	}
