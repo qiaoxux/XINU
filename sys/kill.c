@@ -40,11 +40,13 @@ SYSCALL kill(int pid)
 	
 	kprintf("kill process %d \n", pid);
 
+	// if this process is created by vcreate
 	if (pptr->private == 1) {
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mlen);
 	}
 
-	for(i = 0; i < NFRAMES; i++) {
+	// reverse traverse order to make reference counting correct
+	for(i = NFRAMES - 1; i >= 0; i++) {
 		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
 			kprintf("%dth entering free_frm\n", i);
 			free_frm(i);
