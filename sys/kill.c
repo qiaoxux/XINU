@@ -17,7 +17,7 @@ SYSCALL kill(int pid)
 {
 	STATWORD ps;    
 	struct	pentry	*pptr;		/* points to proc. table for pid*/
-	int	dev;
+	int	dev, i;
 
 	disable(ps);
 	if (isbadpid(pid) || (pptr= &proctab[pid])->pstate==PRFREE) {
@@ -37,6 +37,12 @@ SYSCALL kill(int pid)
 	if (! isbaddev(dev) )
 		close(dev);
 	
+	for(i = 0; i < 8; i++) {
+		if(bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid) {
+			free_bsm(i);
+		}
+	}
+
 	send(pptr->pnxtkin, pid);
 
 	freestk(pptr->pbase, pptr->pstklen);
@@ -55,19 +61,6 @@ SYSCALL kill(int pid)
 	case PRTRECV:	unsleep(pid);
 						/* fall through	*/
 	default:	pptr->pstate = PRFREE;
-	}
-
-	evict_frm(currpid);
-
-	release_bs(proctab[currpid].store);
-
-	proctab[currpid].pdbr = -1;
-
-	if (proctab[currpid].store >= 0) {
-		proctab[currpid].store = -1;
-		proctab[currpid].vhpno = -1;
-		proctab[currpid].vhpnpages = -1;
-		vfreemem(proctab[currpid].vmemlist->mnext, proctab[currpid].vmemlist->mnext->mlen);
 	}
 
 	restore(ps);
