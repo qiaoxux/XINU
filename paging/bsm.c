@@ -129,6 +129,9 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 	bsm_tab[source].bs_pid = pid;
 	bsm_tab[source].bs_vpno = vpno;
 	bsm_tab[source].bs_npages = npages;
+
+	proctab[currpid].store = source;
+	proctab[currpid].vhpno = vpno;
 	
 	restore(ps);
 	return OK;
