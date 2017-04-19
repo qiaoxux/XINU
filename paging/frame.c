@@ -167,7 +167,7 @@ SYSCALL free_frm(int i) {
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
 		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
-			kill(currpid);
+			kprintf("fress_frm: can't find map");
 			return SYSERR;
 		}
 			
