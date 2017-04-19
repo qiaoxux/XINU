@@ -42,6 +42,20 @@ typedef struct {
   unsigned int pd_offset : 10;		/* page directory offset	*/
 } virt_addr_t;
 
+typedef struct frame {
+  int fr_status;      /* MAPPED or UNMAPPED   */
+  int fr_pid;       /* process id using this frame  */
+  int fr_vpno;        /* corresponding virtual page no*/
+  int fr_refcnt;      /* reference count    */
+  int fr_type;        /* FR_DIR, FR_TBL, FR_PAGE  */
+  int fr_dirty;
+
+  int fr_id;  /* frame id */
+  int fr_upper; /* page -> page table, page table -> page directory */
+  struct frame *fr_next  /* the list of all frames on the same backing store */
+
+} fr_map_t;
+
 typedef struct {
   int bs_status;			/* MAPPED or UNMAPPED		*/
   int bs_pid;				/* process id using this slot   */
@@ -53,20 +67,6 @@ typedef struct {
   int bs_nmapping;    /* how many mappings on this bs */
   fr_map_t  *bs_frames;  /* the list of frames on this bs */
 } bs_map_t;
-
-typedef struct frame {
-  int fr_status;			/* MAPPED or UNMAPPED		*/
-  int fr_pid;				/* process id using this frame  */
-  int fr_vpno;				/* corresponding virtual page no*/
-  int fr_refcnt;			/* reference count		*/
-  int fr_type;				/* FR_DIR, FR_TBL, FR_PAGE	*/
-  int fr_dirty;
-
-  int fr_id;  /* frame id */
-  int fr_upper; /* page -> page table, page table -> page directory */
-  struct frame *fr_next  /* the list of all frames on the same backing store */
-
-} fr_map_t;
 
 extern bs_map_t bsm_tab[];
 extern fr_map_t frm_tab[];
