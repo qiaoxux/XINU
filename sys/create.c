@@ -11,6 +11,8 @@
 
 LOCAL int newpid();
 
+void init_page_directory(int pid);
+
 /*------------------------------------------------------------------------
  *  create  -  create a process to start running a procedure
  *------------------------------------------------------------------------
@@ -99,7 +101,6 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	init_page_directory(pid);	/* page directory initialization */
 
 	restore(ps);
-
 	return(pid);
 }
 
@@ -148,12 +149,10 @@ void init_page_directory(int pid) {
 		pd_entry->pd_fmb = 0;
 		pd_entry->pd_global = 0;
 		pd_entry->pd_avail = 0;
-		pd_entry->pd_base = FRAME0 + free_frame;
+		pd_entry->pd_base = 0;
 		if (i < 4) {
 			pd_entry->pd_pres = 1;
 			pd_entry->pd_base = FRAME0 + i;
-
-			frm_tab[free_frame].fr_refcnt++;
 		}
 		pd_entry++;
 	}

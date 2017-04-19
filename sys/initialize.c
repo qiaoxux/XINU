@@ -208,7 +208,7 @@ sysinit()
 	init_frm();
 
 	/* Create the page tables which will map pages 0 through 4095 to the physical 16 MB. */
-	init_four_global_pages();
+	init_four_global_pages(NULLPROC);
 
 	/* Allocate and initialize a page directory for the NULL process. */
 	init_page_directory(NULLPROC);
@@ -254,14 +254,14 @@ long sizmem()
 	return 4096; 
 }
 
-void init_four_global_pages() {
+void init_four_global_pages(int pid) {
 	int i, j;
 	int free_frame;
 	pt_t *pt_entry;
 	for(i = 0; i < 4; i++) {
 		get_frm(&free_frame);
 		frm_tab[free_frame].fr_status = FRM_MAPPED;
-		frm_tab[free_frame].fr_pid = currpid;
+		frm_tab[free_frame].fr_pid = pid;
 		frm_tab[free_frame].fr_vpno = -1;
 		frm_tab[free_frame].fr_refcnt = 0;
 		frm_tab[free_frame].fr_type = FR_TBL;

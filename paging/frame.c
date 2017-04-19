@@ -59,7 +59,7 @@ SYSCALL get_frm(int* avail)
 			if (currqueue == HeadPQ || currqueue == TailPQ)
 				currqueue = pq[HeadPQ].qnext;
 			
-			if (frm_tab[currqueue].fr_refcnt == 0) {
+			if (frm_tab[currqueue].fr_refcnt <= 0) {
 				pdequeue(currqueue);
 				free_frm(currqueue);
 				*avail = currqueue;
@@ -124,15 +124,15 @@ SYSCALL free_frm(int i)
 	pd_t *pd_entry;
 	pt_t *pt_entry;
 
-	if (frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE) {
+	if (frm_tab[i].fr_type == FR_PAGE) {
 
 		vpno = frm_tab[i].fr_vpno;
 		pdbr = proctab[(pid = frm_tab[i].fr_pid)].pdbr;
 		
 		pd_offset = vpno >> 10;
 		pt_offset = vpno & 1023;
-		pd_entry = pdbr + pd_offset * sizeof(pd_t);
-		pt_entry = pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t);
+		pd_entry = (pd_t*)(pdbr + pd_offset * sizeof(pd_t));
+		pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
 
 		frm_tab[i].fr_status = FRM_UNMAPPED;
 		frm_tab[i].fr_pid = -1;
@@ -140,7 +140,6 @@ SYSCALL free_frm(int i)
 		frm_tab[i].fr_refcnt = 0;
 		frm_tab[i].fr_type = FR_PAGE;
 		frm_tab[i].fr_dirty = 0;
-
 		pt_entry->pt_pres = 0;
 
 		write_bs((FRAME0 + i) * NBPG, proctab[pid].store, vpno - proctab[pid].vhpno);
@@ -179,7 +178,7 @@ SYSCALL evict_frm(int pid)
 
 	int i, qid;
 	for (i = 0; i < NFRAMES; i++) {
-		if (frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid && frm_tab[i].fr_type == FR_PAGE) {
+		if (frm_tab[i].fr_pid == pid) {
 			int qid = pq[HeadPQ].qnext;
 			while (qid != TailPQ) {
 				if (qid == i) {
@@ -188,7 +187,13 @@ SYSCALL evict_frm(int pid)
 				}
 				qid = pq[qid].qnext;
 			}
-			free_frm(i);
+			
+			frm_tab[pd_nframes].fr_status = FRM_UNMAPPED;
+			frm_tab[pd_nframes].fr_pid = -1;
+			frm_tab[pd_nframes].fr_vpno = -1;
+			frm_tab[pd_nframes].fr_refcnt = 0;
+			frm_tab[pd_nframes].fr_type = FR_PAGE;
+			frm_tab[pd_nframes].fr_dirty = 0;
 		}
 	}
 

@@ -30,20 +30,10 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 		return SYSERR;
 	}
 
-	if (bsm_tab[source].bs_status == BSM_MAPPED) {
-		if (bsm_tab[source].bs_pid == currpid) {
-			bsm_map(currpid, virtpage, source, npages);
-			restore(ps);
-			return OK;
-		}
-		
-		if (bsm_tab[source].bs_sem = 1) {
-			kprintf("Exclusive backing store\n");
-			return SYSERR;
-		}
-	}
-	
-	return SYSERR;
+	bsm_map(currpid, virtpage, source, npages);
+
+	restore(ps);
+	return OK;
 }
 
 /*-------------------------------------------------------------------------
@@ -61,6 +51,7 @@ SYSCALL xmunmap(int virtpage)
 	}
 
 	bsm_unmap(currpid, virtpage, 0);
+	
 	restore(ps);
   	return OK;
 }

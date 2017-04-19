@@ -129,33 +129,38 @@ PrintSaved(ptr)
 
 int write_data(int pid)
 {
-	int i, j, bs_id;
+	STATWORD ps;
+	disable(ps);
+
+	int i, j, bs_id, pageth;
 	for(i = 0; i < NFRAMES; i++){
-		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {	
-         bs_id = proctab[pid].store;
-
-         if(bs_id >= 0 && bs_id <=7 && bsm_tab[bs_id].bs_vpno > 0)
-         	write_bs((char *)((i + FRAME0) * NBPG), bs_id, (frm_tab[i].fr_vpno - bsm_tab[bs_id].bs_vpno));
-
-         
+		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
+			bsm_lookup(pid, frm_tab[i].fr_vpno * 4096, &bs_id, &pageth);
+			
+			if(bs_id >= 0 && bs_id <= 7)
+         		write_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
       }
    }   
-
-   return OK;
+	
+	restore(PS);
+	return OK;
 }
 
 int read_data(int pid)
 {
-	int i, j, bs_id;
+	STATWORD ps;
+	disable(ps);
+
+	int i, j, bs_id, pageth;
 	for(i = 0; i < NFRAMES; i++){
 		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
-
-         bs_id = proctab[pid].store;
-
-         if(bs_id >= 0 && bs_id <=7)
-         	read_bs((char *)((i + FRAME0) * NBPG), bs_id, (frm_tab[i].fr_vpno - bsm_tab[bs_id].bs_vpno));
+			bsm_lookup(pid, frm_tab[i].fr_vpno * 4096, &bs_id, &pageth);
+			
+			if(bs_id >= 0 && bs_id <= 7)
+         		read_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
       }
    }   
 
+   restore(PS);
    return OK;
 }

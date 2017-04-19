@@ -20,8 +20,8 @@ SYSCALL init_bsm()
 	for (i = 0; i < NSTORES; i++) {
 		bsm_tab[i].bs_status = BSM_UNMAPPED;
 		bsm_tab[i].bs_pid = -1;
-		bsm_tab[i].bs_vpno = -1;
-		bsm_tab[i].bs_npages = -1;
+		bsm_tab[i].bs_vpno = 4096;
+		bsm_tab[i].bs_npages = 0;
 		bsm_tab[i].bs_sem = 0;
 	}
 
@@ -42,12 +42,13 @@ SYSCALL get_bsm(int* avail)
 	for (i = 0; i < NSTORES; i++) {
 		if (bsm_tab[i].bs_status == BSM_UNMAPPED) {
 			*avail = i;
+
+			restore(ps);
 			return OK;
 		}
 	}
 
 	kprintf("No free store\n");
-	restore(ps);
 	return SYSERR;
 }
 
@@ -68,8 +69,8 @@ SYSCALL free_bsm(int i)
 
 	bsm_tab[i].bs_status = BSM_UNMAPPED;
 	bsm_tab[i].bs_pid = -1;
-	bsm_tab[i].bs_vpno = -1;
-	bsm_tab[i].bs_npages = -1;
+	bsm_tab[i].bs_vpno = 4096;
+	bsm_tab[i].bs_npages = 0;
 	bsm_tab[i].bs_sem = 0;
 
 	restore(ps);
@@ -93,7 +94,7 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth)
 	int i;
 	int vpno = (int) (vaddr / NBPG);
 	for (i = 0; i < NSTORES; i++) {
-		if (bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid) {
+		if (bsm_tab[i].bs_pid == pid) {
 			*store = i;
 			*pageth = vpno - bsm_tab[i].bs_vpno;
 
@@ -120,8 +121,18 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 		return SYSERR;
 	}
 
+	if (vpno < 4096) {
+		kprintf("Wrong virtual page number\n");
+		return SYSERR;
+	}
+
 	if (source < 0 || source > NSTORES) {
 		kprintf("Wrong source store index\n");
+		return SYSERR;
+	}
+
+	if (npages <= 0 || npages > 256) {
+		kprintf("Wrong npages\n");
 		return SYSERR;
 	}
 
@@ -129,6 +140,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages)
 	bsm_tab[source].bs_pid = pid;
 	bsm_tab[source].bs_vpno = vpno;
 	bsm_tab[source].bs_npages = npages;
+	bsm_tab[i].bs_sem = 0;
 
 	proctab[currpid].store = source;
 	proctab[currpid].vhpno = vpno;
@@ -151,10 +163,14 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
 		return SYSERR;
 	}
 
+	if (vpno < 4096) {
+		kprintf("Wrong virtual page number\n");
+		return SYSERR;
+	}
+
 	int i;
 	for (i = 0; i < NSTORES; i++) {
-		if (bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid && 
-			bsm_tab[i].bs_vpno == vpno) {
+		if (bsm_tab[i].bs_pid == pid) {
 			bsm_tab[i].bs_status = BSM_UNMAPPED;
 			bsm_tab[i].bs_pid = -1;
 			bsm_tab[i].bs_vpno = -1;
@@ -162,6 +178,9 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag)
 			bsm_tab[i].bs_sem = 0;
 		}
 	}
+
+	proctab[pid].store = -1;
+	proctab[pid].vhpno = 4096;
 
 	restore(ps);
 	return OK;

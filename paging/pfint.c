@@ -119,8 +119,6 @@ SYSCALL pfint()
 		penqueue(free_frame, TailPQ);
 	}
 
-	write_cr3(pdbr);
-
 	restore(ps);
 	return OK;
 }
