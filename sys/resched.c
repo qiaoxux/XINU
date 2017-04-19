@@ -97,6 +97,7 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 	
+	kprintf("4\n");
 	/* The OLD process returns here when resumed. */
 	restore(PS);
 	return OK;
