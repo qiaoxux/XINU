@@ -39,7 +39,7 @@ SYSCALL init_bsmap_for_process(bs_map_t *bsmap) {
   	disable(ps);
 
 	int i;
-	for (i = 0; i < STORES; ++i) {
+	for (i = 0; i < NSTORES; ++i) {
 		bsmap[i].bs_status = BSM_UNMAPPED;
 		bsmap[i].bs_pid = -1;
 		bsmap[i].bs_vpno = 0;
@@ -91,15 +91,15 @@ SYSCALL free_bsm(int i) {
 		return SYSERR;
 	}
 
-	bsmap[i].bs_status = BSM_UNMAPPED;
-	bsmap[i].bs_pid = -1;
-	bsmap[i].bs_vpno = 0;
-	bsmap[i].bs_npages = 0;
-	bsmap[i].bs_sem =	-1;
+	bsm_tab[i].bs_status = BSM_UNMAPPED;
+	bsm_tab[i].bs_pid = -1;
+	bsm_tab[i].bs_vpno = 0;
+	bsm_tab[i].bs_npages = 0;
+	bsm_tab[i].bs_sem =	-1;
 
-	bsmap[i].bs_nmapping = 0;
-	bsmap[i].bs_private = 0;
-	bsmap[i].bs_frames = NULL;
+	bsm_tab[i].bs_nmapping = 0;
+	bsm_tab[i].bs_private = 0;
+	bsm_tab[i].bs_frames = NULL;
 	
 	proctab[currpid].bsmap[i].bs_status = BSM_UNMAPPED;
 	proctab[currpid].bsmap[i].bs_pid = -1;
@@ -198,7 +198,9 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	STATWORD ps;
   	disable(ps);
 
-	if(bsm_lookup(currpid, virtpage, &store, &pageth) == SYSERR){
+  	int store, pageth;
+
+	if(bsm_lookup(currpid, vpno, &store, &pageth) == SYSERR){
       	kprintf("bsm_unmap could not find mapping!\n");
       	return SYSERR;
   	}
