@@ -30,7 +30,7 @@ SYSCALL pfint() {
     pd = proctab[currpid].pdbr;
 
     if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
-      	kprintf("Virtual address hasn't been mapped!\n");
+      	kprintf("pfint: virtual address hasn't been mapped!\n");
       	kill(currpid);
     }
 

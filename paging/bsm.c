@@ -73,7 +73,7 @@ SYSCALL get_bsm(int* avail) {
 		}
 	}
 
-	kprintf("No free store\n");
+	kprintf("get_bsm: no free store\n");
 	return SYSERR;
 }
 
@@ -87,7 +87,7 @@ SYSCALL free_bsm(int i) {
   	disable(ps);
 
 	if (i < 0 || i > NSTORES) {
-		kprintf("Wrong store index\n");
+		kprintf("free_bsm: wrong store index\n");
 		return SYSERR;
 	}
 
@@ -124,7 +124,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id\n");
+		kprintf("bsm_lookup: wrong process id\n");
 		return SYSERR;
 	}
 
@@ -142,7 +142,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 		}
 	}
 
-	kprintf("No such entry\n");
+	kprintf("bsm_lookup: no such entry\n");
 	return SYSERR;
 }
 
@@ -155,22 +155,22 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("Wrong process id\n");
+		kprintf("bsm_map: wrong process id\n");
 		return SYSERR;
 	}
 
 	if (vpno < 4096) {
-		kprintf("Wrong virtual page number\n");
+		kprintf("bsm_map: wrong virtual page number\n");
 		return SYSERR;
 	}
 
 	if (source < 0 || source > NSTORES) {
-		kprintf("Wrong source store index\n");
+		kprintf("bsm_map: wrong source store index\n");
 		return SYSERR;
 	}
 
 	if (npages <= 0 || npages > 256) {
-		kprintf("Wrong npages\n");
+		kprintf("bsm_map: wrong npages\n");
 		return SYSERR;
 	}
 
@@ -200,7 +200,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
   	int store, pageth;
 
 	if(bsm_lookup(currpid, vpno, &store, &pageth) == SYSERR){
-      	kprintf("bsm_unmap could not find mapping!\n");
+      	kprintf("bsm_unmap: could not find mapping!\n");
       	return SYSERR;
   	}
  

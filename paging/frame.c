@@ -100,7 +100,6 @@ SYSCALL get_frm(int* avail) {
 		return OK;
 	}
 
-	kprintf("Wrong policy\n");
 	return SYSERR;
 }
 
@@ -262,8 +261,10 @@ SYSCALL write_back(int old_pid) {
 			pt = (pt_t *) fr2p(i);
 			upper = frm_tab[i].fr_upper;
 		
-			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
-				kprintf("bsm_lookup in write_back can't find mapping\n");
+			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
+				kprintf("write_back: bsm_lookup can't find mapping\n");
+				kill(old_pid);
+			}
 			
 			kprintf("write_back %d %d %d %d\n", old_pid, frm_tab[i].fr_vpno, store, pageth);
 
@@ -310,8 +311,10 @@ SYSCALL read_from(int new_pid) {
 			pt = (pt_t *) fr2p(i);
 			upper = frm_tab[i].fr_upper;
 		
-			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth))
-				kprintf("bsm_lookup in read_from can't find mapping\n");
+			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
+				kill(new_pid);
+				kprintf("read_from: bsm_lookup can't find mapping\n");
+			}
 			
 			kprintf("read_from %d %d %d %d\n", new_pid, frm_tab[i].fr_vpno, store, pageth);
 

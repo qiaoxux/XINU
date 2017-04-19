@@ -16,17 +16,17 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
   	disable(ps);
 
 	if (virtpage < 4096) {
-		kprintf("Wrong virtual page number\n");
+		kprintf("xmmap: wrong virtual page number\n");
 		return SYSERR;
 	}
 
   	if (source < 0 || source > 7) {
-		kprintf("Wrong source\n");
+		kprintf("xmmap: wrong source\n");
 		return SYSERR;
 	}
 
 	if (npages > bsm_tab[source].bs_npages || npages <= 0 || npages > 256) {
-		kprintf("Wrong npages\n");
+		kprintf("xmmap: wrong npages\n");
 		return SYSERR;
 	}
 
@@ -54,12 +54,12 @@ SYSCALL xmunmap(int virtpage)
   	unsigned long vaddr;
   	
   	if (virtpage < 4096) {
-		kprintf("Wrong virtual page number\n");
+		kprintf("xmunmap: wrong virtual page number\n");
 		return SYSERR;
 	}
  	
  	if(bsm_unmap(currpid, virtpage, 0) == SYSERR){
-      	kprintf("xmunmap could not find mapping!\n");
+      	kprintf("xmunmap: could not find mapping!\n");
       	return SYSERR;
   	}
   	
