@@ -303,6 +303,8 @@ SYSCALL read_from(int new_pid) {
 
 	pd = proctab[new_pid].pdbr;
 
+	kprintf("find you\n");
+
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == new_pid) {
 			pt = (pt_t *) fr2p(i);
