@@ -88,10 +88,12 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
-	write_back(opid);
-	kprintf("what happened??\n");
-	read_from(currpid);
+	
 	set_PDBR(currpid);
+
+	write_back(opid);
+	read_from(currpid);
+	
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
