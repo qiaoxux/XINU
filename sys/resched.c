@@ -88,20 +88,18 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
-	kprintf("1\n");
+	write_back(opid);
+	read_from(currpid);
 	set_PDBR(currpid);
-	kprintf("2\n");
+
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
-	kprintf("3\n");
+
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
 	
-	kprintf("4\n");
 	/* The OLD process returns here when resumed. */
 	restore(PS);
-	kprintf("5\n");
-	kprintf("Process id %d\n", currpid);
 	return OK;
 }
 
