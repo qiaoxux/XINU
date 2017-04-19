@@ -5,6 +5,9 @@
 
 /* requests a new mapping of npages with ID map_id */
 int get_bs(bsd_t bs_id, unsigned int npages) {
+	STATWORD ps;
+  	disable(ps);
+
 	if (bs_id < 0 || bs_id >= NSTORES) {
 		kprintf("get_bs: wrong bs_id\n");
 		return SYSERR;
@@ -35,6 +38,8 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 	}
 
 	kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
+
+	restore(ps);
     return bsm_tab[bs_id].bs_npages;
 }
 
