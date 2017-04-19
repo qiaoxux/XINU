@@ -132,6 +132,8 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	bs_map_t *bs;
 	for (i = 0; i < NSTORES; i++) {
 		bs = &proctab[pid].bsmap[i];
+		kprintf("%d %d %d %d %d \n", pid, i, bs->bs_status, bs->bs_vpno, bs->bs_npages);
+
 		if (bs->bs_status == BSM_MAPPED && vpno >= bs->bs_vpno && 
 			vpno < bs->bs_vpno + bs->bs_npages) {
 			*store = i;
