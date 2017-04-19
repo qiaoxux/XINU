@@ -154,7 +154,6 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	STATWORD ps;
   	disable(ps);
 
-  	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 	if(isbadpid(pid)) {
 		kprintf("bsm_map: wrong process id\n");
 		return SYSERR;
@@ -175,7 +174,6 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		return SYSERR;
 	}
 
-	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 	if (++bsm_tab[source].bs_nmapping == 1) {
 		bsm_tab[source].bs_status = BSM_MAPPED;
 		bsm_tab[source].bs_pid = pid;
@@ -183,12 +181,9 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		bsm_tab[source].bs_npages = npages;
 	}
 	
-	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
 	proctab[pid].bsmap[source].bs_vpno = vpno;
 	proctab[pid].bsmap[source].bs_npages = npages;
-
-	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 	
 	restore(ps);
 	return OK;
