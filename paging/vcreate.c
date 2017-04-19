@@ -31,7 +31,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	STATWORD ps;
   	disable(ps);
 
-  	kprintf("vcreate1: \n");
   	int pid = create(procaddr, ssize, priority, name, nargs, args);
 
 	int bs_id;
@@ -45,26 +44,21 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		kprintf("Wrong hsize");
 		return SYSERR;
 	}
-	kprintf("vcreate2: \n");
+
 	proctab[pid].private = 1;
 	bsm_tab[bs_id].bs_private = 1;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
 
-	kprintf("vcreate2.3: \n");
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 	bsm_map(pid, 4096, bs_id, hsize);
 
-	kprintf("vcreate2.6: \n");
 	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
 	proctab[pid].vmemlist->mlen = 0;
 
-	kprintf("vcreate2.9: \n");
 	struct mblock * memblock = bs2p(bs_id);
     memblock->mnext = 0;  
     memblock->mlen  = hsize*NBPG;
-
-    kprintf("vcreate3: \n");
 
 	restore(ps);
 	return pid;

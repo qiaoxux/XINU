@@ -88,15 +88,15 @@ int	resched()
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
-	
+	kprintf("vcreate1: \n");
 	set_PDBR(currpid);
-
+kprintf("vcreate2: \n");
 	write_back(opid);
 	read_from(currpid);
-	
+	kprintf("vcreate4: \n");
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
-
+kprintf("vcreate5: \n");
 #ifdef	DEBUG
 	PrintSaved(nptr);
 #endif
