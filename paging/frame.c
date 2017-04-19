@@ -188,12 +188,12 @@ SYSCALL evict_frm(int pid)
 				qid = pq[qid].qnext;
 			}
 			
-			frm_tab[pd_nframes].fr_status = FRM_UNMAPPED;
-			frm_tab[pd_nframes].fr_pid = -1;
-			frm_tab[pd_nframes].fr_vpno = -1;
-			frm_tab[pd_nframes].fr_refcnt = 0;
-			frm_tab[pd_nframes].fr_type = FR_PAGE;
-			frm_tab[pd_nframes].fr_dirty = 0;
+			frm_tab[i].fr_status = FRM_UNMAPPED;
+			frm_tab[i].fr_pid = -1;
+			frm_tab[i].fr_vpno = -1;
+			frm_tab[i].fr_refcnt = 0;
+			frm_tab[i].fr_type = FR_PAGE;
+			frm_tab[i].fr_dirty = 0;
 		}
 	}
 
