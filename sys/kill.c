@@ -38,6 +38,8 @@ SYSCALL kill(int pid)
 	if (! isbaddev(dev) )
 		close(dev);
 	
+	kprintf("kill process %d \n", pid);
+
 	if (pptr->private == 1) {
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mlen);
 	}
