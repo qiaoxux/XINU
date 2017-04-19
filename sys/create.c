@@ -135,7 +135,8 @@ void init_page_directory(int pid) {
 	frm_tab[free_frame].fr_type = FR_DIR;
 	frm_tab[free_frame].fr_dirty = 0;
 	
-	proctab[pid].pdbr = pd_entry = (pd_t*)((FRAME0 + free_frame) * NBPG);
+	proctab[pid].pdbr = (FRAME0 + free_frame) * NBPG;
+	pd_entry = (pd_t*)((FRAME0 + free_frame) * NBPG);
 
 	int i;
 	for (i = 0; i < NFRAMES; i++) {

@@ -127,40 +127,30 @@ PrintSaved(ptr)
 }
 #endif
 
-int write_data(int pid)
-{
-	STATWORD ps;
-	disable(ps);
-
+int write_data(int pid) {
 	int i, j, bs_id, pageth;
 	for(i = 0; i < NFRAMES; i++){
 		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
-			bsm_lookup(pid, frm_tab[i].fr_vpno * 4096, &bs_id, &pageth);
+			bsm_lookup(pid, frm_tab[i].fr_vpno * NBPG, &bs_id, &pageth);
 			
 			if(bs_id >= 0 && bs_id <= 7)
          		write_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
-      }
-   }   
+         }
+   	}   
 	
-	restore(PS);
 	return OK;
 }
 
-int read_data(int pid)
-{
-	STATWORD ps;
-	disable(ps);
-
+int read_data(int pid) {
 	int i, j, bs_id, pageth;
 	for(i = 0; i < NFRAMES; i++){
 		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
-			bsm_lookup(pid, frm_tab[i].fr_vpno * 4096, &bs_id, &pageth);
+			bsm_lookup(pid, frm_tab[i].fr_vpno * NBPG, &bs_id, &pageth);
 			
 			if(bs_id >= 0 && bs_id <= 7)
          		read_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
       }
    }   
 
-   restore(PS);
    return OK;
 }

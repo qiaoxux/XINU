@@ -82,6 +82,7 @@ SYSCALL bsm_unmap(int, int, int);
 SYSCALL init_frm();
 SYSCALL get_frm(int *);
 SYSCALL free_frm(int);
+SYSCALL evict_frm(int);
 
 
 #define NBPG		4096	/* number of bytes per page	*/
