@@ -27,6 +27,7 @@ SYSCALL init_frm() {
 		frm_tab[i].fr_id = i;
 		frm_tab[i].fr_next = NULL;
 		frm_tab[i].fr_upper = -1;
+		frm_tab[i].fr_age = 0;
 	}
 
 	struct qent pq[NPQ];
@@ -56,20 +57,23 @@ SYSCALL get_frm(int* avail) {
 		}
 	}
 
+	pt_t *pt;
 	if (grpolicy() == SC) {
 		while (1) {
 			if (currqueue == HeadPQ || currqueue == TailPQ)
 				currqueue = pq[HeadPQ].qnext;
 			
-			if (frm_tab[currqueue].fr_refcnt <= 0) {
-				pdequeue(currqueue);
-				free_frm(currqueue);
-				*avail = currqueue;
+			if (frm_tab[currqueue].fr_type == FR_TBL) {
+				pt = (pt*)fr2p(i);
+				if (pt->pt_acc == 1) {
+					pt->pt_acc = 0;
+				} else {
+					free_frm(currqueue);
+					*avail = currqueue;
 
-				restore(ps);
-				return OK;
-			} else {
-				frm_tab[currqueue].fr_refcnt--;
+					restore(ps);
+					return OK;
+				}
 			}
 
 			currqueue = pq[currqueue].qnext;
@@ -78,21 +82,20 @@ SYSCALL get_frm(int* avail) {
 		int min_age = 256;
 		int frame_idx = pq[TailPQ].qprev, fit_frame;
 		while (frame_idx != HeadPQ) {
-			frm_tab[frame_idx].fr_refcnt = (int) (frm_tab[frame_idx].fr_refcnt/2);
+			frm_tab[frame_idx].fr_age = (int) (frm_tab[frame_idx].fr_age/2);
 			frame_idx = pq[frame_idx].qprev;
 		}
 
 		frame_idx = pq[TailPQ].qprev;
 		fit_frame = frame_idx;
 		while (frame_idx != HeadPQ) {
-			if (frm_tab[frame_idx].fr_refcnt <= min_age) {
-				min_age = frm_tab[frame_idx].fr_refcnt;
+			if (frm_tab[frame_idx].fr_age <= min_age) {
+				min_age = frm_tab[frame_idx].fr_age;
 				fit_frame = frame_idx;
 			}
 			frame_idx = pq[frame_idx].qprev;
 		}
 
-		pdequeue(fit_frame);
 		free_frm(fit_frame);
 		*avail = fit_frame;
 		
@@ -120,6 +123,7 @@ SYSCALL init_frm_after_get(int i, int pid, int type) {
 	frm_tab[i].fr_id = i;
 	frm_tab[i].fr_next = NULL;
 	frm_tab[i].fr_upper = -1;
+	frm_tab[i].fr_age = 0;
 
 	restore(ps);
 	return OK;
@@ -143,6 +147,7 @@ SYSCALL reset_frm(int i) {
 	frm_tab[i].fr_id = i;
 	frm_tab[i].fr_next = NULL;
 	frm_tab[i].fr_upper = -1;
+	frm_tab[i].fr_age = 0;
 
 	restore(ps);
 	return OK;
@@ -188,6 +193,8 @@ SYSCALL free_frm(int i) {
   		init_pd(pd);
   		reset_frm(i);	
 	}
+
+	pdequeue(i);
 	
 	restore(ps);
   	return OK;
@@ -375,7 +382,9 @@ int pdequeue(int item)
 	struct	qent	*mptr;		/* pointer to pq entry for item	*/
 
 	mptr = &pq[item];
-	pq[mptr->qprev].qnext = mptr->qnext;
-	pq[mptr->qnext].qprev = mptr->qprev;
+	if (mptr->qprev != NULL && mptr->qnext != NULL) {
+		pq[mptr->qprev].qnext = mptr->qnext;
+		pq[mptr->qnext].qprev = mptr->qprev;	
+	}
 	return(item);
 }

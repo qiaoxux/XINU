@@ -50,6 +50,7 @@ typedef struct frame {
   int fr_dirty;
 
   int fr_id;  /* frame id */
+  int fr_age;   /* for demand paging */
   int fr_upper; /* page -> page table, page table -> page directory */
   struct frame *fr_next  /* the list of all frames on the same backing store */
 } fr_map_t;

@@ -13,12 +13,12 @@
  */
 
 SYSCALL pfint() {
-	STATWORD ps;
+    STATWORD ps;
     disable(ps);
 
     virt_addr_t * vaddr;
-	int vp,free_frame,store,pageth;
-	unsigned int pd_offset, pt_offset, pg_offset;
+  	int vp,free_frame,store,pageth;
+  	unsigned int pd_offset, pt_offset, pg_offset;
   	unsigned long cr2, physical_addr;
     
     pd_t *pd;
@@ -28,8 +28,6 @@ SYSCALL pfint() {
     vaddr = (virt_addr_t *)(&cr2); 
     vp = p2vno(cr2);
     pd = proctab[currpid].pdbr;
-
-    kprintf("vp %d\n", vp);
 
     if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
       	kprintf("pfint: virtual address hasn't been mapped!\n");
@@ -68,21 +66,30 @@ SYSCALL pfint() {
     pt = vno2p(pd[pd_offset].pd_base);
     
   	get_frm(&free_frame);
-	init_frm_after_get(free_frame, currpid, FR_PAGE);
-	frm_tab[free_frame].fr_vpno = vp;
-	frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
-	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
-	frm_tab[free_frame].fr_refcnt++;
+    init_frm_after_get(free_frame, currpid, FR_PAGE);
+  	frm_tab[free_frame].fr_vpno = vp;
+  	frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
+  	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
+  	frm_tab[free_frame].fr_refcnt++;
+    
+    if (frm_tab[free_frame].fr_age + 128 > 255) {
+      frm_tab[free_frame].fr_age = 255;
+    } else {
+      frm_tab[free_frame].fr_age += 128;  
+    }
+    
+    proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
 
-	proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
-
-	pt[pt_offset].pt_pres  = 1;
+  	pt[pt_offset].pt_pres  = 1;
     pt[pt_offset].pt_write = 1;
+    pt[pt_offset].pt_acc = 1;
     pt[pt_offset].pt_base  = fr2vno(free_frame);
 
-	physical_addr = fr2p(free_frame);
-	read_bs(physical_addr, store, pageth);
-	// kprintf("pfint: %d %d %d %d\n", physical_addr, free_frame, store, pageth);
+  	physical_addr = fr2p(free_frame);
+  	read_bs(physical_addr, store, pageth);
+  	// kprintf("pfint: %d %d %d %d\n", physical_addr, free_frame, store, pageth);
+
+    penqueue(free_frame, TailPQ);
 	
     set_PDBR(currpid);
 
