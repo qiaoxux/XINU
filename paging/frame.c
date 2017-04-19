@@ -317,7 +317,7 @@ SYSCALL read_from(int new_pid) {
 				return SYSERR;
 			}
 			
-			kprintf("read_from %d %d %d %d\n", new_pid, frm_tab[i].fr_vpno, store, pageth);
+			kprintf("read_from %d %d %d %d %d\n", i, new_pid, frm_tab[i].fr_vpno, store, pageth);
 
 			read_bs((char *)pt, store, pageth);
 			
