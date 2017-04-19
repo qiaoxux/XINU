@@ -292,7 +292,7 @@ SYSCALL write_back(int old_pid) {
  *-------------------------------------------------------------------------
  */
 SYSCALL read_from(int new_pid) {
-	
+	kprintf("read_from currpid %d\n", currpid);
 	STATWORD ps;
 	disable(ps);
 
