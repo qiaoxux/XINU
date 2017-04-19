@@ -29,10 +29,10 @@ SYSCALL pfint() {
     vp = p2vno(cr2);
     pd = proctab[currpid].pdbr;
 
-    // if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
-    //   kprintf("Virtual address hasn't been mapped!\n");
-    //   kill(currpid);
-    // }
+    if( SYSERR == bsm_lookup(currpid, vp, &store, &pageth)) {
+      kprintf("Virtual address hasn't been mapped!\n");
+      kill(currpid);
+    }
 
     pd_offset = vaddr->pd_offset;
     pt_offset = vaddr->pt_offset;
