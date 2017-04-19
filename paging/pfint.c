@@ -16,7 +16,7 @@ SYSCALL pfint()
 	STATWORD ps;
 	disable(ps);
 
-	int i, bs_id, vpno, free_frame;
+	int i, bs_id, vpno, offset, free_frame;
 	struct idt *pidt;
 	virt_addr_t *virt_address;
 	unsigned long vaddr, pdbr;
@@ -92,34 +92,34 @@ SYSCALL pfint()
 
 	pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
 
-	pt_entry->pt_pres = 1;	
-	pt_entry->pt_write = 1;
-	pt_entry->pt_user = 0;
-	pt_entry->pt_pwt = 0;
-	pt_entry->pt_pcd = 0;
-	pt_entry->pt_acc = 0;
-	pt_entry->pt_dirty = 0;
-	pt_entry->pt_mbz = 0;
-	pt_entry->pt_global = 0;
-	pt_entry->pt_avail = 0;
-	pt_entry->pt_base = 0;
+	if (pt_entry->pt_pres == 0) {
+		get_frm(&free_frame);
 
-	frm_tab[free_frame].fr_status = FRM_MAPPED;
-	frm_tab[free_frame].fr_pid = currpid;
-	frm_tab[free_frame].fr_vpno = vpno;
-	frm_tab[free_frame].fr_refcnt++;
-	frm_tab[free_frame].fr_type = FR_PAGE;
-	frm_tab[free_frame].fr_dirty = 0;
+		pt_entry->pt_pres = 1;	
+		pt_entry->pt_write = 1;
+		pt_entry->pt_user = 0;
+		pt_entry->pt_pwt = 0;
+		pt_entry->pt_pcd = 0;
+		pt_entry->pt_acc = 0;
+		pt_entry->pt_dirty = 0;
+		pt_entry->pt_mbz = 0;
+		pt_entry->pt_global = 0;
+		pt_entry->pt_avail = 0; 
+		pt_entry->pt_base = FRAME0 + free_frame;
 
-	int offset;
-	get_frm(&free_frame);
-	bsm_lookup(currpid, vaddr, &bs_id, &offset);
+		frm_tab[free_frame].fr_status = FRM_MAPPED;
+		frm_tab[free_frame].fr_pid = currpid;
+		frm_tab[free_frame].fr_vpno = vpno;
+		frm_tab[free_frame].fr_refcnt++;
+		frm_tab[free_frame].fr_type = FR_PAGE;
+		frm_tab[free_frame].fr_dirty = 0;
 
-	kprintf("0x%08x: %c\n", ((FRAME0 + free_frame) * NBPG), ((FRAME0 + free_frame) * NBPG));
+		bsm_lookup(currpid, vaddr, &bs_id, &offset);
+		read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
+		penqueue(free_frame, TailPQ);
+	}
 
-	read_bs((char*)((FRAME0 + free_frame) * NBPG), bs_id, offset);
-
-	penqueue(free_frame, TailPQ);
+	write_cr3(pdbr);
 
 	restore(ps);
 	return OK;
