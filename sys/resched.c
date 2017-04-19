@@ -136,6 +136,8 @@ int write_data(int pid)
 
          if(bs_id >= 0 && bs_id <=7)
          	write_bs((char *)((i + FRAME0) * NBPG), bs_id, (frm_tab[i].fr_vpno - bsm_tab[bs_id].bs_vpno));
+
+         kprintf("%d, %d\n", frm_tab[i].fr_vpno, bsm_tab[bs_id].bs_vpno);
       }
    }   
 
@@ -146,7 +148,8 @@ int read_data(int pid)
 {
 	int i, j, bs_id;
 	for(i = 0; i < NFRAMES; i++){
-		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {	
+		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
+
          bs_id = proctab[pid].store;
 
          if(bs_id >= 0 && bs_id <=7)
