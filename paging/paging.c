@@ -54,7 +54,6 @@ SYSCALL init_page_directory_for_process(int pid) {
 	pd_t *new_pd = fr2p(free_frame);
 	init_pd(new_pd);
 
-	int i;
 	for(i = 0; i < 4; i++) {
 		new_pd[i].pd_pres = 1;
 		new_pd[i].pd_write = 1;
