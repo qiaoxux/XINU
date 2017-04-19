@@ -17,7 +17,7 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 		kprintf("get_bs: wrong npages\n");
 		return SYSERR;
 	}
-	kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
+
 	if (bsm_tab[bs_id].bs_status == BSM_MAPPED) {
 		if (bsm_tab[bs_id].bs_private = 1 && bsm_tab[bs_id].bs_pid != currpid) {
 			kprintf("get_bs: exclusive backing store\n");
@@ -29,15 +29,10 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 			return SYSERR;
 		}
 	} else {
-		kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
 		bsm_tab[bs_id].bs_status = BSM_MAPPED;
-		kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
 		bsm_tab[bs_id].bs_pid = currpid;
-		kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
 		bsm_tab[bs_id].bs_npages = npages;
 	}
-
-	kprintf("get_bs: %d %d %d %d\n", currpid, bs_id, npages);
 
 	restore(ps);
     return bsm_tab[bs_id].bs_npages;
