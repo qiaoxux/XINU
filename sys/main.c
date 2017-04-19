@@ -35,7 +35,7 @@ void proc1_test1(char *msg, int lck) {
 	}
 
 	sleep(6);
-	kprintf("6\n");
+	kprintf("7\n");
 
 	for (i = 0; i < 26; i++) {
 		kprintf("0x%08x: %c\n", addr + i * NBPG, *(addr + i * NBPG));

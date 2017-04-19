@@ -100,6 +100,7 @@ int	resched()
 	kprintf("4\n");
 	/* The OLD process returns here when resumed. */
 	restore(PS);
+	kprintf("5\n");
 	return OK;
 }
 
