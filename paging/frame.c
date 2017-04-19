@@ -263,7 +263,7 @@ SYSCALL write_back(int old_pid) {
 			upper = frm_tab[i].fr_upper;
 		
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
-				kprintf("bsm_lookup in write_back can't find mapping");
+				kprintf("bsm_lookup in write_back can't find mapping\n");
 		
 			write_bs((char *)pt, store, pageth);
 
@@ -307,7 +307,7 @@ SYSCALL read_from(int new_pid) {
 			upper = frm_tab[i].fr_upper;
 		
 			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth))
-				kprintf("bsm_lookup in read_from can't find mapping");
+				kprintf("bsm_lookup in read_from can't find mapping\n");
 		
 			read_bs((char *)pt, store, pageth);
 			
