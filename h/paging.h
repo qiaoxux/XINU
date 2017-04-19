@@ -99,6 +99,7 @@ SYSCALL free_frm(int);
 SYSCALL find_frm(int, int);
 SYSCALL decrease_frm_refcnt(int, int);
 SYSCALL write_back(int);
+SYSCALL read_from(int);
 
 SYSCALL init_4_global_page_tables();
 SYSCALL init_page_directory_for_process(int);
