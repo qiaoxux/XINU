@@ -39,7 +39,7 @@ SYSCALL pfint() {
     pg_offset = vaddr->pg_offset;
 
     if(pd[pd_offset].pd_pres != 1) {
-      get_frm(&free_frame)
+      get_frm(&free_frame);
       init_frm_after_get(free_frame, currpid, FR_TBL);
 
       frm_tab[free_frame].fr_upper = p2fr((unsigned long) pd);
@@ -56,7 +56,7 @@ SYSCALL pfint() {
       pd[pd_offset].pd_mbz = 0;
       pd[pd_offset].pd_fmb = 0;
       pd[pd_offset].pd_global = 0;
-      pd[pd_offset].pd_free_frame = 0;
+      pd[pd_offset].pd_avail = 0;
       pd[pd_offset].pd_base = p2vno((unsigned long) pt);
     } else {
       frm_tab[pd[pd_offset].pd_base - 1024].fr_refcnt++;
@@ -70,10 +70,10 @@ SYSCALL pfint() {
 
 		init_frm_after_get(free_frame, currpid, FR_PAGE);
 		frm_tab[free_frame].fr_vpno = vp;
-		frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].frames;
+		frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
 		frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
 
-		proctab[currpid].bsmap[store].frames = &frm_tab[free_frame];
+		proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
 
 		pt[pt_offset].pt_pres  = 1;
 	    pt[pt_offset].pt_write = 1;
