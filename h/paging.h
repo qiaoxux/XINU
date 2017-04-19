@@ -5,7 +5,6 @@ typedef unsigned int	 bsd_t;
 /* Structure for a page directory entry */
 
 typedef struct {
-
   unsigned int pd_pres	: 1;		/* page table present?		*/
   unsigned int pd_write : 1;		/* page is writable?		*/
   unsigned int pd_user	: 1;		/* is use level protection?	*/
@@ -53,10 +52,9 @@ typedef struct frame {
   int fr_id;  /* frame id */
   int fr_upper; /* page -> page table, page table -> page directory */
   struct frame *fr_next  /* the list of all frames on the same backing store */
-
 } fr_map_t;
 
-typedef struct {
+typedef struct bs {
   int bs_status;			/* MAPPED or UNMAPPED		*/
   int bs_pid;				/* process id using this slot   */
   int bs_vpno;				/* starting virtual page number */

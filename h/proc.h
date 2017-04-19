@@ -43,8 +43,6 @@
 
 #define	isbadpid(x)	(x<=0 || x>=NPROC)
 
-#include <paging.h>
-
 /* process table entry */
 
 struct	pentry	{
@@ -79,7 +77,7 @@ struct	pentry	{
         int     vhpnpages;              /* vheap size                   */
         struct mblock *vmemlist;        /* vheap list              	*/
 
-		bs_map_t bsmap[NSTORES];		/* process' backing stores */
+		struct bs bsmap[8];		/* process' backing stores */
 };
 
 
