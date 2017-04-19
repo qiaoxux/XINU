@@ -36,27 +36,36 @@ typedef struct {
   unsigned int pt_base	: 20;		/* location of page?		*/
 } pt_t;
 
-typedef struct{
+typedef struct {
   unsigned int pg_offset : 12;		/* page offset			*/
   unsigned int pt_offset : 10;		/* page table offset		*/
   unsigned int pd_offset : 10;		/* page directory offset	*/
 } virt_addr_t;
 
-typedef struct{
+typedef struct {
   int bs_status;			/* MAPPED or UNMAPPED		*/
   int bs_pid;				/* process id using this slot   */
   int bs_vpno;				/* starting virtual page number */
   int bs_npages;			/* number of pages in the store */
   int bs_sem;				/* semaphore mechanism ?	*/
+
+  int bs_private;        /* created by vcreate or not */
+  int bs_nmapping;    /* how many mappings on this bs */
+  fr_map_t  *bs_frames;  /* the list of frames on this bs */
 } bs_map_t;
 
-typedef struct{
+typedef struct frame{
   int fr_status;			/* MAPPED or UNMAPPED		*/
   int fr_pid;				/* process id using this frame  */
   int fr_vpno;				/* corresponding virtual page no*/
   int fr_refcnt;			/* reference count		*/
   int fr_type;				/* FR_DIR, FR_TBL, FR_PAGE	*/
   int fr_dirty;
+
+  int fr_id;  /* frame id */
+  int fr_upper; /* page -> page table, page table -> page directory */
+  struct frame *fr_next  /* the list of all frames on the same backing store */
+
 } fr_map_t;
 
 extern bs_map_t bsm_tab[];
@@ -65,6 +74,10 @@ extern fr_map_t frm_tab[];
 /* Prototypes for required API calls */
 SYSCALL xmmap(int, bsd_t, int);
 SYSCALL xunmap(int);
+SYSCALL vcreate(int *procaddr, int ssize, int hsize, int priority, char *name, int nargs, long args);
+WORD *vgetmem(unsigned nbytes);
+SYSCALL srpolicy (int policy);
+SYSCALL vfreemem(struct mblock *block, unsigned size);
 
 /* given calls for dealing with backing store */
 int get_bs(bsd_t, unsigned int);
@@ -73,6 +86,7 @@ SYSCALL read_bs(char *, bsd_t, int);
 SYSCALL write_bs(char *, bsd_t, int);
 
 SYSCALL init_bsm();
+SYSCALL init_bsmap_for_process(bs_map_t *);
 SYSCALL get_bsm(int *);
 SYSCALL free_bsm(int);
 SYSCALL bsm_lookup(int, long, int *, int *);
@@ -81,9 +95,15 @@ SYSCALL bsm_unmap(int, int, int);
 
 SYSCALL init_frm();
 SYSCALL get_frm(int *);
+SYSCALL init_frm_after_get(int, int, int);
+SYSCALL reset_frm(int);
 SYSCALL free_frm(int);
-SYSCALL evict_frm(int);
+SYSCALL find_frm(int, int);
+SYSCALL decrease_frm_refcnt(int, int);
+SYSCALL write_back(int);
 
+SYSCALL init_4_global_page_tables();
+SYSCALL init_page_directory_for_process(int);
 
 #define NBPG		4096	/* number of bytes per page	*/
 #define FRAME0		1024	/* zero-th frame		*/
@@ -105,3 +125,10 @@ SYSCALL evict_frm(int);
 
 #define BACKING_STORE_BASE	0x00800000
 #define BACKING_STORE_UNIT_SIZE 0x00100000
+
+#define fr2vno(i)  ( (unsigned int) (FRAME0 + i) )
+#define fr2p(i)    ( (unsigned int) ((FRAME0 + i) * NBPG) )
+#define p2fr(i)    ( (unsigned int) ((i/NBPG) - FRAME0) )
+#define bs2p(i)    ( (unsigned int) ((NBSP + i * NPGPBS) * NBPG) )
+#define vno2p(i)   ( (unsigned int) (i * NBPG) )
+#define p2vno(i)   ( (unsigned int) (i/NBPG) )

@@ -208,13 +208,13 @@ sysinit()
 	init_frm();
 
 	/* Create the page tables which will map pages 0 through 4095 to the physical 16 MB. */
-	init_four_global_pages(NULLPROC);
+	init_4_global_page_tables();
 
 	/* Allocate and initialize a page directory for the NULL process. */
-	init_page_directory(NULLPROC);
+	init_page_directory_for_process(NULLPROC);
 
 	/* Set the PDBR register to the page directory for the NULL process. */
-	write_cr3(proctab[NULLPROC].pdbr);
+	set_PDBR(NULLPROC);
 
 	/* Install the page fault interrupt service routine. */
 	set_evec(14,(u_long)pfintr);
@@ -252,35 +252,4 @@ long sizmem()
 
 	/* at least now its hacked to return the right value for the Xinu lab backends (16 MB) */
 	return 4096; 
-}
-
-void init_four_global_pages(int pid) {
-	int i, j;
-	int free_frame;
-	pt_t *pt_entry;
-	for(i = 0; i < 4; i++) {
-		get_frm(&free_frame);
-		frm_tab[free_frame].fr_status = FRM_MAPPED;
-		frm_tab[free_frame].fr_pid = pid;
-		frm_tab[free_frame].fr_vpno = -1;
-		frm_tab[free_frame].fr_refcnt = 0;
-		frm_tab[free_frame].fr_type = FR_TBL;
-		frm_tab[free_frame].fr_dirty = 0;
-		
-		pt_entry = (pt_t*)((FRAME0 + free_frame) * NBPG);
-		for(j = 0; j < NFRAMES; j++) {
-			pt_entry->pt_pres = 1;	
-			pt_entry->pt_write = 1;
-			pt_entry->pt_user = 0;
-			pt_entry->pt_pwt = 0;
-			pt_entry->pt_pcd = 0;
-			pt_entry->pt_acc = 0;
-			pt_entry->pt_dirty = 0;
-			pt_entry->pt_mbz = 0;
-			pt_entry->pt_global = 1;
-			pt_entry->pt_avail = 0;
-			pt_entry->pt_base = i * FRAME0 + j;	
-			pt_entry++;
-		}
-	}
 }

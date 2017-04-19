@@ -31,6 +31,8 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	STATWORD ps;
   	disable(ps);
 
+  	int pid = create(procaddr, ssize, priority, name, nargs, args);
+
 	int bs_id;
 
 	if (get_bsm(&bs_id) == SYSERR) {
@@ -42,17 +44,21 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		kprintf("Wrong hsize");
 		return SYSERR;
 	}
+	
+	bsm_tab[bs_id].bs_private = 1;
+	proctab[pid].bsmap[bs_id].bs_private = 1;
 
-	int pid = create(procaddr, ssize, priority, name, nargs, args);
-
-	bsm_map(pid, 4096, bs_id, hsize);
-	bsm_tab[bs_id].bs_sem = 1;
-
-	proctab[pid].store = bs_id;
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
-	proctab[pid].vmemlist->mnext = (struct mblock *) (4096 * NBPG);
-	proctab[pid].vmemlist->mnext->mlen = hsize * NBPG;
+	bsm_map(pid, 4096, bs_id, hsize);
+
+	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
+	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
+	proctab[pid].vmemlist->mlen = 0;
+
+	struct mblock * memblock = bs2p(store);
+    memblock->mnext = 0;  
+    memblock->mlen  = hsize*NBPG;
 
 	restore(ps);
 	return OK;

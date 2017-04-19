@@ -9,8 +9,7 @@
  * init_frm - initialize frm_tab
  *-------------------------------------------------------------------------
  */
-SYSCALL init_frm()
-{
+SYSCALL init_frm() {
 	STATWORD ps;
   	disable(ps);
 
@@ -22,8 +21,12 @@ SYSCALL init_frm()
 		frm_tab[i].fr_pid = -1;
 		frm_tab[i].fr_vpno = -1;
 		frm_tab[i].fr_refcnt = 0;
-		frm_tab[i].fr_type = FR_PAGE;
+		frm_tab[i].fr_type = -1;
 		frm_tab[i].fr_dirty = 0;
+
+		frm_tab[i].fr_id = i;
+		frm_tab[i].fr_next = NULL;
+		frm_tab[i].fr_upper = -1;
 	}
 
 	struct qent pq[NPQ];
@@ -39,8 +42,7 @@ SYSCALL init_frm()
  * get_frm - get a free frame according page replacement policy
  *-------------------------------------------------------------------------
  */
-SYSCALL get_frm(int* avail)
-{
+SYSCALL get_frm(int* avail) {
 	STATWORD ps;
   	disable(ps);
 
@@ -103,102 +105,189 @@ SYSCALL get_frm(int* avail)
 }
 
 /*-------------------------------------------------------------------------
- * free_frm - free a frame 
+ * init_frm_after_get - initialize a frame after get_frm
  *-------------------------------------------------------------------------
  */
-SYSCALL free_frm(int i)
-{
+SYSCALL init_frm_after_get(int i, int pid, int type) {
 	STATWORD ps;
-  	disable(ps);
+    disable(ps);
 
-	if (i < 0 || i > NFRAMES) {
-		kprintf("Wrong frame index\n");
-		return SYSERR;
-	}
+	frm_tab[i].fr_status = FRM_MAPPED;
+	frm_tab[i].fr_pid = pid;
+	frm_tab[i].fr_refcnt = 1;
+	frm_tab[i].fr_type = type;
+	frm_tab[i].fr_dirty = 0;
 
-	int pid, pd_nframes;
-	unsigned long vpno;
-	unsigned long pdbr;
-	unsigned int pd_offset, pt_offset;
-
-	pd_t *pd_entry;
-	pt_t *pt_entry;
-
-	if (frm_tab[i].fr_type == FR_PAGE) {
-
-		vpno = frm_tab[i].fr_vpno;
-		pdbr = proctab[(pid = frm_tab[i].fr_pid)].pdbr;
-		
-		pd_offset = vpno >> 10;
-		pt_offset = vpno & 1023;
-		pd_entry = (pd_t*)(pdbr + pd_offset * sizeof(pd_t));
-		pt_entry = (pt_t*)(pd_entry->pd_base * NBPG + pt_offset * sizeof(pt_t));
-
-		frm_tab[i].fr_status = FRM_UNMAPPED;
-		frm_tab[i].fr_pid = -1;
-		frm_tab[i].fr_vpno = -1;
-		frm_tab[i].fr_refcnt = 0;
-		frm_tab[i].fr_type = FR_PAGE;
-		frm_tab[i].fr_dirty = 0;
-		pt_entry->pt_pres = 0;
-
-		write_bs((FRAME0 + i) * NBPG, proctab[pid].store, vpno - proctab[pid].vhpno);
-
-		if(--frm_tab[pd_nframes].fr_refcnt <= 0) {
-			pd_nframes = pd_entry->pd_base - FRAME0;
-
-			frm_tab[pd_nframes].fr_status = FRM_UNMAPPED;
-			frm_tab[pd_nframes].fr_pid = -1;
-			frm_tab[pd_nframes].fr_vpno = -1;
-			frm_tab[pd_nframes].fr_refcnt = 0;
-			frm_tab[pd_nframes].fr_type = FR_PAGE;
-			frm_tab[pd_nframes].fr_dirty = 0;
-			
-			pd_entry->pd_pres = 0;
-		}
-	}
+	frm_tab[i].fr_id = i;
+	frm_tab[i].fr_next = NULL;
+	frm_tab[i].fr_upper = -1;
 
 	restore(ps);
 	return OK;
 }
 
 /*-------------------------------------------------------------------------
- * evict_frm - evict frames belong to pid
+ * reset_frm - reset a frame when free them
  *-------------------------------------------------------------------------
  */
-SYSCALL evict_frm(int pid)
-{
+SYSCALL reset_frm(int i) {
 	STATWORD ps;
-  	disable(ps);
+    disable(ps);
 
-	if(isbadpid(pid)) {
-		kprintf("Wrong process id\n");
-		return SYSERR;
-	}
+    frm_tab[i].fr_status = FRM_UNMAPPED;
+	frm_tab[i].fr_pid = -1;
+	frm_tab[i].fr_vpno = -1;
+	frm_tab[i].fr_refcnt = 0;
+	frm_tab[i].fr_type = -1;
+	frm_tab[i].fr_dirty = 0;
 
-	int i, qid;
-	for (i = 0; i < NFRAMES; i++) {
-		if (frm_tab[i].fr_pid == pid) {
-			int qid = pq[HeadPQ].qnext;
-			while (qid != TailPQ) {
-				if (qid == i) {
-					pdequeue(i);
-					break;
-				}
-				qid = pq[qid].qnext;
-			}
-			
-			frm_tab[i].fr_status = FRM_UNMAPPED;
-			frm_tab[i].fr_pid = -1;
-			frm_tab[i].fr_vpno = -1;
-			frm_tab[i].fr_refcnt = 0;
-			frm_tab[i].fr_type = FR_PAGE;
-			frm_tab[i].fr_dirty = 0;
-		}
-	}
+	frm_tab[i].fr_id = i;
+	frm_tab[i].fr_next = NULL;
+	frm_tab[i].fr_upper = -1;
 
 	restore(ps);
 	return OK;
+}
+
+/*-------------------------------------------------------------------------
+ * free_frm - free a frame 
+ *-------------------------------------------------------------------------
+ */
+SYSCALL free_frm(int i) {
+	STATWORD ps;
+    disable(ps);
+
+    int upper, store, pageth;
+
+	pt_t *pt;
+	pd_t *pd;
+	
+	pt = fr2p(i);
+	
+	upper = frm_tab[i].fr_upper;
+	
+	if(frm_tab[i].fr_type == FR_PAGE) {	
+		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR)
+			kill(currpid);
+ 
+    	write_bs((char *)pt, store, pageth);
+    	init_pt(pt);
+    	reset_frm(i);
+
+		if(--frm_tab[upper].fr_refcnt <= 0)
+			free_frm(upper);
+	
+	} else if(frm_tab[i].fr_type == FR_TBL) {
+    	init_pt(pt);
+    	reset_frm(i);
+
+		if(--frm_tab[upper].fr_refcnt <= 0)
+			free_frm(upper);
+	} else {
+		pd = fr2p(i);
+  		init_pd(pd);
+  		reset_frm(id);	
+	}
+	
+	restore(ps);
+  	return OK;
+}
+
+/*-------------------------------------------------------------------------
+ * find_frm - find a frame using bs_id and bs_pageth
+ *-------------------------------------------------------------------------
+ */
+SYSCALL find_frm(int pid, int vpno) {
+	STATWORD ps;
+    disable(ps);
+
+    int i;
+    for (i = 0; i < NFRAMES; i++) {
+        if (frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && 
+        	frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno == vpno) {
+            restore(ps);
+            return i;
+        }
+
+    }
+
+    restore(ps);
+    return -1;
+}
+
+/*-------------------------------------------------------------------------
+ * dec_frm_refcnt - decrease the reference count for each frame allocated
+ * to this process for one particular backing store.
+ *-------------------------------------------------------------------------
+ */
+SYSCALL decrease_frm_refcnt(int pid, int store) {
+	STATWORD ps;
+    disable(ps);
+
+ 	fr_map_t *curr, *prev;
+ 	curr = proctab[pid].bsmap[store].bs_frames;
+
+ 	while(curr != NULL) {
+ 		curr->fr_refcnt--;
+ 		if(curr->fr_refcnt <= 0) {
+ 			prev = curr;
+ 			free_frm(prev->fr_id);
+ 		}
+ 		curr = curr->fr_next;
+ 	}
+
+ 	restore(ps);
+ 	return OK;
+}
+
+/*-------------------------------------------------------------------------
+ * write_back
+ *-------------------------------------------------------------------------
+ */
+SYSCALL write_back(int old_pid) {
+	
+	STATWORD ps;
+	disable(ps);
+
+	int i, j = 0, upper, u_upper, store, pageth;
+	unsigned int pd_offset,pt_offset,pg_offset;
+
+	pd_t *pd;	
+	pt_t *pt;
+
+	pd = proctab[old_pid].pdbr;
+
+ 	for(i = 0; i < NFRAMES; i++) {
+ 		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == old_pid) {
+			pt = fr2p(i);
+			upper = frm_tab[i].fr_upper;
+		
+			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth))
+				kill(old_pid);
+			
+			proc_frames[old_pid][j++] = frm_tab[i].fr_vpno;
+		
+			write_bs((char *)pt, store, pageth);
+
+	    	init_pt(pt);
+	    	reset_frm(i);
+			
+			if(--frm_tab[upper].fr_refcnt <= 0) {	
+				u_upper = frm_tab[upper].fr_upper;
+
+				pt = fr2p(upper);
+				init_pt(pt);
+	    		reset_frm(upper);
+	    		
+	    		if(--frm_tab[upper].fr_refcnt <= 0)
+	    			init_pd(pd);
+			}
+
+ 		}
+ 	}
+	
+ 	restore(ps);
+    return OK;
 }
 
 /*------------------------------------------------------------------------

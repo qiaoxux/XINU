@@ -142,6 +142,7 @@ setsegs()
 	psd->sd_lolimit = np;
 	psd->sd_hilimit = np >> 16;
 
+#if 0
 	psd = &gdt_copy[2];	/* kernel data segment */
 	psd->sd_lolimit = npages;
 	psd->sd_hilimit = npages >> 16;
@@ -149,7 +150,7 @@ setsegs()
 	psd = &gdt_copy[3];	/* kernel stack segment */
 	psd->sd_lolimit = npages;
 	psd->sd_hilimit = npages >> 16; 
-
+#endif
 
 	psd = &gdt_copy[4];	/* bootp code segment */
 	psd->sd_lolimit = npages;   /* Allows execution of 0x100000 CODE */

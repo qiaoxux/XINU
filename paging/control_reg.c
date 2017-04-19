@@ -181,10 +181,18 @@ void write_cr4(unsigned long n) {
  *-------------------------------------------------------------------------
  */
 void enable_paging(){
-  
   unsigned long temp =  read_cr0();
   temp = temp | ( 0x1 << 31 ) | 0x1;
-  write_cr0(temp); 
+  write_cr0(temp);
+  kprintf("enable paging\n");
 }
 
 
+/*-------------------------------------------------------------------------
+ * set_PDBR - set the page table base register.
+ *-------------------------------------------------------------------------
+ */
+void set_PDBR(int pid){
+  unsigned long pdbr = proctab[pid].pdbr;
+  write_cr3(pdbr);
+}

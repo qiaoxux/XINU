@@ -15,19 +15,18 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 		return SYSERR;
 	}
 
-	if (bsm_tab[bs_id].bs_status == BSM_MAPPED && bsm_tab[bs_id].bs_pid != currpid) {
-		if (bsm_tab[bs_id].bs_sem = 1 ) {
+	if (bsm_tab[bs_id].bs_status == BSM_MAPPED) {
+		if (bsm_tab[bs_id].bs_sem = 1 && bsm_tab[bs_id].bs_pid != currpid) {
 			kprintf("Exclusive backing store\n");
 			return SYSERR;
 		}
-
-		return bsm_tab[bs_id].bs_npages;
+	} else {
+		bsm_tab[bs_id].bs_status = BSM_MAPPED;
+		bsm_tab[bs_id].bs_pid = currpid;
+		bsm_tab[bs_id].bs_npages = npages;
 	}
 
-	bsm_tab[bs_id].bs_pid = currpid;
-	bsm_tab[bs_id].bs_npages = npages;
-
-    return npages;
+    return bsm_tab[bs_id].bs_npages;
 }
 
 

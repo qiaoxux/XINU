@@ -19,7 +19,10 @@ SYSCALL	vfreemem(block, size)
 	struct	mblock	*p, *q;
 	unsigned top;
 
-	if (size == 0)
+	if (size == 0 || size > 256 * NBPG)
+		return(SYSERR);
+	if ( (unsigned) block < (unsigned) 4096 * NBPG || 
+		(unsigned) block > (unsigned)(proctab[currpid].vhpno + proctab[currpid].vhpnpages) * NBPG)
 		return(SYSERR);
 	size = (unsigned)roundmb(size);
 	

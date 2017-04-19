@@ -94,7 +94,7 @@ int	resched()
 	// 	read_data(currpid);
 	// }
 	
-	write_cr3(nptr->pdbr);
+	set_PDBR(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 
@@ -128,31 +128,3 @@ PrintSaved(ptr)
     kprintf("  PS: 0x%lx\n",(unsigned long) ptr->pregs[PS]);
 }
 #endif
-
-int write_data(int pid) {
-	int i, j, bs_id, pageth;
-	for(i = 0; i < NFRAMES; i++){
-		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
-			bsm_lookup(pid, frm_tab[i].fr_vpno * NBPG, &bs_id, &pageth);
-			
-			if(bs_id >= 0 && bs_id <= 7)
-         		write_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
-         }
-   	}   
-	
-	return OK;
-}
-
-int read_data(int pid) {
-	int i, j, bs_id, pageth;
-	for(i = 0; i < NFRAMES; i++){
-		if(frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno > 4096 && frm_tab[i].fr_type == FR_PAGE) {
-			bsm_lookup(pid, frm_tab[i].fr_vpno * NBPG, &bs_id, &pageth);
-			
-			if(bs_id >= 0 && bs_id <= 7)
-         		read_bs((char *)((i + FRAME0) * NBPG), bs_id, pageth);
-      }
-   }   
-
-   return OK;
-}
