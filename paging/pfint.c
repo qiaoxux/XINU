@@ -50,7 +50,7 @@ SYSCALL pfint()
 		pt_entry = (pt_t*)((FRAME0 + free_frame) * NBPG);
 		for (i = 0; i < NFRAMES; i++) {
 			pt_entry->pt_pres = 0;	
-			pt_entry->pt_write = 0;
+			pt_entry->pt_write = 1;
 			pt_entry->pt_user = 0;
 			pt_entry->pt_pwt = 0;
 			pt_entry->pt_pcd = 0;
