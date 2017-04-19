@@ -135,7 +135,7 @@ setsegs()
 
 	npages = sizmem();
 
-	maxaddr = (char *)( 1024 * NBPG - 1);
+	maxaddr = (char *)( 1024 * NBPG );
 
 	psd = &gdt_copy[1];	/* kernel code segment */
 	np = ((int)&etext + NBPG - 1) / NBPG;	/* # code pages */
