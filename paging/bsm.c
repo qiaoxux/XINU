@@ -119,7 +119,7 @@ SYSCALL free_bsm(int i) {
  * bsm_lookup - lookup bsm_tab and find the corresponding entry
  *-------------------------------------------------------------------------
  */
-SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth) {
+SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	STATWORD ps;
   	disable(ps);
 
@@ -129,7 +129,6 @@ SYSCALL bsm_lookup(int pid, long vaddr, int* store, int* pageth) {
 	}
 
 	int i;
-	unsigned int vpno = (int) (vaddr / NBPG);
 	bs_map_t *bs;
 	for (i = 0; i < NSTORES; i++) {
 		bs = &proctab[pid].bsmap[i];
