@@ -80,7 +80,7 @@ SYSCALL pfint() {
 
 	physical_addr = fr2p(free_frame);
 	read_bs(physical_addr, store, pageth);
-	kprintf("pfint: %d %d %d %d\n", physical_addr, free_frame, store, pageth);
+	// kprintf("pfint: %d %d %d %d\n", physical_addr, free_frame, store, pageth);
 	
     set_PDBR(currpid);
 

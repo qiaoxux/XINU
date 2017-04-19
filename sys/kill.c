@@ -38,7 +38,7 @@ SYSCALL kill(int pid)
 	if (! isbaddev(dev) )
 		close(dev);
 	
-	kprintf("kill process %d \n", pid);
+	// kprintf("kill process %d \n", pid);
 
 	// if this process is created by vcreate
 	if (pptr->private == 1) {
@@ -47,7 +47,7 @@ SYSCALL kill(int pid)
 
 	for(i = 0; i < NFRAMES; i++) {
 		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
-			kprintf("%dth entering free_frm\n", i);
+			// kprintf("%dth entering free_frm\n", i);
 			free_frm(i);
 		}
 	}

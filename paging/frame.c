@@ -170,7 +170,7 @@ SYSCALL free_frm(int i) {
 			kprintf("free_frm: can't find map\n");
 			return SYSERR;
 		}
-		kprintf("free_frm %d %d %d %d\n", currpid, frm_tab[i].fr_vpno, store, pageth);
+		// kprintf("free_frm %d %d %d %d\n", currpid, frm_tab[i].fr_vpno, store, pageth);
 		
     	write_bs((char *)pt, store, pageth);
     	init_pt(pt);
@@ -270,7 +270,7 @@ SYSCALL write_back(int old_pid) {
 				return SYSERR;
 			}
 			
-			kprintf("write_back %d %d %d %d\n", old_pid, frm_tab[i].fr_vpno, store, pageth);
+			// kprintf("write_back %d %d %d %d\n", old_pid, frm_tab[i].fr_vpno, store, pageth);
 
 			write_bs((char *)pt, store, pageth);
 
@@ -317,7 +317,7 @@ SYSCALL read_from(int new_pid) {
 				return SYSERR;
 			}
 			
-			kprintf("read_from %d %d %d %d %d\n", i, new_pid, frm_tab[i].fr_vpno, store, pageth);
+			// kprintf("read_from %d %d %d %d %d\n", i, new_pid, frm_tab[i].fr_vpno, store, pageth);
 
 			read_bs((char *)pt, store, pageth);
 			
