@@ -181,7 +181,7 @@ SYSCALL free_frm(int i) {
     	init_pt(pt);
     	reset_frm(i);
 
-		frm_tab[upper].fr_refcnt--
+		frm_tab[upper].fr_refcnt--;
 	} else {
 		pd = fr2p(i);
   		init_pd(pd);
