@@ -54,7 +54,7 @@ typedef struct {
   fr_map_t  *bs_frames;  /* the list of frames on this bs */
 } bs_map_t;
 
-typedef struct frame{
+typedef struct frame {
   int fr_status;			/* MAPPED or UNMAPPED		*/
   int fr_pid;				/* process id using this frame  */
   int fr_vpno;				/* corresponding virtual page no*/

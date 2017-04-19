@@ -43,6 +43,8 @@
 
 #define	isbadpid(x)	(x<=0 || x>=NPROC)
 
+#include <paging.h>
+
 /* process table entry */
 
 struct	pentry	{
