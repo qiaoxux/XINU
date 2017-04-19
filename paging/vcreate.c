@@ -54,7 +54,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	kprintf("vcreate hsize 1 %d\n", hsize);
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
-	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
 	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(4096 * NBPG);
 	proctab[pid].vmemlist->mlen = 0;
 	struct mblock * memblock = bs2p(bs_id);
