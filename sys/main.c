@@ -506,7 +506,7 @@ void testSC_func()
 	//frame for pages will be from 1032-2047
 	int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
 
-
+	kprintf("are you finished0?\n");
 	for (i=0;i<=maxpage/256;i++){
 		if(get_bs(i,256) == SYSERR)
 		{
@@ -523,6 +523,7 @@ void testSC_func()
 			addrs[cnt++] = (unsigned long)(PAGE0+(i*256) + j) << 12;
 		}			
 	}
+	kprintf("are you finished1?\n");
 	// kprintf("cnt=%d\n", cnt);
 	// for(i=0; i < 8*256; i++) {  
 	// 	kprintf("vaddr[%d]=0x%08x\n", i, addrs[i]);
@@ -540,6 +541,7 @@ void testSC_func()
 			return;
 	    }
 	}
+	kprintf("are you finished2?\n");
 
 	//trigger page replacement, this should clear all access bits of all pages
 	//expected output: frame 1032 will be swapped out
@@ -576,7 +578,7 @@ void testSC_func()
 		xmunmap(PAGE0+(i*256));
 		release_bs(i);			
 	}
-	kprintf("are you finished?\n");
+
 
 }
 void testSC(){
