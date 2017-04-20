@@ -52,7 +52,7 @@ SYSCALL kill(int pid)
 	// }
 
 	for(i = 0; i < 8; i++) {
-		if(bsm_tab[i].bs_status == BSM_MAPPED && bsm_tab[i].bs_pid == pid) {
+		if(proctab[pid].bsmap[i].bs_status == BSM_MAPPED) {
 			free_bsm(i);
 		}
 	}
