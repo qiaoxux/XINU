@@ -30,7 +30,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 		return SYSERR;
 	}
 
-	if (bsm_tab[source].private == 1) {
+	if (bsm_tab[source].bs_rivate == 1) {
 		kprintf("xmmap: virtual heap\n");
 		return SYSERR;
 	}
