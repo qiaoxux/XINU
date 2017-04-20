@@ -78,7 +78,7 @@ struct	pentry	{
         struct mblock *vmemlist;        /* vheap list              	*/
 
 		int private;			/* private heap */
-		struct bs *bsmap;		/* process' backing stores */
+		bs_map_t *bsmap;		/* process' backing stores */
 };
 
 

@@ -42,9 +42,9 @@ SYSCALL init_bsmap_for_process(bs_map_t *bsmap) {
 	for (i = 0; i < NSTORES; ++i) {
 		bsmap[i].bs_status = BSM_UNMAPPED;
 		bsmap[i].bs_pid = -1;
-		bsmap[i].bs_vpno = 666;
+		bsmap[i].bs_vpno = 0;
 		bsmap[i].bs_npages = 0;
-		bsmap[i].bs_sem =	-1;
+		bsmap[i].bs_sem = -1;
 
 		bsmap[i].bs_nmapping = 0;
 		bsmap[i].bs_private = 0;
@@ -129,15 +129,15 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	}
 
 	int i;
-	bs_map_t *bs;
+	bs_map_t *bsmap;
 	for (i = 0; i < NSTORES; i++) {
-		bs = &proctab[pid].bsmap[i];
-		kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bs->bs_status, bs->bs_vpno, bs->bs_npages);
+		bsmap = &proctab[pid].bsmap[i];
+		kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 
-		if (bs->bs_status == BSM_MAPPED && vpno >= bs->bs_vpno && 
-			vpno < bs->bs_vpno + bs->bs_npages) {
+		if (bsmap->bs_status == BSM_MAPPED && vpno >= bsmap->bs_vpno && 
+			vpno < bsmap->bs_vpno + bsmap->bs_npages) {
 			*store = i;
-			*pageth = vpno - bs->bs_vpno;
+			*pageth = vpno - bsmap->bs_vpno;
 
 			restore(ps);
 			return OK;
