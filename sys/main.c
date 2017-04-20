@@ -63,6 +63,7 @@ void proc_test2(int i,int j,int* ret,int s) {
   int bsize;
   int r;
   bsize = get_bs(i, j);
+  kprintf("bsize %d\n", bsize);
   if (bsize != 50)
     *ret = TFAILED;
   r = xmmap(MYVPNO1, i, j);
