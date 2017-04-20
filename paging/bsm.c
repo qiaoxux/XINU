@@ -226,8 +226,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 			reset_frm(i);
 			proctab[pid].bsmap[store].bs_frames[i] = 0;
 		}
-	}
-			
+	}		
 
   	restore(ps);
 	return OK;

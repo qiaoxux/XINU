@@ -99,6 +99,14 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 
 	init_page_directory_for_process(pid);	/* page directory initialization */
 
+	if (pid == 47) {
+		bs_map_t *bsmap;
+  for (i = 0; i < NSTORES; i++) {
+    bsmap = &proctab[49].bsmap[i];
+    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+  }
+	}
+
 	restore(ps);
 	return(pid);
 }
