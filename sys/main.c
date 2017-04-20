@@ -576,6 +576,7 @@ void testSC_func()
 		xmunmap(PAGE0+(i*256));
 		release_bs(i);			
 	}
+	kprintf("are you finished?\n");
 
 }
 void testSC(){
@@ -594,7 +595,7 @@ void testSC(){
 
 int main() {
 	// test1();
-	test2();
+	// test2();
 	// test3();
 	// test4();
 	// test5();
@@ -602,7 +603,7 @@ int main() {
 	// test7();
 	// test8();
 	// test9();
-	// testSC();
+	testSC();
 
 
 	shutdown();
