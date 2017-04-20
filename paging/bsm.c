@@ -42,7 +42,7 @@ SYSCALL init_bsmap_for_process(int pid) {
 	}
 
 	int i;
-	
+
 	if (pid == 47) {
 		bs_map_t *bsmap;
 		for (i = 0; i < NSTORES; i++) {
@@ -51,11 +51,11 @@ SYSCALL init_bsmap_for_process(int pid) {
 		}
 	}
 
-	
+	kprintf("%d\n", pid);
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
 		proctab[pid].bsmap[i].bs_pid = pid;
-		// proctab[pid].bsmap[i].bs_vpno = 0;
+		proctab[pid].bsmap[i].bs_vpno = 0;
 		proctab[pid].bsmap[i].bs_npages = 0;
 
 		proctab[pid].bsmap[i].bs_nmapping = 0;
