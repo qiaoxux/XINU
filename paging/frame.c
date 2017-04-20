@@ -217,7 +217,7 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 				return SYSERR;
 			}
 			
-			kprintf("process <%d> writes frame %d to store %d with page offset %d\n (vaddr: %d)", old_pid, i, store, pageth, frm_tab[i].fr_vpno);
+			kprintf("process <%d> writes frame %d to store %d with page offset %d (vaddr: %d)\n", old_pid, i, store, pageth, frm_tab[i].fr_vpno);
 
 			write_bs((char *)pt, store, pageth);
 
