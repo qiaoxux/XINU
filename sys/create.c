@@ -97,7 +97,38 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
-	init_page_directory_for_process(pid);	/* page directory initialization */
+	int  free_frame;
+	get_frm(&free_frame);
+	set_frm(free_frame, pid, FR_DIR);
+	
+	pd_t *new_pd = fr2p(free_frame);
+	init_pd(new_pd);
+
+	for(i = 0; i < 4; i++) {
+		new_pd[i].pd_pres = 1;
+		new_pd[i].pd_write = 1;
+		new_pd[i].pd_user = 0;
+		new_pd[i].pd_pwt = 0;
+		new_pd[i].pd_pcd = 0;
+		new_pd[i].pd_acc = 0;
+		new_pd[i].pd_mbz = 0;
+		new_pd[i].pd_fmb = 0;
+		new_pd[i].pd_global = 1;
+		new_pd[i].pd_avail = 0;
+		new_pd[i].pd_base = FRAME0 + i;
+	}
+	
+	proctab[pid].pdbr = (unsigned long) new_pd;
+
+	for (i = 0; i < NSTORES; i++) {
+		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
+		proctab[pid].bsmap[i].bs_pid = pid;
+		proctab[pid].bsmap[i].bs_vpno = 0;
+		proctab[pid].bsmap[i].bs_npages = 0;
+
+		proctab[pid].bsmap[i].bs_nmapping = 0;
+		proctab[pid].bsmap[i].bs_private = 0;
+	}
 
 	restore(ps);
 	return(pid);
