@@ -132,7 +132,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	bs_map_t *bs;
 	for (i = 0; i < NSTORES; i++) {
 		bs = &proctab[pid].bsmap[i];
-		kprintf("%d %d %d %d %d \n", pid, i, proctab[pid].bsmap[i].bs_status, proctab[pid].bsmap[i].bs_vpno, proctab[pid].bsmap[i].bs_npages);
+		kprintf("%d %d %d %d %d \n", pid, i, bs->bs_status, bs->bs_vpno, bs->bs_npages);
 
 		if (bs->bs_status == BSM_MAPPED && vpno >= bs->bs_vpno && 
 			vpno < bs->bs_vpno + bs->bs_npages) {
@@ -154,6 +154,8 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	STATWORD ps;
   	disable(ps);
+
+  	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 
 	if(isbadpid(pid)) {
 		kprintf("bsm_map: wrong process id\n");
@@ -197,6 +199,8 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	STATWORD ps;
   	disable(ps);
+
+  	kprintf("bsm_map: %d %d\n", pid, vpno);
 
   	int store, pageth;
 
