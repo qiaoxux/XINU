@@ -7,7 +7,6 @@
 #include <sem.h>
 #include <mem.h>
 #include <io.h>
-#include <paging.h>
 
 /*
 static unsigned long esp;

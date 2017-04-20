@@ -2,7 +2,6 @@
 
 #include <conf.h>
 #include <kernel.h>
-#include <paging.h>
 #include <proc.h>
 
 /*-------------------------------------------------------------------------

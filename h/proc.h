@@ -43,6 +43,8 @@
 
 #define	isbadpid(x)	(x<=0 || x>=NPROC)
 
+#include <paging.h>
+
 /* process table entry */
 
 struct	pentry	{
@@ -80,7 +82,6 @@ struct	pentry	{
 		int private;			/* private heap */
 		bs_map_t *bsmap;		/* process' backing stores */
 };
-
 
 extern	struct	pentry proctab[];
 extern	int	numproc;		/* currently active processes	*/

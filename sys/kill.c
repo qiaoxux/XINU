@@ -8,7 +8,6 @@
 #include <io.h>
 #include <q.h>
 #include <stdio.h>
-#include <paging.h>
 
 /*------------------------------------------------------------------------
  * kill  --  kill a process and remove it from the system

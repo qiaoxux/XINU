@@ -2,7 +2,6 @@
 #include <conf.h>
 #include <kernel.h>
 #include <proc.h>
-#include <paging.h>
 #include <q.h>
 
 /*-------------------------------------------------------------------------
@@ -321,7 +320,7 @@ SYSCALL read_from(int new_pid) {
 				kprintf("read_from: bsm_lookup can't find mapping\n");
 				return SYSERR;
 			}
-			
+
 			kprintf("process <%d> reads frame %d from store %d with page offset %d\n", new_pid, i, store, pageth);
 
 			read_bs((char *)pt, store, pageth);

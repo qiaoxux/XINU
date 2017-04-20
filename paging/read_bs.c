@@ -3,7 +3,6 @@
 #include <mark.h>
 #include <bufpool.h>
 #include <proc.h>
-#include <paging.h>
 
 SYSCALL read_bs(char *dst, bsd_t bs_id, int page) {
 	STATWORD ps;

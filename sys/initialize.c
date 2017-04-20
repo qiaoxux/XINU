@@ -10,7 +10,6 @@
 #include <tty.h>
 #include <q.h>
 #include <io.h>
-#include <paging.h>
 
 /* HOLE */
 #define	HOLESTART	(640 * 1024)
@@ -193,7 +192,7 @@ sysinit()
 	pptr->paddr = (WORD) nulluser;
 	pptr->pargs = 0;
 	pptr->pprio = 0;
-	
+
 	pptr->private = 0;
 
 	currpid = NULLPROC;

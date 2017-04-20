@@ -1,7 +1,6 @@
 #include <conf.h>
 #include <kernel.h>
 #include <proc.h>
-#include <paging.h>
 
 /* requests a new mapping of npages with ID map_id */
 int get_bs(bsd_t bs_id, unsigned int npages) {
