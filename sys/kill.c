@@ -15,6 +15,7 @@
  */
 SYSCALL kill(int pid)
 {
+	kprintf("hahahhahahhahahhhahahhahaha\n");
 	STATWORD ps;    
 	struct	pentry	*pptr;		/* points to proc. table for pid*/
 	int	dev, i;
