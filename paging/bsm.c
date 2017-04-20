@@ -211,9 +211,9 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
   	}
  
   	decrease_frm_refcnt(pid, store);
-  	
+
   	if (--bsm_tab[store].bs_nmapping == 0)
-  		release(store);
+  		release_bs(store);
   
   	set_PDBR(pid);
 

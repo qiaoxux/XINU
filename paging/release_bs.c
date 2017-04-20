@@ -13,7 +13,7 @@ SYSCALL release_bs(bsd_t bs_id) {
 		return SYSERR;
 	}
 
-	if (--bsm_tab[bs_id].bs_nmapping != 0) {
+	if (bsm_tab[bs_id].bs_nmapping != 0) {
 		kprintf("release_bs: bs_nmapping is not 0");
 		restore(ps);
 		return SYSERR;
