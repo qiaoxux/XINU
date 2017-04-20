@@ -49,14 +49,6 @@ SYSCALL pfint() {
 
       pd[pd_offset].pd_pres = 1;
       pd[pd_offset].pd_write = 1;
-      pd[pd_offset].pd_user = 0;
-      pd[pd_offset].pd_pwt = 0;
-      pd[pd_offset].pd_pcd = 0;
-      pd[pd_offset].pd_acc = 0;
-      pd[pd_offset].pd_mbz = 0;
-      pd[pd_offset].pd_fmb = 0;
-      pd[pd_offset].pd_global = 0;
-      pd[pd_offset].pd_avail = 0;
       pd[pd_offset].pd_base = p2vno((unsigned long) pt);
     } else {
       frm_tab[pd[pd_offset].pd_base - 1024].fr_refcnt++;
@@ -81,7 +73,6 @@ SYSCALL pfint() {
 
   	pt[pt_offset].pt_pres  = 1;
     pt[pt_offset].pt_write = 1;
-    pt[pt_offset].pt_acc = 1;
     pt[pt_offset].pt_base  = fr2vno(free_frame);
 
   	physical_addr = fr2p(free_frame);
