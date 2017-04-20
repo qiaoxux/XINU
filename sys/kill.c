@@ -41,7 +41,7 @@ SYSCALL kill(int pid)
 
 	// if this process is created by vcreate
 	if (pptr->private == 1) {
-		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mlen);
+		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mnext->mlen);
 	}
 
 	// for(i = 0; i < NFRAMES; i++) {
