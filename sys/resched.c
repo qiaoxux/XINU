@@ -90,7 +90,7 @@ int	resched()
 
 	kprintf("##################### pid <%02d> is switching to pid <%02d> #####################\n", prevpid, currpid);
 
-	if (optr->pstate != PR_FREE)
+	if (optr->pstate != PRFREE)
 		write_back_to_backing_store(prevpid);
 
 	read_from_backing_store(currpid);
