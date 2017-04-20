@@ -180,10 +180,11 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		bsm_tab[source].bs_vpno = vpno;
 		bsm_tab[source].bs_npages = npages;
 	}
-	
-	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
-	proctab[pid].bsmap[source].bs_vpno = vpno;
-	proctab[pid].bsmap[source].bs_npages = npages;
+
+	bs_map_t *bsmap = &proctab[pid].bsmap[source];
+	bsmap->bs_status = BSM_MAPPED;
+	bsmap->bs_vpno = vpno;
+	bsmap->bs_npages = npages;
 	
 	restore(ps);
 	return OK;
