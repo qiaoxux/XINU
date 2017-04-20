@@ -601,6 +601,7 @@ void testSC(){
 
 int main() {
 	test1();
+  int i;
   bs_map_t *bsmap;
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
