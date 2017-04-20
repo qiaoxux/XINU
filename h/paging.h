@@ -49,10 +49,8 @@ typedef struct frame {
   int fr_type;        /* FR_DIR, FR_TBL, FR_PAGE  */
   int fr_dirty;
 
-  int fr_id;  /* frame id */
   int fr_age;   /* for demand paging */
   int fr_upper; /* page -> page table, page table -> page directory */
-  struct frame *fr_next  /* the list of all frames on the same backing store */
 } fr_map_t;
 
 typedef struct {
@@ -62,8 +60,8 @@ typedef struct {
   int bs_npages;			/* number of pages in the store */
 
   int bs_private;        /* created by vcreate or not */
-  int bs_nmapping;    /* how many mappings on this bs */
-  fr_map_t  *bs_frames;  /* the list of frames on this bs */
+  int bs_nmapping;      /* how many mappings on this bs */
+  int bs_frames[1024];    /* the list of frames that maps this bs */
 } bs_map_t;
 
 extern bs_map_t bsm_tab[];
@@ -97,7 +95,6 @@ SYSCALL set_frm(int, int, int);
 SYSCALL reset_frm(int);
 SYSCALL free_frm(int, int);
 SYSCALL find_frm(int, int);
-SYSCALL decrease_frm_refcnt(int, int);
 SYSCALL write_back_to_backing_store(int);
 SYSCALL read_from_backing_store(int);
 

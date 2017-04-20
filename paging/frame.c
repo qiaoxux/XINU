@@ -23,8 +23,6 @@ SYSCALL init_frm() {
 		frm_tab[i].fr_type = -1;
 		frm_tab[i].fr_dirty = 0;
 
-		frm_tab[i].fr_id = i;
-		frm_tab[i].fr_next = NULL;
 		frm_tab[i].fr_upper = -1;
 		frm_tab[i].fr_age = 0;
 	}
@@ -139,8 +137,6 @@ SYSCALL reset_frm(int i) {
 	frm_tab[i].fr_type = -1;
 	frm_tab[i].fr_dirty = 0;
 
-	frm_tab[i].fr_id = i;
-	frm_tab[i].fr_next = NULL;
 	frm_tab[i].fr_upper = -1;
 	frm_tab[i].fr_age = 0;
 
@@ -193,29 +189,6 @@ SYSCALL free_frm(int i, int pid) {
   	return OK;
 }
 
-/*-------------------------------------------------------------------------
- * decrease_frm_refcnt - decrease the reference count for each frame allocated
- * to this process for one particular backing store.
- *-------------------------------------------------------------------------
- */
-SYSCALL decrease_frm_refcnt(int pid, int store)
-{
-	STATWORD ps;
-	disable(ps);
-	
-	fr_map_t *curr;
-	curr = proctab[pid].bsmap[store].bs_frames;
-	
-	while(curr != NULL) {
-		kprintf("curr->fr_id %d\n", curr->fr_id);
-		if(--curr->fr_refcnt <= 0)
-			reset_frm(curr->fr_id);
-		curr = curr->fr_next;
-	}
-
-	restore(ps);
-	return OK;
-}
 
 /*-------------------------------------------------------------------------
  * write_back_to_backing_store

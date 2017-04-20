@@ -102,7 +102,6 @@ SYSCALL free_bsm(int i) {
 
 	bsm_tab[i].bs_nmapping = 0;
 	bsm_tab[i].bs_private = 0;
-	bsm_tab[i].bs_frames = NULL;
 
 	restore(ps);
 	return OK;
@@ -210,7 +209,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 		return SYSERR;
 	}
 
-  	int store, pageth;
+  	int i, store, pageth;
 
 	if(bsm_lookup(pid, vpno, &store, &pageth) == SYSERR){
       	kprintf("bsm_unmap: could not find mapping!\n");
@@ -223,8 +222,14 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
   	proctab[pid].bsmap[store].bs_status = BSM_UNMAPPED;
 	proctab[pid].bsmap[store].bs_vpno = 0;
 	proctab[pid].bsmap[store].bs_npages = 0;
-
-	decrease_frm_refcnt(pid, store);
+	
+	for (i = 0; i < NFRAMES; i++) {
+		if (proctab[pid].bsmap[store].bs_frames[i] == 1) {
+			reset_frm(i);
+			proctab[pid].bsmap[store].bs_frames[i] = 0;
+		}
+	}
+			
 
   	restore(ps);
 	return OK;

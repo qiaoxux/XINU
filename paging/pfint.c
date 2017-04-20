@@ -16,7 +16,7 @@ SYSCALL pfint() {
     disable(ps);
 
     virt_addr_t * vaddr;
-  	int vp,free_frame,store,pageth;
+  	int i, vp,free_frame,store,pageth;
   	unsigned int pd_offset, pt_offset, pg_offset;
   	unsigned long cr2, physical_addr;
     
@@ -59,17 +59,16 @@ SYSCALL pfint() {
   	get_frm(&free_frame);
     set_frm(free_frame, currpid, FR_PAGE);
   	frm_tab[free_frame].fr_vpno = vp;
-  	frm_tab[free_frame].fr_next = proctab[currpid].bsmap[store].bs_frames;
+    frm_tab[free_frame].fr_refcnt++;
   	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
-  	frm_tab[free_frame].fr_refcnt++;
+
+    proctab[currpid].bsmap[store].bs_frames[free_frame] = 1;
     
     if (frm_tab[free_frame].fr_age + 128 > 255) {
       frm_tab[free_frame].fr_age = 255;
     } else {
       frm_tab[free_frame].fr_age += 128;  
     }
-    
-    proctab[currpid].bsmap[store].bs_frames = &frm_tab[free_frame];
 
   	pt[pt_offset].pt_pres  = 1;
     pt[pt_offset].pt_write = 1;
