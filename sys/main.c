@@ -48,7 +48,6 @@ void test1()
     addr1 += NBPG;    //increment by one page each time
   }
 
-  bs_map_t *bsmap;
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
     kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
@@ -63,7 +62,6 @@ void test1()
     addr1 += NBPG;    //increment by one page each time
   }
 
-  bs_map_t *bsmap;
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
     kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
@@ -72,7 +70,6 @@ void test1()
   xmunmap(0x40000000>>12);
   release_bs(MYBS1);
 
-  bs_map_t *bsmap;
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
     kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
