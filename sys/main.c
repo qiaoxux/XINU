@@ -106,9 +106,8 @@ void test2() {
     pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                      i*20, &ret, 0);
     resume(pids[i]);
-
+    kprintf("ret %d\n", ret);
   }
-  
   sleep(3);
   kill(mypid);
   for(i=1;i<=5;i++){
