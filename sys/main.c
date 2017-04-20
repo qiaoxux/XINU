@@ -338,7 +338,7 @@ void proc1_test6(int *ret) {
   int vaddr_beg = 0x40000000;
   int vpno;
   
-  for(i = 0; i < MAX_BSTORE; i++){
+  for(i = 0; i < 8; i++){
     tempaddr = vaddr_beg + 100 * NBPG * i; 
     vaddr = (char *) tempaddr;
     vpno = tempaddr >> 12;
@@ -596,8 +596,8 @@ int main() {
 	// test2();
 	// test3();
 	// test4();
-	test5();
-	// test6();
+	// test5();
+	test6();
 	// test7();
 	// test8();
 	// test9();
