@@ -507,25 +507,25 @@ void testSC_func()
 	int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
 
 	kprintf("are you finished0?\n");
-	for (i=0;i<=maxpage/256;i++){
-		if(get_bs(i,256) == SYSERR)
+	for (i=0;i<=maxpage/128;i++){
+		if(get_bs(i,128) == SYSERR)
 		{
 			kprintf("get_bs call failed \n");
 			return;
 		}
-		if ((ret = xmmap(PAGE0+i*256, i, 256)) == SYSERR) {
-			kprintf("xmmap call failed, virtpage=0x%08x, source=%d, npages=%d, ret=%d\n", PAGE0+i*256, i, 256, ret);
+		if ((ret = xmmap(PAGE0+i*128, i, 128)) == SYSERR) {
+			kprintf("xmmap call failed, virtpage=0x%08x, source=%d, npages=%d, ret=%d\n", PAGE0+i*128, i, 128, ret);
 			return;
 		}
-		for(j=0;j < 256;j++)
+		for(j=0;j < 128;j++)
 		{  
 			//store the virtual addresses
-			addrs[cnt++] = (unsigned long)(PAGE0+(i*256) + j) << 12;
+			addrs[cnt++] = (unsigned long)(PAGE0+(i*128) + j) << 12;
 		}			
 	}
 	kprintf("are you finished1?\n");
 	// kprintf("cnt=%d\n", cnt);
-	// for(i=0; i < 8*256; i++) {  
+	// for(i=0; i < 8*128; i++) {  
 	// 	kprintf("vaddr[%d]=0x%08x\n", i, addrs[i]);
 	// }
 
@@ -545,7 +545,8 @@ void testSC_func()
 
 	//trigger page replacement, this should clear all access bits of all pages
 	//expected output: frame 1032 will be swapped out
-	*((unsigned long *)addrs[maxpage]) = maxpage + 1; 
+	*((unsigned long *)addrs[maxpage]) = maxpage + 1;
+	kprintf("are you finished3?\n");
 	temp = *((unsigned long *)addrs[maxpage]);
 	kprintf("temp=%d\n", temp);
 	if (temp != *((unsigned long *)(zero_addr + 1032 * NBPG))) {
