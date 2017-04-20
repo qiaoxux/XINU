@@ -204,11 +204,11 @@ SYSCALL decrease_frm_refcnt(int pid, int store)
 	disable(ps);
 	
 	fr_map_t *curr;
-	curr = proctab[pid].bsmap[store].frames;
+	curr = proctab[pid].bsmap[store].bs_frames;
 	
 	while(curr != NULL) {
 		if(--curr->fr_refcnt <= 0)
-			reset_frm(curr->fr_id)
+			reset_frm(curr->fr_id);
 		curr = curr->bs_next;
 	}
 
