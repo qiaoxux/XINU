@@ -41,6 +41,14 @@ SYSCALL init_bsmap_for_process(int pid) {
 		return SYSERR;
 	}
 
+	if (pid == 47) {
+		bs_map_t *bsmap;
+		for (i = 0; i < NSTORES; i++) {
+			bsmap = &proctab[49].bsmap[i];
+			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+		}
+	}
+
 	int i;
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
