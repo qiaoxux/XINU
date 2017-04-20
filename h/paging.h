@@ -85,7 +85,7 @@ SYSCALL read_bs(char *, bsd_t, int);
 SYSCALL write_bs(char *, bsd_t, int);
 
 SYSCALL init_bsm();
-SYSCALL init_bsmap_for_process(bs_map_t *);
+SYSCALL init_bsmap_for_process(int);
 SYSCALL get_bsm(int *);
 SYSCALL free_bsm(int);
 SYSCALL bsm_lookup(int, long, int *, int *);
