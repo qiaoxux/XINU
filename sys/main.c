@@ -272,7 +272,7 @@ void proc1_test5(int* ret) {
   }
   if (x == SYSERR)
     return;
-
+kprintf("ret %d\n", ret);
   *x = 100;
   *(x + 1) = 200;
 
