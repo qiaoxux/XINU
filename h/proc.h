@@ -79,7 +79,7 @@ struct	pentry	{
         int     vhpnpages;              /* vheap size                   */
         struct mblock *vmemlist;        /* vheap list              	*/
 
-		bs_map_t bsmap[8];		/* process' backing stores */
+		bs_map_t *bsmap;		/* process' backing stores */
 };
 
 extern	struct	pentry proctab[];
