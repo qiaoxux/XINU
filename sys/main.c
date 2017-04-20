@@ -98,11 +98,11 @@ void test2() {
   if (bsize != SYSERR)
     ret = TFAILED;
 
-  mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
-                 50, &ret, 4);
+  // mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
+  //                50, &ret, 4);
 
-  resume(mypid);
-  sleep(2);
+  // resume(mypid);
+  // sleep(2);
   // for(i=1;i<=5;i++){
   //   pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
   //                    i*20, &ret, 0);
