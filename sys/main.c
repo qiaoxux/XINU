@@ -66,6 +66,7 @@ void proc_test2(int i,int j,int* ret,int s) {
   if (bsize != 50)
     *ret = TFAILED;
   r = xmmap(MYVPNO1, i, j);
+  kprintf("r value %d\n", r);
   if (j<=50 && r == SYSERR){
     *ret = TFAILED;
   }
