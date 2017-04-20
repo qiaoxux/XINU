@@ -40,7 +40,7 @@ SYSCALL kill(int pid)
 	// kprintf("kill process %d \n", pid);
 
 	// if this process is created by vcreate
-	if (pptr->private == 1) {
+	if (pptr->vheap != 0) {
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mnext->mlen);
 	}
 
