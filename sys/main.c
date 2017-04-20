@@ -268,7 +268,7 @@ void proc1_test5(int* ret) {
   x = vgetmem(1024);
   kprintf("x %d\n", x);
   if ((x ==SYSERR) || (x < 0x1000000)
-      || (x > 0x1000000 + 128 * NBPG - 1024)) {
+      || (x > 0x1000000 + 256 * NBPG - 1024)) {
     *ret = TFAILED;
   }
   kprintf("ret %d\n", ret);
@@ -283,7 +283,7 @@ void proc1_test5(int* ret) {
   }
   vfreemem(x, 1024);
 
-  x = vgetmem(129*NBPG); //try to acquire a space that is bigger than size of one backing store
+  x = vgetmem(257*NBPG); //try to acquire a space that is bigger than size of one backing store
   if (x != SYSERR) {
     *ret = TFAILED;
   }
