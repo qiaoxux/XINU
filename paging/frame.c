@@ -209,7 +209,7 @@ SYSCALL decrease_frm_refcnt(int pid, int store)
 	while(curr != NULL) {
 		if(--curr->fr_refcnt <= 0)
 			reset_frm(curr->fr_id);
-		curr = curr->bs_next;
+		curr = curr->fr_next;
 	}
 
 	restore(ps);
