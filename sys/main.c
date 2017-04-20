@@ -105,10 +105,7 @@ void test2() {
 
   resume(mypid);
   sleep(2);
-  for (i = 0; i < NSTORES; i++) {
-      bsmap = &proctab[49].bsmap[i];
-      kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
-    }
+
   for(i=1;i<=5;i++){
     pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                      i*20, &ret, 0);
