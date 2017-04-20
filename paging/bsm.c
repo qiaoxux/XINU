@@ -16,7 +16,7 @@ SYSCALL init_bsm() {
 	for (i = 0; i < NSTORES; i++) {
 		bsm_tab[i].bs_status = BSM_UNMAPPED;
 		bsm_tab[i].bs_pid = -1;
-		bsm_tab[i].bs_vpno = 0;
+		bsm_tab[i].bs_vpno = 1000;
 		bsm_tab[i].bs_npages = 0;
 		bsm_tab[i].bs_sem =	-1;
 
@@ -41,7 +41,7 @@ SYSCALL init_bsmap_for_process(bs_map_t *bsmap) {
 	for (i = 0; i < NSTORES; ++i) {
 		bsmap[i].bs_status = BSM_UNMAPPED;
 		bsmap[i].bs_pid = -1;
-		bsmap[i].bs_vpno = 0;
+		bsmap[i].bs_vpno = 100;
 		bsmap[i].bs_npages = 0;
 		bsmap[i].bs_sem = -1;
 
@@ -92,7 +92,7 @@ SYSCALL free_bsm(int i) {
 
 	bsm_tab[i].bs_status = BSM_UNMAPPED;
 	bsm_tab[i].bs_pid = -1;
-	bsm_tab[i].bs_vpno = 0;
+	bsm_tab[i].bs_vpno = 10;
 	bsm_tab[i].bs_npages = 0;
 	bsm_tab[i].bs_sem =	-1;
 
@@ -184,10 +184,6 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
 	proctab[pid].bsmap[source].bs_vpno = vpno;
 	proctab[pid].bsmap[source].bs_npages = npages;
-
-	bs_map_t *bs;
-	bs = &proctab[pid].bsmap[source];
-	kprintf("bsm_map: %d %d %d %d %d \n", pid, source, bs->bs_status, bs->bs_vpno, bs->bs_npages);
 	
 	restore(ps);
 	return OK;
