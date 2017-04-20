@@ -49,19 +49,22 @@ SYSCALL init_bsmap_for_process(int pid) {
 			bsmap = &proctab[49].bsmap[i];
 			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 		}
+
+		for (i = 0; i < NSTORES; i++) {
+			bsmap = &proctab[47].bsmap[i];
+			kprintf("bsm_lookup: %d %d %d %d %d \n", 47, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+		}
 	}
 
 	kprintf("%d\n", pid);
-	bs_map_t *bsmap;
 	for (i = 0; i < NSTORES; i++) {
-		bsmap = &proctab[pid].bsmap[i];
-		bsmap->bs_status = BSM_UNMAPPED;
-		bsmap->bs_pid = pid;
-		bsmap->bs_vpno = 0;
-		bsmap->bs_npages = 0;
+		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
+		proctab[pid].bsmap[i].bs_pid = pid;
+		proctab[pid].bsmap[i].bs_vpno = 0;
+		proctab[pid].bsmap[i].bs_npages = 0;
 
-		bsmap->bs_nmapping = 0;
-		bsmap->bs_private = 0;
+		proctab[pid].bsmap[i].bs_nmapping = 0;
+		proctab[pid].bsmap[i].bs_private = 0;
 	}
 
 	if (pid == 47) {
@@ -69,6 +72,10 @@ SYSCALL init_bsmap_for_process(int pid) {
 		for (i = 0; i < NSTORES; i++) {
 			bsmap = &proctab[49].bsmap[i];
 			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+		}
+		for (i = 0; i < NSTORES; i++) {
+			bsmap = &proctab[47].bsmap[i];
+			kprintf("bsm_lookup: %d %d %d %d %d \n", 47, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 		}
 	}
 	
