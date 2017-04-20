@@ -98,11 +98,7 @@ void test2() {
   if (bsize != SYSERR)
     ret = TFAILED;
 
-  bs_map_t *bsmap;
-  for (i = 0; i < NSTORES; i++) {
-    bsmap = &proctab[49].bsmap[i];
-    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
-  }
+  
 
   // mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
   //                50, &ret, 4);
@@ -605,6 +601,11 @@ void testSC(){
 
 int main() {
 	test1();
+  bs_map_t *bsmap;
+  for (i = 0; i < NSTORES; i++) {
+    bsmap = &proctab[49].bsmap[i];
+    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+  }
 	test2();
 	// test3();
 	// test4();
