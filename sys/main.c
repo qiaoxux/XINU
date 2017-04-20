@@ -63,7 +63,6 @@ void proc_test2(int i,int j,int* ret,int s) {
   int bsize;
   int r;
   bsize = get_bs(i, j);
-  kprintf("bsize %d\n", bsize);
   if (bsize != 50)
     *ret = TFAILED;
   r = xmmap(MYVPNO1, i, j);
@@ -102,7 +101,6 @@ void test2() {
                  50, &ret, 4);
 
   resume(mypid);
-  kprintf("0 ret %d\n", ret);
   sleep(2);
   for(i=1;i<=5;i++){
     pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
