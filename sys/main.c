@@ -37,8 +37,6 @@ void test1()
     return;
   }
 
-  bs_map_t *bsmap;
-
   for (i = 0; i < 26; i++) {
     *addr1 = 'A'+i;   //trigger page fault for every iteration
     addr1 += NBPG;    //increment by one page each time
@@ -54,10 +52,6 @@ void test1()
   }
 
   xmunmap(0x40000000>>12);
-  for (i = 0; i < NSTORES; i++) {
-    bsmap = &proctab[49].bsmap[i];
-    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
-  }
   release_bs(MYBS1);
   
   kprintf("\t\tPASSED!\n");
@@ -105,24 +99,22 @@ void test2() {
   if (bsize != SYSERR)
     ret = TFAILED;
 
-  
+  mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
+                 50, &ret, 4);
 
-  // mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
-  //                50, &ret, 4);
-
-  // resume(mypid);
-  // sleep(2);
-  // for(i=1;i<=5;i++){
-  //   pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
-  //                    i*20, &ret, 0);
-  //   resume(pids[i]);
-  //   kprintf("%d \n", i);
-  // }
-  // sleep(3);
-  // kill(mypid);
-  // for(i=1;i<=5;i++){
-  //   kill(pids[i]);
-  // }
+  resume(mypid);
+  sleep(2);
+  for(i=1;i<=5;i++){
+    pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
+                     i*20, &ret, 0);
+    resume(pids[i]);
+    kprintf("%d \n", i);
+  }
+  sleep(3);
+  kill(mypid);
+  for(i=1;i<=5;i++){
+    kill(pids[i]);
+  }
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
