@@ -38,19 +38,10 @@ void test1()
   }
 
   bs_map_t *bsmap;
-  for (i = 0; i < NSTORES; i++) {
-    bsmap = &proctab[49].bsmap[i];
-    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
-  }
 
   for (i = 0; i < 26; i++) {
     *addr1 = 'A'+i;   //trigger page fault for every iteration
     addr1 += NBPG;    //increment by one page each time
-  }
-
-  for (i = 0; i < NSTORES; i++) {
-    bsmap = &proctab[49].bsmap[i];
-    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
   }
 
   addr1 = (char*)0x40000000;
@@ -62,18 +53,14 @@ void test1()
     addr1 += NBPG;    //increment by one page each time
   }
 
+  xmunmap(0x40000000>>12);
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
     kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
   }
-
-  xmunmap(0x40000000>>12);
   release_bs(MYBS1);
 
-  for (i = 0; i < NSTORES; i++) {
-    bsmap = &proctab[49].bsmap[i];
-    kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
-  }
+  
   kprintf("\t\tPASSED!\n");
   return;
 }
