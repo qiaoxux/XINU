@@ -11,40 +11,44 @@ extern struct pentry proctab[];
  *------------------------------------------------------------------------
  */
 SYSCALL	vfreemem(block, size)
-	struct mblock *block;
+	struct	mblock	*block;
 	unsigned size;
-{
-	STATWORD ps;    
+{	 
+	STATWORD ps;
+	disable(ps);
+
 	struct	mblock	*p, *q;
 	unsigned top;
 
-	if (size == 0 || size > 256 * NBPG)
+	struct	mblock *vmemlist;
+	vmemlist = proctab[currpid].vmemlist;
+	
+	if (size == 0 || size > NPGPBS*NBPG)
 		return(SYSERR);
-	if ( (unsigned) block < (unsigned) 4096 * NBPG || 
-		(unsigned) block > (unsigned)(proctab[currpid].vhpno + proctab[currpid].vhpnpages) * NBPG)
+	if ( (unsigned) block < (unsigned) 4096*NBPG || (unsigned) block > (unsigned)(proctab[currpid].vhpno + proctab[currpid].vhpnpages)*NBPG)
 		return(SYSERR);
+
 	size = (unsigned)roundmb(size);
-	
-	disable(ps);
-	
-	struct mblock *vmemlist = proctab[currpid].vmemlist;
-	for( p = vmemlist->mnext,q = &vmemlist; p != (struct mblock *) NULL && p < block; q = p, p = p->mnext);
-	if (((top = q->mlen + (unsigned)q) > (unsigned)block && q!= &vmemlist) ||
-	    (p != NULL && (size+(unsigned)block) > (unsigned)p)) {
+
+	for( p=(vmemlist->mnext),q=vmemlist; p != (struct mblock *) NULL && p < block; q = p, p = p->mnext );
+	if (((top=q->mlen+(unsigned)q)>(unsigned)block && q!= vmemlist) ||
+	    (p!=NULL && (size+(unsigned)block) > (unsigned)p )) {
 		restore(ps);
 		return(SYSERR);
 	}
 
-	if ( q!= &vmemlist && top == (unsigned)block ) {
+	if ( q!= vmemlist && top == (unsigned)block ) {
+		
 		q->mlen += size;
-	} else {
+	}
+	else {
 		block->mlen = size;
 		block->mnext = p;
 		q->mnext = block;
 		q = block;
 	}
 
-	if ((unsigned)( q->mlen + (unsigned)q ) == (unsigned)p) {
+	if ( (unsigned)( q->mlen + (unsigned)q ) == (unsigned)p) {
 		q->mlen += p->mlen;
 		q->mnext = p->mnext;
 	}

@@ -294,7 +294,7 @@ void proc1_test5(int* ret) {
   z = vgetmem(50*NBPG);
   if ((x == SYSERR) || (y == SYSERR) || (z != SYSERR)){
     *ret = TFAILED;
-    kprintf("x y z %d %d %d\n", x, y, z);
+    // kprintf("x y z %d %d %d\n", x, y, z);
     if (x != SYSERR) vfreemem(x, 50*NBPG);
     if (y != SYSERR) vfreemem(y, 50*NBPG);
     if (z != SYSERR) vfreemem(z, 50*NBPG);
