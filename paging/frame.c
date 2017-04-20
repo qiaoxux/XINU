@@ -211,7 +211,7 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 			pt = (pt_t *) fr2p(i);
 
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
-				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping\n");
+				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping with %d %d\n", old_pid, frm_tab[i].fr_vpno);
 				kill(old_pid);
 				restore(ps);
 				return SYSERR;
@@ -254,7 +254,7 @@ SYSCALL read_from_backing_store(int new_pid) {
 		if (proctab[new_pid].bsmap[i].bs_status == BSM_MAPPED) {
 			vpno = proctab[new_pid].bsmap[i].bs_vpno;
 			if( SYSERR == bsm_lookup(new_pid, vpno, &store, &pageth)) {
-				kprintf("read_from_backing_store: bsm_lookup can't find mapping\n");
+				kprintf("read_from_backing_store: bsm_lookup can't find mapping with %d %d\n", new_pid, vpno);
 				kill(new_pid);
 				restore(ps);
 				return SYSERR;
