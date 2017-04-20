@@ -11,14 +11,14 @@
  */
 SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 {
-  STATWORD ps;
-  disable(ps);
+	STATWORD ps;
+	disable(ps);
 
 	if (bsm_map(currpid, virtpage, source, npages) == SYSERR) {
-  		kprintf("xmmap could not create mapping!\n");
-  		restore(ps);
- 		return SYSERR;
- 	}
+		kprintf("xmmap could not create mapping!\n");
+		restore(ps);
+		return SYSERR;
+	}
 
 	restore(ps);
 	return OK;
@@ -30,7 +30,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
  */
 SYSCALL xmunmap(int virtpage)
 {
-  STATWORD ps;
+  	STATWORD ps;
 	disable(ps);
  	
  	if(bsm_unmap(currpid, virtpage, 0) == SYSERR){

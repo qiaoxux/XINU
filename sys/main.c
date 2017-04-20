@@ -59,7 +59,6 @@ void test1()
     kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
   }
   release_bs(MYBS1);
-
   
   kprintf("\t\tPASSED!\n");
   return;

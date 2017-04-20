@@ -224,6 +224,8 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	proctab[pid].bsmap[store].bs_vpno = 0;
 	proctab[pid].bsmap[store].bs_npages = 0;
 
+	decrease_frm_refcnt(pid, store);
+
   	restore(ps);
 	return OK;
 }

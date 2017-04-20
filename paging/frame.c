@@ -194,6 +194,29 @@ SYSCALL free_frm(int i, int pid) {
 }
 
 /*-------------------------------------------------------------------------
+ * decrease_frm_refcnt - decrease the reference count for each frame allocated
+ * to this process for one particular backing store.
+ *-------------------------------------------------------------------------
+ */
+SYSCALL decrease_frm_refcnt(int pid, int store)
+{
+	STATWORD ps;
+	disable(ps);
+	
+	fr_map_t *curr;
+	curr = proctab[pid].bsmap[store].frames;
+	
+	while(curr != NULL) {
+		if(--curr->fr_refcnt <= 0)
+			reset_frm(curr->fr_id)
+		curr = curr->bs_next;
+	}
+
+	restore(ps);
+	return OK;
+}
+
+/*-------------------------------------------------------------------------
  * write_back_to_backing_store
  *-------------------------------------------------------------------------
  */
