@@ -67,7 +67,7 @@ SYSCALL get_frm(int* avail) {
 				if (pt->pt_acc == 1) {
 					pt->pt_acc = 0;
 				} else {
-					free_frm(currqueue);
+					free_frm(currqueue, currpid);
 					*avail = currqueue;
 
 					restore(ps);
@@ -95,7 +95,7 @@ SYSCALL get_frm(int* avail) {
 			frame_idx = pq[frame_idx].qprev;
 		}
 
-		free_frm(fit_frame);
+		free_frm(fit_frame, currpid);
 		*avail = fit_frame;
 		
 		restore(ps);
@@ -107,23 +107,18 @@ SYSCALL get_frm(int* avail) {
 }
 
 /*-------------------------------------------------------------------------
- * init_frm_after_get - initialize a frame after get_frm
+ * set_frm - initialize a frame after get_frm
  *-------------------------------------------------------------------------
  */
-SYSCALL init_frm_after_get(int i, int pid, int type) {
+SYSCALL set_frm(int i, int pid, int type) {
 	STATWORD ps;
     disable(ps);
 
 	frm_tab[i].fr_status = FRM_MAPPED;
 	frm_tab[i].fr_pid = pid;
-	frm_tab[i].fr_refcnt = 1;
 	frm_tab[i].fr_type = type;
-	frm_tab[i].fr_dirty = 0;
 
-	frm_tab[i].fr_id = i;
-	frm_tab[i].fr_next = NULL;
-	frm_tab[i].fr_upper = -1;
-	frm_tab[i].fr_age = 0;
+	frm_tab[i].fr_refcnt++;
 
 	restore(ps);
 	return OK;
@@ -157,7 +152,7 @@ SYSCALL reset_frm(int i) {
  * free_frm - free a frame 
  *-------------------------------------------------------------------------
  */
-SYSCALL free_frm(int i) {
+SYSCALL free_frm(int i, int pid) {
 	STATWORD ps;
     disable(ps);
 
@@ -166,32 +161,29 @@ SYSCALL free_frm(int i) {
 	pt_t *pt;
 	pd_t *pd;
 	
-	pt = fr2p(i);
-	
+	pt_e = (pt_t*) fr2p(i);
+	pd_e = (pd_t*) fr2p(i);
 	upper = frm_tab[i].fr_upper;
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
-		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
+		if(bsm_lookup(pid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
 			kprintf("free_frm: can't find map\n");
 			restore(ps);
 			return SYSERR;
 		}
 		// kprintf("free_frm %d %d %d %d\n", currpid, frm_tab[i].fr_vpno, store, pageth);
 		
-    	write_bs((char *)pt, store, pageth);
-    	init_pt(pt);
+    	write_bs((char *)pt_e, store, pageth);
     	reset_frm(i);
 
 		frm_tab[upper].fr_refcnt--;
-	
 	} else if(frm_tab[i].fr_type == FR_TBL) {
-    	init_pt(pt);
+    	init_pt(pt_e);
     	reset_frm(i);
 
 		frm_tab[upper].fr_refcnt--;
 	} else {
-		pd = fr2p(i);
-  		init_pd(pd);
+  		init_pd(pd_e);
   		reset_frm(i);	
 	}
 
@@ -202,63 +194,15 @@ SYSCALL free_frm(int i) {
 }
 
 /*-------------------------------------------------------------------------
- * find_frm - find a frame using bs_id and bs_pageth
+ * write_back_to_backing_store
  *-------------------------------------------------------------------------
  */
-SYSCALL find_frm(int pid, int vpno) {
-	STATWORD ps;
-    disable(ps);
-
-    int i;
-    for (i = 0; i < NFRAMES; i++) {
-        if (frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && 
-        	frm_tab[i].fr_pid == pid && frm_tab[i].fr_vpno == vpno) {
-            restore(ps);
-            return i;
-        }
-
-    }
-
-    restore(ps);
-    return -1;
-}
-
-/*-------------------------------------------------------------------------
- * dec_frm_refcnt - decrease the reference count for each frame allocated
- * to this process for one particular backing store.
- *-------------------------------------------------------------------------
- */
-SYSCALL decrease_frm_refcnt(int pid, int store) {
-	STATWORD ps;
-    disable(ps);
-
- 	fr_map_t *curr, *prev;
- 	curr = proctab[pid].bsmap[store].bs_frames;
-
- 	while(curr != NULL) {
- 		curr->fr_refcnt--;
- 		if(curr->fr_refcnt <= 0) {
- 			prev = curr;
- 			free_frm(prev->fr_id);
- 		}
- 		curr = curr->fr_next;
- 	}
-
- 	restore(ps);
- 	return OK;
-}
-
-/*-------------------------------------------------------------------------
- * write_back
- *-------------------------------------------------------------------------
- */
-SYSCALL write_back(int old_pid) {
+SYSCALL write_back_to_backing_store(int old_pid) {
 	
 	STATWORD ps;
 	disable(ps);
 
 	int i, upper, u_upper, store, pageth;
-	unsigned int pd_offset, pt_offset, pg_offset;
 
 	pd_t *pd;	
 	pt_t *pt;
@@ -268,10 +212,9 @@ SYSCALL write_back(int old_pid) {
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == old_pid) {
 			pt = (pt_t *) fr2p(i);
-			upper = frm_tab[i].fr_upper;
-		
+
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
-				kprintf("write_back: bsm_lookup can't find mapping\n");
+				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping\n");
 				kill(old_pid);
 				restore(ps);
 				return SYSERR;
@@ -281,15 +224,15 @@ SYSCALL write_back(int old_pid) {
 
 			write_bs((char *)pt, store, pageth);
 
-	    	init_pt(pt);
-			
-			if(--frm_tab[upper].fr_refcnt <= 0) {	
+			upper = frm_tab[i].fr_upper;
+			if(--frm_tab[upper].fr_refcnt <= 0) {
+				init_pt(pt);
+				
 				u_upper = frm_tab[upper].fr_upper;
-	    		
-	    		if(--frm_tab[u_upper].fr_refcnt <= 0)
+	    		if(--frm_tab[u_upper].fr_refcnt <= 0) {
 	    			init_pd(pd);
+	    		}
 			}
-
  		}
  	}
 	
@@ -298,40 +241,34 @@ SYSCALL write_back(int old_pid) {
 }
 
 /*-------------------------------------------------------------------------
- * read_from
+ * read_from_backing_store
  *-------------------------------------------------------------------------
  */
-SYSCALL read_from(int new_pid) {
+SYSCALL read_from_backing_store(int new_pid) {
 	STATWORD ps;
 	disable(ps);
 
-	int i, upper, u_upper, store, pageth;
-	unsigned int pd_offset, pt_offset, pg_offset;
+	int i, store, pageth;
+	unsigned long vpno;
 
-	pd_t *pd;	
-	pt_t *pt;
+	pt_t *pt_e;
 
-	pd = proctab[new_pid].pdbr;
-
- 	for(i = 0; i < NFRAMES; i++) {
- 		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == new_pid) {
-			pt = (pt_t *) fr2p(i);
-			upper = frm_tab[i].fr_upper;
-		
-			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
+	for (i = 0; i < NSTORES; i++) {
+		if (proctab[new_pid].bsmap[i].bs_status == BSM_MAPPED) {
+			vpno = proctab[new_pid].bsmap[i].bs_vpno;
+			if( SYSERR == bsm_lookup(new_pid, vpno, &store, &pageth)) {
+				kprintf("read_from_backing_store: bsm_lookup can't find mapping\n");
 				kill(new_pid);
-				kprintf("read_from: bsm_lookup can't find mapping\n");
 				restore(ps);
 				return SYSERR;
 			}
 
 			kprintf("process <%d> reads frame %d from store %d with page offset %d\n", new_pid, i, store, pageth);
 
-			read_bs((char *)pt, store, pageth);
-			
-			frm_tab[upper].fr_refcnt++;
- 		}
- 	}
+			pt_e = (pt_t*) vno2p(vpno);
+			read_bs((char *)pt_e, store, pageth);
+		}
+	}
 	
  	restore(ps);
     return OK;

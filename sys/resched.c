@@ -26,7 +26,7 @@ int	resched()
 
 	disable(PS);
 	
-	int opid = currpid;
+	int prevpid = currpid;
 
 	/* no switch needed if current process priority higher than next*/
 
@@ -88,12 +88,14 @@ int	resched()
 	PrintSaved(nptr);
 #endif
 
+	kprintf("##################### pid <%02d> is switching to pid <%02d> #####################\n", prevpid, currpid);
+
+	if (optr->pstate != PR_FREE)
+		write_back_to_backing_store(prevpid);
+
+	read_from_backing_store(currpid);
+
 	set_PDBR(currpid);
-
-	kprintf("##################### pid <%02d> is switching to pid <%02d> #####################\n", opid, currpid);
-
-	write_back(opid);
-	read_from(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 

@@ -93,13 +93,13 @@ SYSCALL bsm_unmap(int, int, int);
 
 SYSCALL init_frm();
 SYSCALL get_frm(int *);
-SYSCALL init_frm_after_get(int, int, int);
+SYSCALL set_frm(int, int, int);
 SYSCALL reset_frm(int);
-SYSCALL free_frm(int);
+SYSCALL free_frm(int, int);
 SYSCALL find_frm(int, int);
 SYSCALL decrease_frm_refcnt(int, int);
-SYSCALL write_back(int);
-SYSCALL read_from(int);
+SYSCALL write_back_to_backing_store(int);
+SYSCALL read_from_backing_store(int);
 
 SYSCALL init_4_global_page_tables();
 SYSCALL init_page_directory_for_process(int);

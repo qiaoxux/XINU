@@ -36,25 +36,26 @@ SYSCALL kill(int pid)
 	dev = pptr->ppagedev;
 	if (! isbaddev(dev) )
 		close(dev);
-	
-	// kprintf("kill process %d \n", pid);
+
+	for(i = 0; i < NFRAMES; i++) {
+		if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
+			free_frm(i, pid);
+		}
+	}
+
+	for(i = 0; i < 8; i++) {
+		if(proctab[pid].bsmap[i].bs_status == BSM_MAPPED) {
+			bsm_tab[i].bs_nmapping--;
+
+		  	proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
+			proctab[pid].bsmap[i].bs_vpno = 0;
+			proctab[pid].bsmap[i].bs_npages = 0;
+		}
+	}
 
 	// if this process is created by vcreate
 	if (pptr->vhpno != 0) {
 		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mnext->mlen);
-	}
-
-	// for(i = 0; i < NFRAMES; i++) {
-	// 	if(frm_tab[i].fr_status = FRM_MAPPED && frm_tab[i].fr_pid == pid) {
-	// 		// kprintf("%dth entering free_frm\n", i);
-	// 		free_frm(i);
-	// 	}
-	// }
-
-	for(i = 0; i < 8; i++) {
-		if(proctab[pid].bsmap[i].bs_status == BSM_MAPPED) {
-			free_bsm(i);
-		}
 	}
 
 	send(pptr->pnxtkin, pid);

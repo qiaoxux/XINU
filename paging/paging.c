@@ -15,7 +15,7 @@ SYSCALL init_4_global_page_tables() {
 	int i, j, free_frame;
 	for (i = 0; i < 4; i++) {
 		get_frm(&free_frame);
-		init_frm_after_get(free_frame, NULLPROC, FR_TBL);
+		set_frm(free_frame, NULLPROC, FR_TBL);
 
 		pt_t *new_pt = fr2p(free_frame);
 		for (j = 0; j < 1024; ++j) {
@@ -48,7 +48,7 @@ SYSCALL init_page_directory_for_process(int pid) {
 
 	int i, free_frame;
 	get_frm(&free_frame);
-	init_frm_after_get(free_frame, pid, FR_DIR);
+	set_frm(free_frame, pid, FR_DIR);
 	
 	pd_t *new_pd = fr2p(free_frame);
 	init_pd(new_pd);

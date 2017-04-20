@@ -36,10 +36,16 @@ SYSCALL init_bsmap_for_process(int pid) {
 	STATWORD ps;
   	disable(ps);
 
+  	if(isbadpid(pid)) {
+		kprintf("init_bsmap_for_process: wrong process id\n");
+		restore(ps);
+		return SYSERR;
+	}
+
 	int i;
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
-		proctab[pid].bsmap[i].bs_pid = -1;
+		proctab[pid].bsmap[i].bs_pid = pid;
 		proctab[pid].bsmap[i].bs_vpno = 0;
 		proctab[pid].bsmap[i].bs_npages = 0;
 
@@ -97,15 +103,6 @@ SYSCALL free_bsm(int i) {
 	bsm_tab[i].bs_nmapping = 0;
 	bsm_tab[i].bs_private = 0;
 	bsm_tab[i].bs_frames = NULL;
-	
-	proctab[currpid].bsmap[i].bs_status = BSM_UNMAPPED;
-	proctab[currpid].bsmap[i].bs_pid = -1;
-	proctab[currpid].bsmap[i].bs_vpno = 0;
-	proctab[currpid].bsmap[i].bs_npages = 0;
-
-	proctab[currpid].bsmap[i].bs_nmapping = 0;
-	proctab[currpid].bsmap[i].bs_private = 0;
-	proctab[currpid].bsmap[i].bs_frames = NULL;
 
 	restore(ps);
 	return OK;
@@ -131,8 +128,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 		bsmap = &proctab[pid].bsmap[i];
 		// kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 
-		if (bsmap->bs_status == BSM_MAPPED && vpno >= bsmap->bs_vpno && 
-			vpno < bsmap->bs_vpno + bsmap->bs_npages) {
+		if (bsmap->bs_status == BSM_MAPPED && vpno >= bsmap->bs_vpno && vpno < bsmap->bs_vpno + bsmap->bs_npages) {
 			*store = i;
 			*pageth = vpno - bsmap->bs_vpno;
 
@@ -151,7 +147,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
  */
 SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	STATWORD ps;
-  	disable(ps);
+  	disable(ps);	
 
 	if(isbadpid(pid)) {
 		kprintf("bsm_map: wrong process id\n");
@@ -171,18 +167,26 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		return SYSERR;
 	}
 
-	if (npages <= 0 || npages > 256) {
+	if (npages > bsm_tab[source].bs_npages || npages <= 0 || npages > 256) {
 		kprintf("bsm_map: wrong npages\n");
 		restore(ps);
 		return SYSERR;
 	}
 
-	if (++bsm_tab[source].bs_nmapping == 1) {
-		bsm_tab[source].bs_status = BSM_MAPPED;
-		bsm_tab[source].bs_pid = pid;
-		bsm_tab[source].bs_vpno = vpno;
-		bsm_tab[source].bs_npages = npages;
+	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
+		kprintf("bsm_map: backing store is not mapped\n");
+		restore(ps);
+ 		return SYSERR;
 	}
+
+	if (bsm_tab[source].bs_private == 1) {
+		kprintf("bsm_map: virtual heap\n");
+		restore(ps);
+		return SYSERR;
+	}
+
+	if (++bsm_tab[source].bs_nmapping == 1)
+		bsm_tab[source].bs_npages = npages;
 	
 	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
 	proctab[pid].bsmap[source].bs_vpno = vpno;
@@ -200,7 +204,11 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	STATWORD ps;
   	disable(ps);
 
-  	kprintf("bsm_unmap: %d %d\n", pid, vpno);
+  	if (vpno < 4096) {
+		kprintf("bsm_unmap: wrong virtual page number\n");
+		restore(ps);
+		return SYSERR;
+	}
 
   	int store, pageth;
 
@@ -209,13 +217,12 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
       	restore(ps);
       	return SYSERR;
   	}
- 
-  	decrease_frm_refcnt(pid, store);
 
-  	if (--bsm_tab[store].bs_nmapping == 0)
-  		release_bs(store);
-  
-  	set_PDBR(pid);
+  	bsm_tab[store].bs_nmapping--;
+
+  	proctab[pid].bsmap[store].bs_status = BSM_UNMAPPED;
+	proctab[pid].bsmap[store].bs_vpno = 0;
+	proctab[pid].bsmap[store].bs_npages = 0;
 
   	restore(ps);
 	return OK;

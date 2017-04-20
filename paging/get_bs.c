@@ -28,11 +28,7 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 	} else {
 		bsm_tab[bs_id].bs_status = BSM_MAPPED;
 		bsm_tab[bs_id].bs_pid = currpid;
-		bsm_tab[bs_id].bs_vpno = 0;
 		bsm_tab[bs_id].bs_npages = npages;
-
-		bsm_tab[bs_id].bs_nmapping = 0;
-		bsm_tab[bs_id].bs_frames = NULL;
 	}
 
 	restore(ps);
