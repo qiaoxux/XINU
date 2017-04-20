@@ -75,6 +75,7 @@ SYSCALL init_page_directory_for_process(int pid) {
 			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 		}
 	}
+	kprintf("%d\n", pid);
 	init_bsmap_for_process(pid);
 	if (pid == 47) {
 		bs_map_t *bsmap;

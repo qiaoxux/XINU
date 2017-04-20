@@ -99,7 +99,7 @@ void test2() {
   bsize = get_bs(1, 0);
   if (bsize != SYSERR)
     ret = TFAILED;
-
+  kprintf("0\n");
   mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                  50, &ret, 4);
 
@@ -107,6 +107,7 @@ void test2() {
   sleep(2);
   
   for(i=1;i<=5;i++){
+    kprintf("%d \n", i);
     pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                      i*20, &ret, 0);
     resume(pids[i]);
