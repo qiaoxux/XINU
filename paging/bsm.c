@@ -21,7 +21,6 @@ SYSCALL init_bsm() {
 
 		bsm_tab[i].bs_nmapping = 0;
 		bsm_tab[i].bs_private = 0;
-		bsm_tab[i].bs_frames = NULL;
 	}
 
 	restore(ps);
@@ -51,7 +50,6 @@ SYSCALL init_bsmap_for_process(int pid) {
 
 		proctab[pid].bsmap[i].bs_nmapping = 0;
 		proctab[pid].bsmap[i].bs_private = 0;
-		proctab[pid].bsmap[i].bs_frames = NULL;
 	}
 	
 	restore(ps);
