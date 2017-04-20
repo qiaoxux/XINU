@@ -67,6 +67,8 @@ typedef struct bs {
   fr_map_t  *bs_frames;  /* the list of frames on this bs */
 } bs_map_t;
 
+extern bs_map_t;
+
 extern bs_map_t bsm_tab[];
 extern fr_map_t frm_tab[];
 
