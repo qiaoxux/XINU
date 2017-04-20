@@ -200,7 +200,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	STATWORD ps;
   	disable(ps);
 
-  	kprintf("bsm_map: %d %d\n", pid, vpno);
+  	kprintf("bsm_unmap: %d %d\n", pid, vpno);
 
   	int store, pageth;
 
