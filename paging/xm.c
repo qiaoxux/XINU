@@ -20,7 +20,7 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 		return SYSERR;
 	}
 
-  	if (source < 0 || source > 7) {
+  	if (source < 0 || source >= NSTORES) {
 		kprintf("xmmap: wrong source\n");
 		return SYSERR;
 	}
@@ -30,12 +30,20 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 		return SYSERR;
 	}
 
-	if (bsm_tab[source].bs_status == BSM_MAPPED && bsm_tab[source].bs_private == 0) {
-		if (bsm_map(currpid, virtpage, source, npages) == SYSERR) {
-      		kprintf("xmmap could not create mapping!\n");
-     		return SYSERR;
-     	}
+	if (bsm_tab[source].private == 1) {
+		kprintf("xmmap: virtual heap\n");
+		return SYSERR;
 	}
+
+	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
+		kprintf("xmmap: bs is not mapped\n");
+ 		return SYSERR;
+	}
+
+	if (bsm_map(currpid, virtpage, source, npages) == SYSERR) {
+  		kprintf("xmmap could not create mapping!\n");
+ 		return SYSERR;
+ 	}
 
 	restore(ps);
 	return OK;
