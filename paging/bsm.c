@@ -42,7 +42,7 @@ SYSCALL init_bsmap_for_process(int pid) {
 	}
 
 
-
+	int i;
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
 		proctab[pid].bsmap[i].bs_pid = pid;
