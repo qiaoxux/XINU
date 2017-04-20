@@ -33,21 +33,21 @@ SYSCALL init_bsm() {
  * init_bsm_for_process - initialize backing store map table for process
  *-------------------------------------------------------------------------
  */
-SYSCALL init_bsmap_for_process(bs_map_t *bsmap) {
+SYSCALL init_bsmap_for_process(int pid) {
 	STATWORD ps;
   	disable(ps);
 
 	int i;
-	for (i = 0; i < NSTORES; ++i) {
-		bsmap[i].bs_status = BSM_UNMAPPED;
-		bsmap[i].bs_pid = -1;
-		bsmap[i].bs_vpno = 100;
-		bsmap[i].bs_npages = 0;
-		bsmap[i].bs_sem = -1;
+	for (i = 0; i < NSTORES; i++) {
+		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
+		proctab[pid].bsmap[i].bs_pid = -1;
+		proctab[pid].bsmap[i].bs_vpno = 100;
+		proctab[pid].bsmap[i].bs_npages = 0;
+		proctab[pid].bsmap[i].bs_sem = -1;
 
-		bsmap[i].bs_nmapping = 0;
-		bsmap[i].bs_private = 0;
-		bsmap[i].bs_frames = NULL;
+		proctab[pid].bsmap[i].bs_nmapping = 0;
+		proctab[pid].bsmap[i].bs_private = 0;
+		proctab[pid].bsmap[i].bs_frames = NULL;
 	}
 	
 	restore(ps);
@@ -180,11 +180,10 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 		bsm_tab[source].bs_vpno = vpno;
 		bsm_tab[source].bs_npages = npages;
 	}
-
-	bs_map_t *bsmap = &proctab[pid].bsmap[source];
-	bsmap->bs_status = BSM_MAPPED;
-	bsmap->bs_vpno = vpno;
-	bsmap->bs_npages = npages;
+	
+	proctab[pid].bsmap[source].bs_status = BSM_MAPPED;
+	proctab[pid].bsmap[source].bs_vpno = vpno;
+	proctab[pid].bsmap[source].bs_npages = npages;
 	
 	restore(ps);
 	return OK;

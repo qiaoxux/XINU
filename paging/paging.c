@@ -69,7 +69,7 @@ SYSCALL init_page_directory_for_process(int pid) {
 	
 	proctab[pid].pdbr = (unsigned long) new_pd;
 	
-	init_bsmap_for_process(proctab[pid].bsmap);
+	init_bsmap_for_process(pid);
 	
 	restore(ps);
 	return OK;
