@@ -207,6 +207,7 @@ SYSCALL decrease_frm_refcnt(int pid, int store)
 	curr = proctab[pid].bsmap[store].bs_frames;
 	
 	while(curr != NULL) {
+		kprintf("curr->fr_id %d\n", curr->fr_id);
 		if(--curr->fr_refcnt <= 0)
 			reset_frm(curr->fr_id);
 		curr = curr->fr_next;
