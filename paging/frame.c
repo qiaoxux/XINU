@@ -166,12 +166,12 @@ SYSCALL free_frm(int i, int pid) {
 	upper = frm_tab[i].fr_upper;
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
+		kprintf("free_frm %d %d %d\n", i, pid, frm_tab[i].fr_vpno);
 		if(bsm_lookup(pid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
 			kprintf("free_frm: can't find map\n");
 			restore(ps);
 			return SYSERR;
 		}
-		// kprintf("free_frm %d %d %d %d\n", currpid, frm_tab[i].fr_vpno, store, pageth);
 		
     	write_bs((char *)pt_e, store, pageth);
     	reset_frm(i);
