@@ -506,24 +506,24 @@ void testSC_func()
 	int maxpage = (NFRAMES - (5 + 1 + 1 + 1));
 
 
-	for (i=0;i<=maxpage/128;i++){
-		if(get_bs(i,128) == SYSERR)
+	for (i=0;i<=maxpage/256;i++){
+		if(get_bs(i,256) == SYSERR)
 		{
 			kprintf("get_bs call failed \n");
 			return;
 		}
-		if ((ret = xmmap(PAGE0+i*128, i, 128)) == SYSERR) {
-			kprintf("xmmap call failed, virtpage=0x%08x, source=%d, npages=%d, ret=%d\n", PAGE0+i*128, i, 128, ret);
+		if ((ret = xmmap(PAGE0+i*256, i, 256)) == SYSERR) {
+			kprintf("xmmap call failed, virtpage=0x%08x, source=%d, npages=%d, ret=%d\n", PAGE0+i*256, i, 256, ret);
 			return;
 		}
-		for(j=0;j < 128;j++)
+		for(j=0;j < 256;j++)
 		{  
 			//store the virtual addresses
-			addrs[cnt++] = (unsigned long)(PAGE0+(i*128) + j) << 12;
+			addrs[cnt++] = (unsigned long)(PAGE0+(i*256) + j) << 12;
 		}			
 	}
 	// kprintf("cnt=%d\n", cnt);
-	// for(i=0; i < 8*128; i++) {  
+	// for(i=0; i < 8*256; i++) {  
 	// 	kprintf("vaddr[%d]=0x%08x\n", i, addrs[i]);
 	// }
 
@@ -571,8 +571,8 @@ void testSC_func()
 		return;
 	}
 
-	for (i=0;i<=maxpage/128;i++){
-		xmunmap(PAGE0+(i*128));
+	for (i=0;i<=maxpage/256;i++){
+		xmunmap(PAGE0+(i*256));
 		release_bs(i);			
 	}
 
@@ -600,8 +600,8 @@ int main() {
 	// test6();
 	// test7();
 	// test8();
-	test9();
-	// testSC();
+	// test9();
+	testSC();
 
 
 	shutdown();
