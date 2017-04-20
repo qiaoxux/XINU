@@ -66,7 +66,7 @@ SYSCALL init_bsmap_for_process(int pid) {
 		bs_map_t *bsmap;
 		for (i = 0; i < NSTORES; i++) {
 			bsmap = &proctab[49].bsmap[i];
-			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+			kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, proctab[49].bsmap[i].bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 		}
 	}
 	
