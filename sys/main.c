@@ -98,7 +98,6 @@ void test2() {
   if (bsize != SYSERR)
     ret = TFAILED;
 
-  int i;
   bs_map_t *bsmap;
   for (i = 0; i < NSTORES; i++) {
     bsmap = &proctab[49].bsmap[i];
