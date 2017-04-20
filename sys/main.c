@@ -75,7 +75,7 @@ void proc_test2(int i,int j,int* ret,int s) {
   sleep(s);
   if (r != SYSERR)
     xmunmap(MYVPNO1);
-  // release_bs(i);
+  release_bs(i);
   return;
 }
 void test2() {
