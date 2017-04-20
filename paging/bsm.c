@@ -132,7 +132,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	bs_map_t *bs;
 	for (i = 0; i < NSTORES; i++) {
 		bs = &proctab[pid].bsmap[i];
-		// kprintf("%d %d %d %d %d \n", pid, i, bs->bs_status, bs->bs_vpno, bs->bs_npages);
+		kprintf("%d %d %d %d %d \n", pid, i, bs->bs_status, bs->bs_vpno, bs->bs_npages);
 
 		if (bs->bs_status == BSM_MAPPED && vpno >= bs->bs_vpno && 
 			vpno < bs->bs_vpno + bs->bs_npages) {
@@ -200,7 +200,7 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 
   	int store, pageth;
 
-	if(bsm_lookup(currpid, vpno, &store, &pageth) == SYSERR){
+	if(bsm_lookup(pid, vpno, &store, &pageth) == SYSERR){
       	kprintf("bsm_unmap: could not find mapping!\n");
       	return SYSERR;
   	}
