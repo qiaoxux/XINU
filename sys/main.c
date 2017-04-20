@@ -52,6 +52,7 @@ void test1()
   }
 
   xmunmap(0x40000000>>12);
+
   release_bs(MYBS1);
   
   kprintf("\t\tPASSED!\n");
@@ -98,17 +99,22 @@ void test2() {
   bsize = get_bs(1, 0);
   if (bsize != SYSERR)
     ret = TFAILED;
-
+  
   mypid = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                  50, &ret, 4);
 
   resume(mypid);
   sleep(2);
+  bs_map_t *bsmap;
   for(i=1;i<=5;i++){
     pids[i] = create(proc_test2, 2000, 20, "proc_test2", 4, 1,
                      i*20, &ret, 0);
     resume(pids[i]);
-    kprintf("%d \n", i);
+    
+    for (i = 0; i < NSTORES; i++) {
+      bsmap = &proctab[49].bsmap[i];
+      kprintf("bsm_lookup: %d %d %d %d %d \n", 49, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+    }
   }
   sleep(3);
   kill(mypid);

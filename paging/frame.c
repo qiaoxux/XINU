@@ -217,7 +217,7 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 				return SYSERR;
 			}
 			
-			kprintf("process <%d> writes frame %d to store %d with page offset %d\n", old_pid, i, store, pageth);
+			kprintf("process <%d> writes frame %d to store %d with page offset %d\n (vaddr: %d)", old_pid, i, store, pageth, frm_tab[i].fr_vpno);
 
 			write_bs((char *)pt, store, pageth);
 
@@ -260,7 +260,7 @@ SYSCALL read_from_backing_store(int new_pid) {
 				return SYSERR;
 			}
 
-			kprintf("process <%d> reads frame %d from store %d with page offset %d\n", new_pid, i, store, pageth);
+			kprintf("process <%d> reads frame %d from store %d with page offset %d (vaddr: %d)\n", new_pid, i, store, pageth, vpno);
 
 			pt_e = (pt_t*) vno2p(vpno);
 			read_bs((char *)pt_e, store, pageth);
