@@ -55,7 +55,7 @@ typedef struct frame {
   struct frame *fr_next  /* the list of all frames on the same backing store */
 } fr_map_t;
 
-typedef struct bs {
+typedef struct {
   int bs_status;			/* MAPPED or UNMAPPED		*/
   int bs_pid;				/* process id using this slot   */
   int bs_vpno;				/* starting virtual page number */
@@ -66,8 +66,6 @@ typedef struct bs {
   int bs_nmapping;    /* how many mappings on this bs */
   fr_map_t  *bs_frames;  /* the list of frames on this bs */
 } bs_map_t;
-
-extern struct bs bs_map_t;
 
 extern bs_map_t bsm_tab[];
 extern fr_map_t frm_tab[];
