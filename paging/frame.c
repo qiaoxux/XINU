@@ -158,8 +158,8 @@ SYSCALL free_frm(int i, int pid) {
 
     int upper, store, pageth;
 
-	pt_t *pt;
-	pd_t *pd;
+	pt_t *pt_e;
+	pd_t *pd_e;
 	
 	pt_e = (pt_t*) fr2p(i);
 	pd_e = (pd_t*) fr2p(i);
