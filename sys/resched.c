@@ -93,10 +93,8 @@ int	resched()
 
 	kprintf("##################### pid <%02d> is switching to pid <%02d> #####################\n", opid, currpid);
 
-	// write_back(opid);
-	// read_from(currpid);
-
-	
+	write_back(opid);
+	read_from(currpid);
 
 	ctxsw(&optr->pesp, optr->pirmask, &nptr->pesp, nptr->pirmask);
 

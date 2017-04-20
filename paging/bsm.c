@@ -42,7 +42,7 @@ SYSCALL init_bsmap_for_process(bs_map_t *bsmap) {
 	for (i = 0; i < NSTORES; ++i) {
 		bsmap[i].bs_status = BSM_UNMAPPED;
 		bsmap[i].bs_pid = -1;
-		bsmap[i].bs_vpno = 0;
+		bsmap[i].bs_vpno = 666;
 		bsmap[i].bs_npages = 0;
 		bsmap[i].bs_sem =	-1;
 
@@ -154,8 +154,6 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	STATWORD ps;
   	disable(ps);
-
-  	kprintf("bsm_map: %d %d %d %d\n", pid, vpno, source, npages);
 
 	if(isbadpid(pid)) {
 		kprintf("bsm_map: wrong process id\n");
