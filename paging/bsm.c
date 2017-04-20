@@ -188,6 +188,7 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
 	proctab[pid].bsmap[source].bs_vpno = vpno;
 	proctab[pid].bsmap[source].bs_npages = npages;
 
+	bs_map_t *bs;
 	bs = &proctab[pid].bsmap[source];
 	kprintf("bsm_map: %d %d %d %d %d \n", pid, source, bs->bs_status, bs->bs_vpno, bs->bs_npages);
 	
