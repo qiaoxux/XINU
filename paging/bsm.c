@@ -16,7 +16,7 @@ SYSCALL init_bsm() {
 	for (i = 0; i < NSTORES; i++) {
 		bsm_tab[i].bs_status = BSM_UNMAPPED;
 		bsm_tab[i].bs_pid = -1;
-		bsm_tab[i].bs_vpno = 1000;
+		bsm_tab[i].bs_vpno = 0;
 		bsm_tab[i].bs_npages = 0;
 		bsm_tab[i].bs_sem =	-1;
 
@@ -41,7 +41,7 @@ SYSCALL init_bsmap_for_process(int pid) {
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
 		proctab[pid].bsmap[i].bs_pid = -1;
-		proctab[pid].bsmap[i].bs_vpno = 100;
+		proctab[pid].bsmap[i].bs_vpno = 0;
 		proctab[pid].bsmap[i].bs_npages = 0;
 		proctab[pid].bsmap[i].bs_sem = -1;
 
