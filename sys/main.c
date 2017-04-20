@@ -250,7 +250,7 @@ void test4() {
   sleep(3);
   resume(pid2);
 
-  sleep(10);
+  // sleep(10);
   // kill(pid1);
   // kill(pid2);
   if (ret != TPASSED)
