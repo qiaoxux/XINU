@@ -102,6 +102,7 @@ SYSCALL get_frm(int* avail) {
 		return OK;
 	}
 
+	restore(ps);
 	return SYSERR;
 }
 
@@ -172,6 +173,7 @@ SYSCALL free_frm(int i) {
 	if(frm_tab[i].fr_type == FR_PAGE) {	
 		if(bsm_lookup(currpid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
 			kprintf("free_frm: can't find map\n");
+			restore(ps);
 			return SYSERR;
 		}
 		// kprintf("free_frm %d %d %d %d\n", currpid, frm_tab[i].fr_vpno, store, pageth);
@@ -271,6 +273,7 @@ SYSCALL write_back(int old_pid) {
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kprintf("write_back: bsm_lookup can't find mapping\n");
 				kill(old_pid);
+				restore(ps);
 				return SYSERR;
 			}
 			
@@ -318,6 +321,7 @@ SYSCALL read_from(int new_pid) {
 			if( SYSERR == bsm_lookup(new_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kill(new_pid);
 				kprintf("read_from: bsm_lookup can't find mapping\n");
+				restore(ps);
 				return SYSERR;
 			}
 

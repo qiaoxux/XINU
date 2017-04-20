@@ -33,23 +33,24 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	int bs_id, pid;
 	if (get_bsm(&bs_id) == SYSERR) {
 		kprintf("vcreate: no free store");
+		restore(ps);
 		return SYSERR;
 	}
 
 	if (hsize <= 0 || hsize > 256) {
 		kprintf("vcreate: wrong hsize");
+		restore(ps);
 		return SYSERR;
 	}
 
 	pid = create(procaddr, ssize, priority, name, nargs, args);
 
-	proctab[pid].private = 1;
+	bsm_map(pid, 4096, bs_id, hsize);
 	bsm_tab[bs_id].bs_private = 1;
-	proctab[pid].bsmap[bs_id].bs_private = 1;
 
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
-	bsm_map(pid, 4096, bs_id, hsize);
+	proctab[pid].bsmap[bs_id].bs_private = 1;
 
 	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
 	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));

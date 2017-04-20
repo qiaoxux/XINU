@@ -60,7 +60,6 @@ typedef struct {
   int bs_pid;				/* process id using this slot   */
   int bs_vpno;				/* starting virtual page number */
   int bs_npages;			/* number of pages in the store */
-  int bs_sem;				/* semaphore mechanism ?	*/
 
   int bs_private;        /* created by vcreate or not */
   int bs_nmapping;    /* how many mappings on this bs */

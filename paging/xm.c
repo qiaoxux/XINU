@@ -16,31 +16,37 @@ SYSCALL xmmap(int virtpage, bsd_t source, int npages)
 
 	if (virtpage < 4096) {
 		kprintf("xmmap: wrong virtual page number\n");
+		restore(ps);
 		return SYSERR;
 	}
 
   	if (source < 0 || source >= NSTORES) {
 		kprintf("xmmap: wrong source\n");
+		restore(ps);
 		return SYSERR;
 	}
 
 	if (npages > bsm_tab[source].bs_npages || npages <= 0 || npages > 256) {
 		kprintf("xmmap: wrong npages\n");
+		restore(ps);
 		return SYSERR;
 	}
 
 	if (bsm_tab[source].bs_private == 1) {
 		kprintf("xmmap: virtual heap\n");
+		restore(ps);
 		return SYSERR;
 	}
 
 	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
 		kprintf("xmmap: bs is not mapped\n");
+		restore(ps);
  		return SYSERR;
 	}
 
 	if (bsm_map(currpid, virtpage, source, npages) == SYSERR) {
   		kprintf("xmmap could not create mapping!\n");
+  		restore(ps);
  		return SYSERR;
  	}
 
@@ -62,11 +68,13 @@ SYSCALL xmunmap(int virtpage)
   	
   	if (virtpage < 4096) {
 		kprintf("xmunmap: wrong virtual page number\n");
+		restore(ps);
 		return SYSERR;
 	}
  	
  	if(bsm_unmap(currpid, virtpage, 0) == SYSERR){
       	kprintf("xmunmap: could not find mapping!\n");
+      	restore(ps);
       	return SYSERR;
   	}
   	
