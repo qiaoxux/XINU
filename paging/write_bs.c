@@ -13,7 +13,7 @@ int write_bs(char *src, bsd_t bs_id, int page) {
 		return SYSERR;
 	}
 
-	if (page <= 0 || page > 256) {
+	if (page < 0 || page > 256) {
 		kprintf("write_bs: wrong page number\n");
 		return SYSERR;
 	}

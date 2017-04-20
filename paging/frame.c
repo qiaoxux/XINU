@@ -210,7 +210,6 @@ SYSCALL write_back_to_backing_store(int old_pid) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == old_pid) {
 			pt = (pt_t *) fr2p(i);
 
-			kprintf("write_back_to_backing_store %d %d\n", old_pid, frm_tab[i].fr_vpno);
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping\n");
 				kill(old_pid);
