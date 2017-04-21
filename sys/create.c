@@ -10,7 +10,6 @@
 
 LOCAL int newpid();
 
-void init_page_directory_for_process(int pid);
 
 /*------------------------------------------------------------------------
  *  create  -  create a process to start running a procedure
