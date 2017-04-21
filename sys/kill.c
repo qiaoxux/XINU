@@ -54,11 +54,6 @@ SYSCALL kill(int pid)
 		}
 	}
 
-	// if this process is created by vcreate
-	if (pptr->vhpno != 0) {
-		vfreemem(pptr->vmemlist, vno2p(4096));
-	}
-
 	send(pptr->pnxtkin, pid);
 
 	freestk(pptr->pbase, pptr->pstklen);
