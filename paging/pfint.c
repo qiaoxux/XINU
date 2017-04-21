@@ -58,11 +58,10 @@ SYSCALL pfint() {
     
   	get_frm(&free_frame);
     set_frm(free_frame, currpid, FR_PAGE);
-  	frm_tab[free_frame].fr_vpno = vp;
-    frm_tab[free_frame].fr_refcnt++;
+  	frm_tab[free_frame].fr_refcnt++;
+    frm_tab[free_frame].fr_bid = store;
+    frm_tab[free_frame].fr_vpno = vp;
   	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;
-
-    proctab[currpid].bsmap[store].bs_frames[free_frame] = 1;
     
     if (frm_tab[free_frame].fr_age + 128 > 255) {
       frm_tab[free_frame].fr_age = 255;

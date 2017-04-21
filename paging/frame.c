@@ -23,6 +23,8 @@ SYSCALL init_frm() {
 		frm_tab[i].fr_type = -1;
 		frm_tab[i].fr_dirty = 0;
 
+		frm_tab[i].fr_id = i;
+		frm_tab[i].fr_bid = -1;
 		frm_tab[i].fr_upper = -1;
 		frm_tab[i].fr_age = 0;
 	}
@@ -137,6 +139,8 @@ SYSCALL reset_frm(int i) {
 	frm_tab[i].fr_type = -1;
 	frm_tab[i].fr_dirty = 0;
 
+	frm_tab[i].fr_id = i;
+	frm_tab[i].fr_bid = -1;
 	frm_tab[i].fr_upper = -1;
 	frm_tab[i].fr_age = 0;
 

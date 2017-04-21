@@ -125,7 +125,7 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	int i;
 	bs_map_t *bsmap;
 	for (i = 0; i < NSTORES; i++) {
-		bsmap = &proctab[pid].bsmap[i];
+		bsmap = proctab[pid].bsmap[i];
 		// kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
 
 		if (bsmap->bs_status == BSM_MAPPED && vpno >= bsmap->bs_vpno && vpno < bsmap->bs_vpno + bsmap->bs_npages) {
@@ -225,9 +225,8 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
 	proctab[pid].bsmap[store].bs_npages = 0;
 	
 	for (i = 0; i < NFRAMES; i++) {
-		if (proctab[pid].bsmap[store].bs_frames[i] == 1) {
+		if (frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_pid == pid && frm_tab[i].fr_bid == store) {
 			reset_frm(i);
-			proctab[pid].bsmap[store].bs_frames[i] = 0;
 		}
 	}		
 

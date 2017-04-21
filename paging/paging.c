@@ -69,15 +69,7 @@ SYSCALL init_page_directory_for_process(int pid) {
 	
 	proctab[pid].pdbr = (unsigned long) new_pd;
 
-	for (i = 0; i < NSTORES; i++) {
-		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
-		proctab[pid].bsmap[i].bs_pid = pid;
-		proctab[pid].bsmap[i].bs_vpno = 0;
-		proctab[pid].bsmap[i].bs_npages = 0;
-
-		proctab[pid].bsmap[i].bs_nmapping = 0;
-		proctab[pid].bsmap[i].bs_private = 0;
-	}
+	init_bsmap_for_process(pid);
 	
 	restore(ps);
 	return OK;

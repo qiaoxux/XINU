@@ -49,6 +49,8 @@ typedef struct frame {
   int fr_type;        /* FR_DIR, FR_TBL, FR_PAGE  */
   int fr_dirty;
 
+  int fr_id;
+  int fr_bid;
   int fr_age;   /* for demand paging */
   int fr_upper; /* page -> page table, page table -> page directory */
 } fr_map_t;
@@ -61,7 +63,6 @@ typedef struct {
 
   int bs_private;        /* created by vcreate or not */
   int bs_nmapping;      /* how many mappings on this bs */
-  int bs_frames[1024];    /* the list of frames that maps this bs */
 } bs_map_t;
 
 extern bs_map_t bsm_tab[];
