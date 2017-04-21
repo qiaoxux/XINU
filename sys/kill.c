@@ -38,11 +38,11 @@ SYSCALL kill(int pid)
 	if (! isbaddev(dev) )
 		close(dev);
 
-	for(i = 0; i < NFRAMES; i++) {
-		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_pid == pid) {
-			free_frm(i, pid);
-		}
-	}
+	// for(i = 0; i < NFRAMES; i++) {
+	// 	if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_pid == pid) {
+	// 		free_frm(i, pid);
+	// 	}
+	// }
 
 	for(i = 0; i < 8; i++) {
 		if(proctab[pid].bsmap[i].bs_status == BSM_MAPPED) {
