@@ -256,9 +256,9 @@ void test4() {
   kprintf("4retttttt %d\n",ret);
 
 
-  sleep(10);
-  kill(pid1);
-  kill(pid2);
+  // sleep(10);
+  // kill(pid1);
+  // kill(pid2);
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
