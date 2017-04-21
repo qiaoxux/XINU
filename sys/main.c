@@ -271,14 +271,14 @@ void proc1_test5(int* ret) {
   int *z;
 
   //kprintf("ready to allocate heap space\n");
-  x = vgetmem(1024);
-  if ((x ==SYSERR) || (x < 0x1000000)
-      || (x > 0x1000000 + 256 * NBPG - 1024)) {
-    *ret = TFAILED;
-  }
-  kprintf("ret 1 %d\n", ret);
-  if (x == SYSERR)
-    return;
+  // x = vgetmem(1024);
+  // if ((x ==SYSERR) || (x < 0x1000000)
+  //     || (x > 0x1000000 + 256 * NBPG - 1024)) {
+  //   *ret = TFAILED;
+  // }
+  // kprintf("ret 1 %d\n", ret);
+  // if (x == SYSERR)
+  //   return;
 
   // *x = 100;
   // *(x + 1) = 200;
