@@ -246,16 +246,12 @@ void test4() {
   kprintf("\nTest 4: Shared backing store\n");
 
   pid1 = create(proc1_test4, 2000, 20, "proc1_test4", 1, &ret);
-  kprintf("First process ret: %d\n", ret);
   pid2 = create(proc2_test4, 2000, 20, "proc2_test4", 1, &ret);
-  kprintf("Second process ret: %d\n", ret);
 
   resume(pid1);
-  kprintf("Third process ret: %d\n", ret);
   sleep(3);
-  kprintf("Fourth process ret: %d\n", ret);
   resume(pid2);
-  kprintf("Fifth process ret: %d\n", ret);
+
 
   sleep(10);
   kill(pid1);
@@ -607,8 +603,8 @@ int main() {
 	test2();
 	test3();
 	test4();
-	// test5();
-	// test6();
+	test5();
+	test6();
 	// test7();
 	// test8();
 	// test9();
