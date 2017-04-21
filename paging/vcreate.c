@@ -46,8 +46,17 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		return SYSERR;
 	}
 
-	bsm_map(pid, 4096, bs_id, hsize);
-	
+	if(get_bs(bs_id, hsize) == SYSERR) {
+		kprintf("vcreate: get_bs crashed\n");
+		restore(ps);
+		return SYSERR;
+	}
+
+	if(xmmap(4096, bs_id, hsize) == SYSERR) {
+		kprintf("vcreate: xmmap crashed\n");
+		restore(ps);
+		return SYSERR;
+	}
 	bsm_tab[bs_id].bs_private = 1;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
 
@@ -55,8 +64,8 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpnpages = hsize;
 
 	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
-	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vno2p(4096));
-	proctab[pid].vmemlist->mlen = 0;
+	// proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vno2p(4096));
+	// proctab[pid].vmemlist->mlen = 0;
 
 	struct mblock * memblock = bs2p(bs_id);
     memblock->mnext = 0;  
