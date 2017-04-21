@@ -201,7 +201,7 @@ void proc1_test4(int* ret) {
       break;    
     }
   }
-  kprintf("ret %d\n", *ret);
+  kprintf("2ret %d\n", *ret);
 
   xmunmap(MYVPNO1);
   release_bs(MYBS1);
@@ -230,11 +230,12 @@ void proc2_test4(int *ret) {
       break;
     }
   }
-
+  kprintf("0ret %d\n", *ret);
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
     *(addr + i * NBPG) = 'a' + i;
   }
+  kprintf("1ret %d\n", *ret);
 
   xmunmap(MYVPNO2);
   release_bs(MYBS1);
@@ -253,7 +254,7 @@ void test4() {
   sleep(3);
   resume(pid2);
 
-  // sleep(10);
+  sleep(10);
   
   kill(pid1);
   kill(pid2);

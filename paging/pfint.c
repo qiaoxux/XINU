@@ -57,6 +57,7 @@ SYSCALL pfint() {
     pt = vno2p(pd[pd_offset].pd_base);
     
   	get_frm(&free_frame);
+    kprintf("free_frame %d\n", free_frame);
     set_frm(free_frame, currpid, FR_PAGE);
     frm_tab[free_frame].fr_bid = store;
     frm_tab[free_frame].fr_vpno = vp;
