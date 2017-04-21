@@ -229,6 +229,7 @@ void proc2_test4(int *ret) {
       break;
     }
   }
+  kprintf("retttttt %d\n",ret);
 
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
@@ -602,7 +603,7 @@ int main() {
 	test1();
 	test2();
 	test3();
-	// test4();
+	test4();
 	// test5();
 	// test6();
 	// test7();
