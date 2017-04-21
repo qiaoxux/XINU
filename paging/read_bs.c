@@ -17,13 +17,11 @@ SYSCALL read_bs(char *dst, bsd_t bs_id, int page) {
 		kprintf("read_bs: wrong page number\n");
 		return SYSERR;
 	}
-	kprintf("%d %d\n", bs_id, page);
 
 	/* fetch page from map map_id and write beginning at dst. */
    	void * phy_addr = BACKING_STORE_BASE + bs_id * BACKING_STORE_UNIT_SIZE + page * NBPG;
    	bcopy(phy_addr, (void*)dst, NBPG);
 
-   	kprintf(" 888 %d %d\n", bs_id, page);
 
    	restore(ps);
    	return OK;
