@@ -111,7 +111,7 @@ void test2() {
                      i*20, &ret, 0);
     resume(pids[i]);
   }
-  // sleep(3);
+  sleep(3);
   // kill(mypid);
   // for(i=1;i<=5;i++){
   //   kill(pids[i]);
