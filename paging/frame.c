@@ -249,24 +249,27 @@ SYSCALL read_from_backing_store(int new_pid) {
 	STATWORD ps;
 	disable(ps);
 
-	int i, store, pageth;
+	int i, upper, store, pageth;
 	unsigned long vpno;
 
-	for (i = 0; i < NSTORES; i++) {
-		if (proctab[new_pid].bsmap[i].bs_status == BSM_MAPPED) {
-			vpno = proctab[new_pid].bsmap[i].bs_vpno;
-			if( SYSERR == bsm_lookup(new_pid, vpno, &store, &pageth)) {
-				kprintf("read_from_backing_store: bsm_lookup can't find mapping with %d %d\n", new_pid, vpno);
+	for(i = 0; i < NFRAMES; i++) {
+ 		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == new_pid) {
+ 			vpno = frm_tab[i].fr_vpno;
+ 			upper = frm_tab[i].fr_upper;
+ 			if( SYSERR == bsm_lookup(new_pid, vpno, &store, &pageth)) {
+ 				kprintf("read_from_backing_store: bsm_lookup can't find mapping with %d %d\n", new_pid, vpno);
 				kill(new_pid);
 				restore(ps);
 				return SYSERR;
 			}
 
+			read_bs((char *) vno2p(vpno), store, pageth);
+
 			kprintf("process <%d> reads frame %d from store %d with page offset %d (vaddr: %d)\n", new_pid, i, store, pageth, vpno);
 
-			read_bs((char *) vno2p(vpno), store, pageth);
-		}
-	}
+			frm_tab[upper].fr_refcnt++;
+ 		}	
+ 	}
 	
  	restore(ps);
     return OK;
