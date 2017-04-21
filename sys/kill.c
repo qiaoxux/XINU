@@ -57,15 +57,9 @@ SYSCALL kill(int pid)
 		  	proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
 			proctab[pid].bsmap[i].bs_vpno = 0;
 			proctab[pid].bsmap[i].bs_npages = 0;
-
-			bsm_tab[i].bs_private = 0;
 		}
 	}
 
-	
-
-	
-	
 
 	send(pptr->pnxtkin, pid);
 
