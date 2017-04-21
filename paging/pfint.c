@@ -58,7 +58,6 @@ SYSCALL pfint() {
     
   	get_frm(&free_frame);
     set_frm(free_frame, currpid, FR_PAGE);
-  	frm_tab[free_frame].fr_refcnt++;
     frm_tab[free_frame].fr_bid = store;
     frm_tab[free_frame].fr_vpno = vp;
   	frm_tab[free_frame].fr_upper = pd[pd_offset].pd_base - FRAME0;

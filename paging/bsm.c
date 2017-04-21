@@ -35,13 +35,6 @@ SYSCALL init_bsmap_for_process(int pid) {
 	STATWORD ps;
   	disable(ps);
 
-  	if(isbadpid(pid)) {
-		kprintf("init_bsmap_for_process: wrong process id\n");
-		restore(ps);
-		return SYSERR;
-	}
-
-
 	int i;
 	for (i = 0; i < NSTORES; i++) {
 		proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
@@ -53,8 +46,6 @@ SYSCALL init_bsmap_for_process(int pid) {
 		proctab[pid].bsmap[i].bs_private = 0;
 	}
 
-
-	
 	restore(ps);
 	return OK;
 }
