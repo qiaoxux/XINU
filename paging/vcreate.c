@@ -67,7 +67,8 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 
 	struct mblock * memblock = bs2p(bs_id);
     memblock->mnext = 0;  
-    memblock->mlen  = hsize * NBPG;
+    memblock->mlen = hsize * NBPG;
+    proctab[pid].vmemlist->mnext->mnext = memblock;
 
 	restore(ps);
 	return pid;
