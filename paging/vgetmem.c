@@ -13,38 +13,29 @@ extern struct pentry proctab[];
 WORD	*vgetmem(nbytes)
 	unsigned nbytes;
 {
-	STATWORD ps;    
+	STATWORD ps;
+
 	disable(ps);
-
-	struct	mblock	*p, *q, *leftover;
-	struct	mblock *vmemlist;
-
-	vmemlist = proctab[currpid].vmemlist;
-	if (nbytes == 0 || nbytes > vmemlist->mnext->mlen || vmemlist->mnext == (struct mblock *) NULL) {
+	struct pentry *pptr = &proctab[currpid];
+	if (nbytes == 0 ) {
 		restore(ps);
-		return( (WORD *)SYSERR);
+		return ((WORD *) SYSERR);
 	}
-	nbytes = (unsigned int) roundmb(nbytes);
-	
-	int i;
-	for (i = 0, q= vmemlist, p=vmemlist->mnext; p != (struct mblock *) NULL; q=p,p=p->mnext) {
-		if ( p->mlen == nbytes) {
-			q->mnext = p->mnext;
-			restore(ps);
-			return( (WORD *)p );
-		} 
-		else if ( p->mlen > nbytes ) {
-			leftover = (struct mblock *)( (unsigned)p + nbytes );
-			q->mnext = leftover;
-			leftover->mnext = p->mnext;
-			leftover->mlen = p->mlen - nbytes;
-
-			restore(ps);
-			return( (WORD *)p );
+	mem_list *tmp = &(pptr->mem_list_t);
+	while(tmp != NULL){
+		if(tmp->memlen == nbytes){
+			tmp->memlen = 0;
+			return ((WORD *) tmp->mem);
 		}
+		else if(tmp->memlen > nbytes){
+			char *loc = tmp->mem;
+			tmp->mem = (unsigned)tmp->mem + nbytes;
+			tmp->memlen -= nbytes;
+			return ((WORD *) tmp->mem);
+		}
+		tmp = tmp->next;
 	}
-		
 	restore(ps);
-	return( (WORD *)SYSERR );
+	return ((WORD *) SYSERR);
 
 }
