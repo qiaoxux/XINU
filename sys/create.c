@@ -10,7 +10,7 @@
 
 LOCAL int newpid();
 
-void init_page_directory(int pid);
+void init_page_directory_for_process(int pid);
 
 /*------------------------------------------------------------------------
  *  create  -  create a process to start running a procedure
@@ -97,7 +97,7 @@ SYSCALL create(procaddr,ssize,priority,name,nargs,args)
 	*--saddr = 0;		/* %edi */
 	*pushsp = pptr->pesp = (unsigned long)saddr;
 
-	init_page_directory(pid);
+	init_page_directory_for_process(pid);
 
 	restore(ps);
 	return(pid);
