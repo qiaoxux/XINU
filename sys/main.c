@@ -327,9 +327,9 @@ void test5() {
   pid1 = vcreate(proc1_test5, 2000, 100, 20, "proc1_test5", 1, &ret);
 
   //kprintf("pid %d has private heap\n", pid1);
-  resume(pid1);
-  sleep(3);
-  kill(pid1);
+  // resume(pid1);
+  // sleep(3);
+  // kill(pid1);
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
