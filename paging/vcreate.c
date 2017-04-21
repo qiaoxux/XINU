@@ -52,11 +52,11 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		return SYSERR;
 	}
 
-	// if(xmmap(4096, bs_id, hsize) == SYSERR) {
-	// 	kprintf("vcreate: xmmap crashed\n");
-	// 	restore(ps);
-	// 	return SYSERR;
-	// }
+	if(xmmap(4096, bs_id, hsize) == SYSERR) {
+		kprintf("vcreate: xmmap crashed\n");
+		restore(ps);
+		return SYSERR;
+	}
 	// bsm_tab[bs_id].bs_private = 1;
 	// proctab[pid].bsmap[bs_id].bs_private = 1;
 
