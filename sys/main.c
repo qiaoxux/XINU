@@ -200,7 +200,6 @@ void proc1_test4(int* ret) {
       break;    
     }
   }
-  kprintf("1retttttt %d\n",ret);
 
   xmunmap(MYVPNO1);
   release_bs(MYBS1);
@@ -229,7 +228,6 @@ void proc2_test4(int *ret) {
       break;
     }
   }
-  kprintf("2retttttt %d\n",ret);
 
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
@@ -251,14 +249,15 @@ void test4() {
 
   resume(pid1);
   sleep(3);
-  kprintf("3retttttt %d\n",ret);
   resume(pid2);
-  kprintf("4retttttt %d\n",ret);
 
 
-  // sleep(10);
-  // kill(pid1);
-  // kill(pid2);
+  sleep(10);
+  kprintf("retttttt %d\n",ret);
+  kill(pid1);
+  kprintf("1retttttt %d\n",ret);
+  kill(pid2);
+  kprintf("2retttttt %d\n",ret);
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
