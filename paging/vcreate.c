@@ -63,7 +63,8 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
 
-	proctab[pid].vmemlist->mnext = vno2p(4096);
+	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
+	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vpno2p(4096));
 	proctab[pid].vmemlist->mlen = 0;
 
 	struct mblock * memblock = bs2p(bs_id);
