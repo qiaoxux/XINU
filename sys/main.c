@@ -185,7 +185,6 @@ void proc1_test4(int* ret) {
     sleep(3);
     return;
   }
-  kprintf("1retttttt %d\n", *ret);
 
   addr = (char*) MYVADDR1;
   for (i = 0; i < 26; i++) {
@@ -197,11 +196,12 @@ void proc1_test4(int* ret) {
   for (i = 0; i < 26; i++) {
     /*expected output is abcde.....*/
     if (*(addr + i * NBPG) != 'a'+i){
+      kprintf("%c\n", *(addr + i * NBPG));
       *ret = TFAILED;
       break;    
     }
   }
-  kprintf("2retttttt %d\n", *ret);
+  kprintf("ret %d\n", *ret);
 
   xmunmap(MYVPNO1);
   release_bs(MYBS1);
