@@ -252,7 +252,7 @@ void test4() {
   resume(pid2);
 
 
-  sleep(10);
+  // sleep(10);
   kprintf("retttttt %d\n",ret);
   kill(pid1);
   kprintf("1retttttt %d\n",ret);
