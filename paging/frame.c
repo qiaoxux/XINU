@@ -166,9 +166,7 @@ SYSCALL free_frm(int i, int pid) {
 	upper = frm_tab[i].fr_upper;
 	
 	if(frm_tab[i].fr_type == FR_PAGE) {	
-		kprintf("free_frm %d %d %d\n", i, pid, frm_tab[i].fr_vpno);
 		if(bsm_lookup(pid, frm_tab[i].fr_vpno, &store, &pageth) == SYSERR) {
-			kprintf("free_frm: can't find map\n");
 			restore(ps);
 			return SYSERR;
 		}
@@ -215,13 +213,11 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 			pt = (pt_t *) fr2p(i);
 
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
-				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping with %d %d\n", old_pid, frm_tab[i].fr_vpno);
 				kill(old_pid);
 				restore(ps);
 				return SYSERR;
 			}
 			
-			kprintf("process <%d> writes frame %d to store %d with page offset %d (vaddr: %d)\n", old_pid, i, store, pageth, frm_tab[i].fr_vpno);
 
 			write_bs((char *)pt, store, pageth);
 
@@ -257,7 +253,6 @@ SYSCALL read_from_backing_store(int new_pid) {
  			vpno = frm_tab[i].fr_vpno;
  			upper = frm_tab[i].fr_upper;
  			if( SYSERR == bsm_lookup(new_pid, vpno, &store, &pageth)) {
- 				kprintf("read_from_backing_store: bsm_lookup can't find mapping with %d %d\n", new_pid, vpno);
 				kill(new_pid);
 				restore(ps);
 				return SYSERR;
@@ -265,10 +260,9 @@ SYSCALL read_from_backing_store(int new_pid) {
 
 			read_bs((char *) vno2p(vpno), store, pageth);
 
-			kprintf("process <%d> reads frame %d from store %d with page offset %d (vaddr: %d)\n", new_pid, i, store, pageth, vpno);
 
 			frm_tab[upper].fr_refcnt++;
- 		}
+ 		}	
  	}
 	
  	restore(ps);

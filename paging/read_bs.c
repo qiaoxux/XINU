@@ -9,12 +9,10 @@ SYSCALL read_bs(char *dst, bsd_t bs_id, int page) {
   	disable(ps);
 
 	if (bs_id < 0 || bs_id >= NSTORES) {
-		kprintf("read_bs: wrong bs_id\n");
 		return SYSERR;
 	}
 
 	if (page < 0 || page > 256) {
-		kprintf("read_bs: wrong page number\n");
 		return SYSERR;
 	}
 

@@ -18,7 +18,6 @@ SYSCALL srpolicy(int policy)
 
 	/* sanity check ! */
 	if (policy != SC && policy != AGING) {
-		kprintf("srpolicy: wrong policy");
 		return SYSERR;
 	}
 

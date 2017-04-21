@@ -494,7 +494,7 @@ void test9() {
 	int pid1 = create(proc1_test9, 2000, 20, "proc1_test9", 1, &ret);
 	resume(pid1);
 	sleep(3);
-	// kill(pid1);
+	kill(pid1);
 	if (ret != TPASSED)
     	kprintf("\t\tFAILED!\n");
   	else

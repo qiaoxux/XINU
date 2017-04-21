@@ -68,7 +68,6 @@ SYSCALL get_bsm(int* avail) {
 		}
 	}
 
-	kprintf("get_bsm: no free store\n");
 	restore(ps);
 	return SYSERR;
 }
@@ -83,7 +82,6 @@ SYSCALL free_bsm(int i) {
   	disable(ps);
 
 	if (i < 0 || i >= NSTORES) {
-		kprintf("free_bsm: wrong store index\n");
 		return SYSERR;
 	}
 
@@ -108,7 +106,6 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
   	disable(ps);
 
 	if(isbadpid(pid)) {
-		kprintf("bsm_lookup: wrong process id\n");
 		restore(ps);
 		return SYSERR;
 	}
@@ -117,7 +114,6 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	bs_map_t bsmap;
 	for (i = 0; i < NSTORES; i++) {
 		bsmap = proctab[pid].bsmap[i];
-		// kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap.bs_status, bsmap.bs_vpno, bsmap.bs_npages);
 
 		if (bsmap.bs_status == BSM_MAPPED && vpno >= bsmap.bs_vpno && vpno < bsmap.bs_vpno + bsmap.bs_npages) {
 			*store = i;
@@ -141,37 +137,31 @@ SYSCALL bsm_map(int pid, int vpno, int source, int npages) {
   	disable(ps);	
 
 	if(isbadpid(pid)) {
-		kprintf("bsm_map: wrong process id\n");
 		restore(ps);
 		return SYSERR;
 	}
 
 	if (vpno < 4096) {
-		kprintf("bsm_map: wrong virtual page number\n");
 		restore(ps);
 		return SYSERR;
 	}
 
 	if (source < 0 || source >= NSTORES) {
-		kprintf("bsm_map: wrong source store index\n");
 		restore(ps);
 		return SYSERR;
 	}
 
 	if (npages > bsm_tab[source].bs_npages || npages <= 0 || npages > 256) {
-		kprintf("bsm_map: wrong npages\n");
 		restore(ps);
 		return SYSERR;
 	}
 
 	if (bsm_tab[source].bs_status == BSM_UNMAPPED) {
-		kprintf("bsm_map: backing store is not mapped\n");
 		restore(ps);
  		return SYSERR;
 	}
 
 	if (bsm_tab[source].bs_private == 1) {
-		kprintf("bsm_map: virtual heap\n");
 		restore(ps);
 		return SYSERR;
 	}
@@ -196,7 +186,6 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
   	disable(ps);
 
   	if (vpno < 4096) {
-		kprintf("bsm_unmap: wrong virtual page number\n");
 		restore(ps);
 		return SYSERR;
 	}
@@ -204,7 +193,6 @@ SYSCALL bsm_unmap(int pid, int vpno, int flag) {
   	int i, store, pageth;
 
 	if(bsm_lookup(pid, vpno, &store, &pageth) == SYSERR){
-      	kprintf("bsm_unmap: could not find mapping!\n");
       	restore(ps);
       	return SYSERR;
   	}

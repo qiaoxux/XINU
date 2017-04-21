@@ -33,13 +33,11 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	int bs_id, pid;
 
 	if (get_bsm(&bs_id) == SYSERR) {
-		kprintf("vcreate: no free store\n");
 		restore(ps);
 		return SYSERR;
 	}
 
 	if (hsize <= 0 || hsize > 256) {
-		kprintf("vcreate: wrong hsize\n");
 		restore(ps);
 		return SYSERR;
 	}

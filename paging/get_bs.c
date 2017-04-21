@@ -19,7 +19,6 @@ int get_bs(bsd_t bs_id, unsigned int npages) {
 
 	if (bsm_tab[bs_id].bs_status == BSM_MAPPED) {
 		if (bsm_tab[bs_id].bs_private == 1 && bsm_tab[bs_id].bs_pid != currpid) {
-			kprintf("get_bs: exclusive backing store\n");
 			restore(ps);
 			return SYSERR;
 		}
