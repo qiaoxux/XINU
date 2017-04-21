@@ -206,10 +206,13 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 	int i, upper, u_upper, store, pageth;
 
 	pd_t *pd;	
+	pt_t *pt;
 
 	pd = proctab[old_pid].pdbr;
+
  	for(i = 0; i < NFRAMES; i++) {
  		if(frm_tab[i].fr_status == FRM_MAPPED && frm_tab[i].fr_type == FR_PAGE && frm_tab[i].fr_pid == old_pid) {
+			pt = (pt_t *) fr2p(i);
 
 			if( SYSERR == bsm_lookup(old_pid, frm_tab[i].fr_vpno, &store, &pageth)) {
 				kprintf("write_back_to_backing_store: bsm_lookup can't find mapping with %d %d\n", old_pid, frm_tab[i].fr_vpno);
@@ -220,7 +223,7 @@ SYSCALL write_back_to_backing_store(int old_pid) {
 			
 			kprintf("process <%d> writes frame %d to store %d with page offset %d (vaddr: %d)\n", old_pid, i, store, pageth, frm_tab[i].fr_vpno);
 
-			write_bs((char *) fr2p(i), store, pageth);
+			write_bs((char *)pt, store, pageth);
 
 			upper = frm_tab[i].fr_upper;
 			if(--frm_tab[upper].fr_refcnt <= 0) {
