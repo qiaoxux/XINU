@@ -68,10 +68,6 @@ SYSCALL pfint() {
       frm_tab[free_frame].fr_age += 128;  
     }
 
-    if (free_frame == 35) {
-      kprintf("ok\n");
-    }
-
   	pt[pt_offset].pt_pres  = 1;
     pt[pt_offset].pt_write = 1;
     pt[pt_offset].pt_base  = fr2vno(free_frame);

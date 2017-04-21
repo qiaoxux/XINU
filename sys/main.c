@@ -230,7 +230,6 @@ void proc2_test4(int *ret) {
       break;
     }
   }
-  kprintf("oko\n");
 
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
@@ -254,10 +253,10 @@ void test4() {
   sleep(3);
   resume(pid2);
 
-  sleep(10);
+  // sleep(10);
   
-  // kill(pid1);
-  // kill(pid2);
+  kill(pid1);
+  kill(pid2);
   
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
