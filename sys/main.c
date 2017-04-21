@@ -280,41 +280,41 @@ void proc1_test5(int* ret) {
   if (x == SYSERR)
     return;
 
-  *x = 100;
-  *(x + 1) = 200;
+  // *x = 100;
+  // *(x + 1) = 200;
 
-  if ((*x != 100) || (*(x+1) != 200)) {
-    *ret = TFAILED;
-  }
-  kprintf("ret 2 %d\n", ret);
-  vfreemem(x, 1024);
+  // if ((*x != 100) || (*(x+1) != 200)) {
+  //   *ret = TFAILED;
+  // }
+  // kprintf("ret 2 %d\n", ret);
+  // vfreemem(x, 1024);
 
-  x = vgetmem(257*NBPG); //try to acquire a space that is bigger than size of one backing store
-  if (x != SYSERR) {
-    *ret = TFAILED;
-  }
-  kprintf("ret 3 %d\n", ret);
+  // x = vgetmem(257*NBPG); //try to acquire a space that is bigger than size of one backing store
+  // if (x != SYSERR) {
+  //   *ret = TFAILED;
+  // }
+  // kprintf("ret 3 %d\n", ret);
 
-  x = vgetmem(50*NBPG);
-  y = vgetmem(50*NBPG);
-  z = vgetmem(50*NBPG);
-  if ((x == SYSERR) || (y == SYSERR) || (z != SYSERR)){
-    *ret = TFAILED;
-    // kprintf("x y z %d %d %d\n", x, y, z);
-    if (x != SYSERR) vfreemem(x, 50*NBPG);
-    if (y != SYSERR) vfreemem(y, 50*NBPG);
-    if (z != SYSERR) vfreemem(z, 50*NBPG);
-    return;
-  }
-  kprintf("ret 4 %d\n", ret);
-  vfreemem(y, 50*NBPG);
-  z = vgetmem(50*NBPG);
-  if (z == NULL){
-    *ret = TFAILED;
-  }
-  kprintf("ret 5 %d\n", ret);
-  if (x != NULL) vfreemem(x, 50*NBPG);
-  if (z != NULL) vfreemem(z, 50*NBPG);
+  // x = vgetmem(50*NBPG);
+  // y = vgetmem(50*NBPG);
+  // z = vgetmem(50*NBPG);
+  // if ((x == SYSERR) || (y == SYSERR) || (z != SYSERR)){
+  //   *ret = TFAILED;
+  //   // kprintf("x y z %d %d %d\n", x, y, z);
+  //   if (x != SYSERR) vfreemem(x, 50*NBPG);
+  //   if (y != SYSERR) vfreemem(y, 50*NBPG);
+  //   if (z != SYSERR) vfreemem(z, 50*NBPG);
+  //   return;
+  // }
+  // kprintf("ret 4 %d\n", ret);
+  // vfreemem(y, 50*NBPG);
+  // z = vgetmem(50*NBPG);
+  // if (z == NULL){
+  //   *ret = TFAILED;
+  // }
+  // kprintf("ret 5 %d\n", ret);
+  // if (x != NULL) vfreemem(x, 50*NBPG);
+  // if (z != NULL) vfreemem(z, 50*NBPG);
   return;
 
 
