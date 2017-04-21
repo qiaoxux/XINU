@@ -55,12 +55,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 
 	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
 	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vno2p(4096));
-	proctab[pid].vmemlist->mlen = 0;
-
-	struct mblock * memblock = bs2p(bs_id);
-    memblock->mnext = 0;  
-    memblock->mlen  = hsize * NBPG;
-    proctab[pid].vmemlist->mnext->mnext = memblock;
+	proctab[pid].vmemlist->mlen = bs2p(bs_id);
 
 	restore(ps);
 	return pid;
