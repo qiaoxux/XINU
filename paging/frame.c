@@ -268,7 +268,7 @@ SYSCALL read_from_backing_store(int new_pid) {
 
 			pt_e = (pt_t*) vno2p(vpno);
 			read_bs((char *)pt_e, store, pageth);
-			kprint("okokok\n");
+			kprintf("okokok\n");
 		}
 	}
 	
