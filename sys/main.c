@@ -111,11 +111,11 @@ void test2() {
                      i*20, &ret, 0);
     resume(pids[i]);
   }
-  sleep(3);
-  kill(mypid);
-  for(i=1;i<=5;i++){
-    kill(pids[i]);
-  }
+  // sleep(3);
+  // kill(mypid);
+  // for(i=1;i<=5;i++){
+  //   kill(pids[i]);
+  // }
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
