@@ -54,10 +54,10 @@ SYSCALL kill(int pid)
 		}
 	}
 
-	// if this process is created by vcreate
-	if (pptr->vhpno != 0) {
-		vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mnext->mlen);
-	}
+	// // if this process is created by vcreate
+	// if (pptr->vhpno != 0) {
+	// 	vfreemem(pptr->vmemlist->mnext, pptr->vmemlist->mnext->mlen);
+	// }
 
 	send(pptr->pnxtkin, pid);
 
