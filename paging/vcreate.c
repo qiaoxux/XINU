@@ -64,11 +64,11 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 	proctab[pid].vhpnpages = hsize;
 
 	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(1024));
-	// proctab[pid].vmemlist->mlen = 0;
+	proctab[pid].vmemlist->mlen = 0;
 
-	// struct mblock * memblock = bs2p(bs_id);
- //    memblock->mnext = 0;  
- //    memblock->mlen  = hsize * NBPG;
+	struct mblock * memblock = bs2p(bs_id);
+    memblock->mnext = 0;  
+    memblock->mlen  = hsize * NBPG;
 
 	restore(ps);
 	return pid;
