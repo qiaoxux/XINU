@@ -34,23 +34,23 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 
 	pid = create(procaddr, ssize, priority, name, nargs, args);
 
-	// if (get_bsm(&bs_id) == SYSERR) {
-	// 	kprintf("vcreate: no free store\n");
-	// 	restore(ps);
-	// 	return SYSERR;
-	// }
+	if (get_bsm(&bs_id) == SYSERR) {
+		kprintf("vcreate: no free store\n");
+		restore(ps);
+		return SYSERR;
+	}
 
-	// if (hsize <= 0 || hsize > 256) {
-	// 	kprintf("vcreate: wrong hsize\n");
-	// 	restore(ps);
-	// 	return SYSERR;
-	// }
+	if (hsize <= 0 || hsize > 256) {
+		kprintf("vcreate: wrong hsize\n");
+		restore(ps);
+		return SYSERR;
+	}
 
-	// if(get_bs(bs_id, hsize) == SYSERR) {
-	// 	kprintf("vcreate: get_bs crashed\n");
-	// 	restore(ps);
-	// 	return SYSERR;
-	// }
+	if(get_bs(bs_id, hsize) == SYSERR) {
+		kprintf("vcreate: get_bs crashed\n");
+		restore(ps);
+		return SYSERR;
+	}
 
 	// if(xmmap(4096, bs_id, hsize) == SYSERR) {
 	// 	kprintf("vcreate: xmmap crashed\n");
