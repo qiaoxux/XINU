@@ -31,6 +31,9 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
   	disable(ps);
 
 	int bs_id, pid;
+
+	pid = create(procaddr, ssize, priority, name, nargs, args);
+
 	if (get_bsm(&bs_id) == SYSERR) {
 		kprintf("vcreate: no free store\n");
 		restore(ps);
@@ -42,8 +45,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		restore(ps);
 		return SYSERR;
 	}
-
-	pid = create(procaddr, ssize, priority, name, nargs, args);
 
 	if(get_bs(bs_id, hsize) == SYSERR) {
 		kprintf("vcreate: get_bs crashed\n");
@@ -67,8 +68,7 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 
 	struct mblock * memblock = bs2p(bs_id);
     memblock->mnext = 0;  
-    memblock->mlen = hsize * NBPG;
-    proctab[pid].vmemlist->mnext->mnext = memblock;
+    memblock->mlen  = hsize * NBPG;
 
 	restore(ps);
 	return pid;
