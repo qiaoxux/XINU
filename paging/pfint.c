@@ -57,7 +57,6 @@ SYSCALL pfint() {
     pt = vno2p(pd[pd_offset].pd_base);
     
   	get_frm(&free_frame);
-    kprintf("free_frame %d\n", free_frame);
     set_frm(free_frame, currpid, FR_PAGE);
     frm_tab[free_frame].fr_bid = store;
     frm_tab[free_frame].fr_vpno = vp;
@@ -75,7 +74,7 @@ SYSCALL pfint() {
 
   	physical_addr = fr2p(free_frame);
   	read_bs(physical_addr, store, pageth);
-  	kprintf("pfint: %d %d %d %d %d\n", currpid, physical_addr, free_frame, store, pageth);
+  	// kprintf("pfint: %d %d %d %d %d\n", currpid, physical_addr, free_frame, store, pageth);
 
     penqueue(free_frame, TailPQ);
 	
