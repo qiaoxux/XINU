@@ -57,14 +57,14 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		restore(ps);
 		return SYSERR;
 	}
-	// bsm_tab[bs_id].bs_private = 1;
-	// proctab[pid].bsmap[bs_id].bs_private = 1;
+	bsm_tab[bs_id].bs_private = 1;
+	proctab[pid].bsmap[bs_id].bs_private = 1;
 
-	// proctab[pid].vhpno = 4096;
-	// proctab[pid].vhpnpages = hsize;
+	proctab[pid].vhpno = 4096;
+	proctab[pid].vhpnpages = hsize;
 
-	// proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
-	// proctab[pid].vmemlist->mlen = 0;
+	proctab[pid].vmemlist->mnext = (struct mblock *) (vno2p(4096));
+	proctab[pid].vmemlist->mlen = 0;
 
 	// struct mblock * memblock = bs2p(bs_id);
  //    memblock->mnext = 0;  
