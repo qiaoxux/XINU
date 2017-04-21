@@ -64,7 +64,6 @@ void proc_test2(int i,int j,int* ret,int s) {
   int bsize;
   int r;
   bsize = get_bs(i, j);
-  kprintf("size %d\n", bsize);
   if (bsize != 50)
     *ret = TFAILED;
   r = xmmap(MYVPNO1, i, j);
@@ -252,7 +251,9 @@ void test4() {
 
   resume(pid1);
   sleep(3);
+  kprintf("3retttttt %d\n",ret);
   resume(pid2);
+  kprintf("4retttttt %d\n",ret);
 
 
   sleep(10);
@@ -601,9 +602,9 @@ void testSC(){
 }
 
 int main() {
-	test1();
-	test2();
-	test3();
+	// test1();
+	// test2();
+	// test3();
 	test4();
 	// test5();
 	// test6();
