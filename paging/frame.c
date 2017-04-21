@@ -268,7 +268,7 @@ SYSCALL read_from_backing_store(int new_pid) {
 			kprintf("process <%d> reads frame %d from store %d with page offset %d (vaddr: %d)\n", new_pid, i, store, pageth, vpno);
 
 			frm_tab[upper].fr_refcnt++;
- 		}	
+ 		}
  	}
 	
  	restore(ps);
