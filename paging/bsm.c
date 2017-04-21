@@ -126,11 +126,11 @@ SYSCALL bsm_lookup(int pid, long vpno, int* store, int* pageth) {
 	bs_map_t bsmap;
 	for (i = 0; i < NSTORES; i++) {
 		bsmap = proctab[pid].bsmap[i];
-		// kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap->bs_status, bsmap->bs_vpno, bsmap->bs_npages);
+		// kprintf("bsm_lookup: %d %d %d %d %d \n", pid, i, bsmap.bs_status, bsmap.bs_vpno, bsmap.bs_npages);
 
-		if (bsmap->bs_status == BSM_MAPPED && vpno >= bsmap->bs_vpno && vpno < bsmap->bs_vpno + bsmap->bs_npages) {
+		if (bsmap.bs_status == BSM_MAPPED && vpno >= bsmap.bs_vpno && vpno < bsmap.bs_vpno + bsmap.bs_npages) {
 			*store = i;
-			*pageth = vpno - bsmap->bs_vpno;
+			*pageth = vpno - bsmap.bs_vpno;
 
 			restore(ps);
 			return OK;
