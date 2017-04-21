@@ -201,6 +201,7 @@ void proc1_test4(int* ret) {
       break;    
     }
   }
+  kprintf("retttttt %d\n",ret);
 
   xmunmap(MYVPNO1);
   release_bs(MYBS1);
@@ -229,7 +230,7 @@ void proc2_test4(int *ret) {
       break;
     }
   }
-  kprintf("retttttt %d\n",ret);
+
 
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
