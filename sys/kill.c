@@ -46,14 +46,8 @@ SYSCALL kill(int pid)
 
 	for(i = 0; i < 8; i++) {
 		if(proctab[pid].bsmap[i].bs_status == BSM_MAPPED) {
-			if(--bsm_tab[i].bs_nmapping == 0) {
-				bsm_tab[i].bs_status = BSM_UNMAPPED;
-				bsm_tab[i].bs_pid = -1;
-				bsm_tab[i].bs_vpno = 0;
-				bsm_tab[i].bs_npages = 0;
-				bsm_tab[i].bs_private = 0;
-			}
-
+			--bsm_tab[i].bs_nmapping;
+				
 		  	proctab[pid].bsmap[i].bs_status = BSM_UNMAPPED;
 			proctab[pid].bsmap[i].bs_vpno = 0;
 			proctab[pid].bsmap[i].bs_npages = 0;
