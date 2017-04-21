@@ -203,7 +203,7 @@ void proc1_test4(int* ret) {
   }
 
   xmunmap(MYVPNO1);
-  // release_bs(MYBS1);
+  release_bs(MYBS1);
   return;
 }
 void proc2_test4(int *ret) {
@@ -236,7 +236,7 @@ void proc2_test4(int *ret) {
   }
 
   xmunmap(MYVPNO2);
-  // release_bs(MYBS1);
+  release_bs(MYBS1);
   return;
 }
 void test4() {
@@ -251,8 +251,11 @@ void test4() {
   kprintf("Second process ret: %d\n", ret);
 
   resume(pid1);
+  kprintf("Third process ret: %d\n", ret);
   sleep(3);
+  kprintf("Fourth process ret: %d\n", ret);
   resume(pid2);
+  kprintf("Fifth process ret: %d\n", ret);
 
   sleep(10);
   kill(pid1);
