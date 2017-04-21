@@ -203,7 +203,7 @@ void proc1_test4(int* ret) {
   }
 
   xmunmap(MYVPNO1);
-  release_bs(MYBS1);
+  // release_bs(MYBS1);
   return;
 }
 void proc2_test4(int *ret) {
@@ -236,7 +236,7 @@ void proc2_test4(int *ret) {
   }
 
   xmunmap(MYVPNO2);
-  release_bs(MYBS1);
+  // release_bs(MYBS1);
   return;
 }
 void test4() {
@@ -254,9 +254,9 @@ void test4() {
   sleep(3);
   resume(pid2);
 
-  // sleep(10);
-  // kill(pid1);
-  // kill(pid2);
+  sleep(10);
+  kill(pid1);
+  kill(pid2);
   if (ret != TPASSED)
     kprintf("\t\tFAILED!\n");
   else
