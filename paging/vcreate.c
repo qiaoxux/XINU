@@ -32,8 +32,6 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 
 	int bs_id, pid;
 
-	pid = create(procaddr, ssize, priority, name, nargs, args);
-
 	if (get_bsm(&bs_id) == SYSERR) {
 		kprintf("vcreate: no free store\n");
 		restore(ps);
@@ -46,26 +44,18 @@ SYSCALL vcreate(procaddr,ssize,hsize,priority,name,nargs,args)
 		return SYSERR;
 	}
 
-	if(get_bs(bs_id, hsize) == SYSERR) {
-		kprintf("vcreate: get_bs crashed\n");
-		restore(ps);
-		return SYSERR;
-	}
-
-	if(xmmap(4096, bs_id, hsize) == SYSERR) {
-		kprintf("vcreate: xmmap crashed\n");
-		restore(ps);
-		return SYSERR;
-	}
+	pid = create(procaddr, ssize, priority, name, nargs, args);
+	
 	bsm_tab[bs_id].bs_private = 1;
 	proctab[pid].bsmap[bs_id].bs_private = 1;
 
 	proctab[pid].vhpno = 4096;
 	proctab[pid].vhpnpages = hsize;
+	bsm_map(pid, 4096, bs_id, hsize);
 
 	proctab[pid].vmemlist = getmem(sizeof(struct mblock *));
-	// proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vno2p(4096));
-	// proctab[pid].vmemlist->mlen = 0;
+	proctab[pid].vmemlist->mnext = (struct mblock *) roundmb(vno2p(4096));
+	proctab[pid].vmemlist->mlen = 0;
 
 	struct mblock * memblock = bs2p(bs_id);
     memblock->mnext = 0;  
