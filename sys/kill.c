@@ -61,9 +61,10 @@ SYSCALL kill(int pid)
 	}
 
 	if (proctab[pid].bsmap[i].bs_private == 1) {
-		bsm_tab[pid].bs_private = 0;
+		
 		proctab[pid].bsmap[i].bs_private == 0;
 	}
+	bsm_tab[pid].bs_private = 0;
 	
 
 	send(pptr->pnxtkin, pid);
