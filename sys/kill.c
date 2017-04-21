@@ -58,12 +58,9 @@ SYSCALL kill(int pid)
 			proctab[pid].bsmap[i].bs_vpno = 0;
 			proctab[pid].bsmap[i].bs_npages = 0;
 		}
-
-		if (proctab[pid].bsmap[i].bs_private == 1) {
-			bsm_tab[pid].bs_private = 0;
-			proctab[pid].bsmap[i].bs_private == 0;
-		}
 	}
+
+	bsm_tab[i].bs_private = 0;
 
 	
 	
