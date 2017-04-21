@@ -230,7 +230,7 @@ void proc2_test4(int *ret) {
       break;
     }
   }
-  kprintf("ret222 %d\n", *ret);
+  kprintf("oko\n");
 
   /*Update the content, proc1 should see it*/
   for (i = 0; i < 26; i++) {
